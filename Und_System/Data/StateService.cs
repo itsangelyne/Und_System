@@ -6,8 +6,8 @@ namespace Und_System.Data
     {
         private readonly ProtectedSessionStorage _sessionStorage = sessionStorage;
         public int? SelectedBankId { get; private set; }
-        public string SelectedBankName { get; private set; }
-        public event Action OnChange;
+        public string? SelectedBankName { get; private set; }
+        public event Action? OnChange;
 
         public async Task LoadStateAsync()
         {
@@ -25,8 +25,15 @@ namespace Und_System.Data
             SelectedBankId = bankId;
             SelectedBankName = bankName;
 
-            await _sessionStorage.SetAsync("SelectedBankId", bankId);
-            await _sessionStorage.SetAsync("SelectedBankName", bankName);
+            if (bankId.HasValue)
+            {
+                await _sessionStorage.SetAsync("SelectedBankId", bankId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(bankName))
+            {
+                await _sessionStorage.SetAsync("SelectedBankName", bankName);
+            }
 
             NotifyStateChanged();
         }
