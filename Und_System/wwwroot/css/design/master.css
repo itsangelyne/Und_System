@@ -1,0 +1,125 @@
+﻿hr {
+    color: #326f32;
+    height: 2px !important;
+    opacity: 1;
+    position: relative;
+    z-index: -99;
+}
+
+.card {
+    position: relative;
+    z-index: 1;
+}
+
+.constyle {
+    background-color: #FFFFFF;
+    max-width: 100%;
+}
+
+#loginbtn, #resetbtn, #lostpassbtn, #aspbtn, #cglbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn {
+    border-color: #326f32;
+    color: #326f32;
+    transition: all 0.3s ease;
+}
+
+    #loginbtn:hover, #lostpassbtn:hover, #resetbtn:hover, #aspbtn:hover, #cglbtn:hover, #gyrtpbtn:hover, #mrpbtn:hover, #spbtn:hover, #dpbtn:hover {
+        background-color: #326f32;
+        border-color: #326f32;
+        color: #ffff;
+    }
+
+#password, #username {
+    border-color: #326f32;
+}
+
+#passlabel, #usernamelabel {
+    font-weight: 600;
+}
+
+.login-container {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.totalcontainer {
+    background-color: #F8F8FF;
+}
+
+.lob-container {
+    background-color: #F8F8FF;
+    border: 1px solid #95be95;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 85%;
+    margin: 20px auto;
+}
+
+.background-overlay {
+    background-image: url('/assets/washoutlogo1.png');
+    background-size: 40% auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.hover-cell:hover {
+    background-color: #e0f5dd;
+    color: #000000;
+}
+
+.table-responsive {
+    max-height: 80vh;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table th, .table td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 200px;
+}
+
+.table td {
+    word-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+    .table {
+        font-size: 12px;
+    }
+
+        .table th, .table td {
+            padding: 8px;
+        }
+}
+
+.status-dropdown {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cardbank:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    transition: all 0.3s ease-in-out;
+}
+
+.card button {
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .card button:hover {
+        background-color: #f8f9fa;
+    }

@@ -1,0 +1,51 @@
+﻿@page "/"
+@using Und_System.Data
+@inject NavigationManager NavigationManager
+
+<div class="d-flex justify-content-center align-items-center" style="height: 95vh;">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="login-container p-4">
+                <img src="assets/cbliclogo.png" alt="Logo" style="height: 50px;" />
+                <EditForm Model="@loginModel">
+                    <div class="mb-3 row">
+                        <label for="username" class="col-sm-3 col-form-label text-nowrap">Username</label>
+                        <div>
+                            <InputText id="username" class="form-control" @bind-Value="loginModel.Username" required />
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="password" class="col-sm-3 col-form-label">Password</label>
+                        <div class="col-sm-12 position-relative">
+                            <div class="input-group">
+                                <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" required />
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+                <div class="d-flex flex-column flex-sm-row justify-content-end mt-3">
+                    <button class="btn btn-outline-primary mb-2 mb-sm-0 me-sm-2" id="lostpassbtn">
+                        <i class="fas fa-key"></i> Lost Password
+                    </button>
+                    <button class="btn btn-outline-primary" id="loginbtn" @onclick="HandleLogin">
+                        <i class="oi oi-account-login"></i> Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+
+    public class LoginModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+    private async Task HandleLogin()
+    {
+        NavigationManager.NavigateTo("/lineofbusiness", true);
+    }
+}

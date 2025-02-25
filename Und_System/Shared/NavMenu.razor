@@ -1,0 +1,343 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@inject NavigationManager NavigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="cgldashboard">Underwriting Portal</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass">
+    <nav class="flex-column">
+        <!-- Dashboard -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="cgldashboard" Match="NavLinkMatch.All" @onclick="CloseAllMenus">
+                <span class="oi oi-home" aria-hidden="true"></span> Dashboard
+            </NavLink>
+        </div>
+        <!-- Loan Applications -->
+        <div class="nav-item px-3">
+            <a class="nav-link d-flex justify-content-between" @onclick="ToggleLoansDropdown">
+                <span>
+                    <span class="oi oi-document" aria-hidden="true"></span> Applications
+                </span>
+                <span class="@GetArrowClass(showLoansDropdown) ms-2"></span>
+            </a>
+            <div class="nested-menu ps-3 @LoansDropdownClass">
+                <!-- Long Term Applications -->
+                <a class="nav-link d-flex justify-content-between" @onclick="ToggleLongTermDropdown">
+                    <span>
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Long Term
+                    </span>
+                    <span class="@GetArrowClass(showLongTermDropdown) ms-2"></span>
+                </a>
+                <div class="nested-menu ps-3 @LongTermDropdownClass">
+                    <!-- Pending -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/pendinglist">
+                        <span class="oi oi-clock" aria-hidden="true"></span> Pending
+                    </NavLink>
+                    <!-- Approved -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/approvedlist">
+                        <span class="oi oi-check" aria-hidden="true"></span> Approved
+                    </NavLink>
+                    <!-- Renewal -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/renewedlist">
+                        <span class="oi oi-loop-circular" aria-hidden="true"></span> Renewal
+                    </NavLink>
+                    <!-- Refund -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/refund">
+                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 19px;"></span> For Refund
+                    </NavLink>
+                    <!-- Terminated -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/terminatedlist">
+                        <span class="oi oi-x" aria-hidden="true"></span> Terminated
+                    </NavLink>
+                    <!-- Declined -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/declinedlist">
+                        <span class="oi oi-ban" aria-hidden="true"></span> Declined
+                    </NavLink>
+                </div>
+
+                <!-- Short Term Applications -->
+                <a class="nav-link d-flex justify-content-between" @onclick="ToggleShortTermDropdown">
+                    <span>
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Short Term
+                    </span>
+                    <span class="@GetArrowClass(showShortTermDropdown) ms-2"></span>
+                </a>
+                <div class="nested-menu ps-3 @ShortTermDropdownClass">
+                    <!-- Pending -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/pendinglist">
+                        <span class="oi oi-clock" aria-hidden="true"></span> Pending
+                    </NavLink>
+                    <!-- Approved -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/approvedlist">
+                        <span class="oi oi-check" aria-hidden="true"></span> Approved
+                    </NavLink>
+                    <!-- Refund -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/refund">
+                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 19px;"></span> For Refund
+                    </NavLink>
+                    <!-- Terminated -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/terminatedlist">
+                        <span class="oi oi-x" aria-hidden="true"></span> Terminated
+                    </NavLink>
+                    <!-- Declined -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/declinedlist">
+                        <span class="oi oi-ban" aria-hidden="true"></span> Declined
+                    </NavLink>
+                </div>
+            </div>
+        </div>
+        <div class="nav-item px-3">
+            <a class="nav-link d-flex justify-content-between" @onclick="ToggleComplianceDropdown">
+                <span>
+                    <span class="oi oi-spreadsheet" aria-hidden="true"></span> Compliance
+                </span>
+                <span class="@GetArrowClass(showComplianceDropdown) ms-2"></span>
+            </a>
+            <div class="nested-menu ps-3 @ComplianceDropdownClass">
+                <!-- Long Term Compliance -->
+                <a class="nav-link d-flex justify-content-between" @onclick="ToggleLongTermComplianceDropdown">
+                    <span>
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Long Term
+                    </span>
+                    <span class="@GetArrowClass(showLongTermComplianceDropdown) ms-2"></span>
+                </a>
+                <div class="nested-menu ps-3 @LongTermComplianceDropdownClass">
+                    <!-- Medical -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/medical">
+                        <span class="bi bi-clipboard-pulse" aria-hidden="true" style="margin-right: 19px; font-size:18px;"></span> For Medical
+                    </NavLink>
+                    <!-- With Notices -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/withnotices">
+                        <span class="oi oi-envelope-closed" aria-hidden="true"></span> With Notice
+                    </NavLink>
+                </div>
+
+                <!-- Short Term Compliance -->
+                <a class="nav-link d-flex justify-content-between" @onclick="ToggleShortTermComplianceDropdown">
+                    <span>
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Short Term
+                    </span>
+                    <span class="@GetArrowClass(showShortTermComplianceDropdown) ms-2"></span>
+                </a>
+                <div class="nested-menu ps-3 @ShortTermComplianceDropdownClass">
+                    <!-- Medical -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/medical">
+                        <span class="bi bi-clipboard-pulse" aria-hidden="true" style="margin-right: 19px; font-size:18px;"></span> For Medical
+                    </NavLink>
+                    <!-- With Notices -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/withnotices">
+                        <span class="oi oi-envelope-closed" aria-hidden="true"></span> With Notice
+                    </NavLink>
+                </div>
+            </div>
+        </div>
+        <!-- Extended Age -->
+        <div class="nav-item px-3">
+            <a class="nav-link d-flex justify-content-between" @onclick="ToggleExtendedAgeDropdown">
+                <span>
+                    <span class="fas fa-users" aria-hidden="true" style="margin-right: 19px;font-size:18px;"></span> Extended Age
+                </span>
+                <span class="@GetArrowClass(showExtendedAgeDropdown) ms-2"></span>
+            </a>
+            <div class="nested-menu ps-3 @ExtendedAgeDropdownClass">
+                <NavLink class="nav-link" href="extendedage/longterm">
+                    <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Long Term
+                </NavLink>
+                <NavLink class="nav-link" href="extendedage/shortterm">
+                    <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span>Short Term
+                </NavLink>
+            </div>
+        </div>
+        <!-- Admin Control -->
+        <div class="nav-item px-3">
+            <a class="nav-link d-flex justify-content-between" @onclick="ToggleUsersDropdown">
+                <span>
+                    <span class="oi oi-wrench" aria-hidden="true"></span> Admin Control
+                </span>
+                <span class="@GetArrowClass(showUsersDropdown) ms-2"></span>
+            </a>
+            <div class="nested-menu ps-3 @UsersDropdownClass">
+                <NavLink class="nav-link" href="emplisting">
+                    <span class="oi oi-people" aria-hidden="true"></span> Employees
+                </NavLink>
+            </div>
+        </div>
+        <!-- Logout -->
+        <div class="nav-item px-3 mt-auto">
+            <a class="nav-link d-flex justify-content-between" @onclick="ShowLogoutPopup">
+                <span>
+                    <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+                </span>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<!-- Logout Modal -->
+@if (showLogoutPopup)
+{
+    <div class="modal show d-block" style="background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; right: 0; bottom: 0;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Logout</h5>
+                    <button type="button" class="btn-close" @onclick="CancelLogout"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to log out?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelLogout">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="Logout">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool collapseNavMenu = true;
+    private bool showLoansDropdown = false;
+    private bool showLongTermDropdown = false;
+    private bool showShortTermDropdown = false;
+    private bool showComplianceDropdown = false;
+    private bool showLongTermComplianceDropdown = false;
+    private bool showShortTermComplianceDropdown = false;
+    private bool showExtendedAgeDropdown = false;
+    private bool showUsersDropdown = false;
+    private bool showLogoutPopup = false;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string LoansDropdownClass => showLoansDropdown ? "show" : "d-none";
+    private string LongTermDropdownClass => showLongTermDropdown ? "show" : "d-none";
+    private string ShortTermDropdownClass => showShortTermDropdown ? "show" : "d-none";
+    private string ComplianceDropdownClass => showComplianceDropdown ? "show" : "d-none";
+    private string LongTermComplianceDropdownClass => showLongTermComplianceDropdown ? "show" : "d-none";
+    private string ShortTermComplianceDropdownClass => showShortTermComplianceDropdown ? "show" : "d-none";
+    private string ExtendedAgeDropdownClass => showExtendedAgeDropdown ? "show" : "d-none";
+    private string UsersDropdownClass => showUsersDropdown ? "show" : "d-none";
+
+    private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
+
+    private void ToggleLoansDropdown()
+    {
+        showLoansDropdown = !showLoansDropdown;
+
+        if (showLoansDropdown)
+        {
+            showComplianceDropdown = false;
+            showExtendedAgeDropdown = false;
+            showUsersDropdown = false;
+        }
+        else
+        {
+            showLongTermDropdown = false;
+            showShortTermDropdown = false;
+        }
+    }
+
+    private void ToggleLongTermDropdown()
+    {
+        showLongTermDropdown = !showLongTermDropdown;
+
+        if (showLongTermDropdown)
+        {
+            showShortTermDropdown = false;
+        }
+    }
+
+    private void ToggleShortTermDropdown()
+    {
+        showShortTermDropdown = !showShortTermDropdown;
+
+        if (showShortTermDropdown)
+        {
+            showLongTermDropdown = false;
+        }
+    }
+
+    private void ToggleComplianceDropdown()
+    {
+        showComplianceDropdown = !showComplianceDropdown;
+
+        if (showComplianceDropdown)
+        {
+            showLoansDropdown = false;
+            showLongTermDropdown = false;
+            showShortTermDropdown = false;
+            showExtendedAgeDropdown = false;
+            showUsersDropdown = false;
+        }
+        else
+        {
+            showLongTermComplianceDropdown = false;
+            showShortTermComplianceDropdown = false;
+        }
+    }
+
+    private void ToggleLongTermComplianceDropdown()
+    {
+        showLongTermComplianceDropdown = !showLongTermComplianceDropdown;
+
+        if (showLongTermComplianceDropdown)
+        {
+            showShortTermComplianceDropdown = false;
+        }
+    }
+
+    private void ToggleShortTermComplianceDropdown()
+    {
+        showShortTermComplianceDropdown = !showShortTermComplianceDropdown;
+
+        if (showShortTermComplianceDropdown)
+        {
+            showLongTermComplianceDropdown = false;
+        }
+    }
+
+    private void ToggleExtendedAgeDropdown()
+    {
+        showExtendedAgeDropdown = !showExtendedAgeDropdown;
+
+        if (showExtendedAgeDropdown)
+        {
+            showLoansDropdown = false;
+            showComplianceDropdown = false;
+            showUsersDropdown = false;
+        }
+    }
+
+    private void ToggleUsersDropdown()
+    {
+        showUsersDropdown = !showUsersDropdown;
+
+        if (showUsersDropdown)
+        {
+            showLoansDropdown = false;
+            showComplianceDropdown = false;
+            showExtendedAgeDropdown = false;
+        }
+    }
+    private void CloseAllMenus()
+    {
+        showLoansDropdown = false;
+        showLongTermDropdown = false;
+        showShortTermDropdown = false;
+        showComplianceDropdown = false;
+        showLongTermComplianceDropdown = false;
+        showShortTermComplianceDropdown = false;
+        showExtendedAgeDropdown = false;
+        showUsersDropdown = false;
+    }
+
+    private void ShowLogoutPopup() => showLogoutPopup = true;
+    private void CancelLogout() => showLogoutPopup = false;
+    private void Logout() => NavigationManager.NavigateTo("/");
+    private string GetArrowClass(bool isDropdownOpen) => isDropdownOpen ? "fas fa-chevron-up" : "fas fa-chevron-right";
+}

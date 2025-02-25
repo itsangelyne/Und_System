@@ -1,0 +1,43 @@
+﻿@page "/banklisting"
+@using Und_System.Data
+@inject NavigationManager NavigationManager
+@inject CGLPolicyHolderServices CGLPolicyHolderServices
+@inject StateService StateService
+
+<h1 class="text-center my-4"><b>Bank List</b></h1>
+
+<div class="background-overlay"></div>
+<div class="container mt-4 mb-4">
+    <h5 class="text-muted mb-4">Please select a bank from the list below to proceed:</h5>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var bank in banks)
+        {
+            <div class="col">
+                <div class="card shadow-sm border-0 cardbank">
+                    <div class="card-body p-4">
+                        <button class="btn w-100 text-start p-0 border-0 focus:outline-none" @onclick="() => SelectBank(bank)">
+                            <h5 class="card-title mb-1">@bank.Policy_Holder_Name</h5>
+                            <p class="card-text text-muted">@bank.Bank_Address</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<CGLPolicyHolder> banks = new List<CGLPolicyHolder>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        banks = await CGLPolicyHolderServices.GetBanksAsync();
+    }
+
+    private async Task SelectBank(CGLPolicyHolder bank)
+    {
+        await StateService.SetSelectedBank(bank.ID_Policy_Holder, bank.Policy_Holder_Name);
+        NavigationManager.NavigateTo("/cgldashboard");
+    }
+}

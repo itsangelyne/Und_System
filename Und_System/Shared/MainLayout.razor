@@ -1,0 +1,50 @@
+﻿@inherits LayoutComponentBase
+@using Und_System.Data
+@using Und_System.Context
+@inject NavigationManager NavigationManager
+@inject StateService StateService
+@inject CGLPolicyHolderServices CGLPolicyHolderServices
+
+<PageTitle>Underwriting Portal</PageTitle>
+
+<div class="page">
+    @if (ShowSidebar())
+    {
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    }
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    private bool isInitialized = false;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !isInitialized)
+        {
+            await StateService.LoadStateAsync();
+            isInitialized = true;
+            StateHasChanged();
+        }
+    }
+
+    private bool ShowSidebar()
+    {
+        return isInitialized && !IsLoginPage() && !IsLineOfBusinessPage() && StateService.SelectedBankId.HasValue;
+    }
+
+    private bool IsLoginPage()
+    {
+        return NavigationManager.Uri.EndsWith("/") || NavigationManager.Uri.Contains("/login");
+    }
+
+    private bool IsLineOfBusinessPage()
+    {
+        return NavigationManager.Uri.Contains("/lineofbusiness");
+    }
+}
