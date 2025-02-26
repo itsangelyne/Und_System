@@ -16,20 +16,9 @@ namespace Und_System.Data
             _context.CGL_INSURED.Update(employee);
             await _context.SaveChangesAsync();
         }
-        //public async Task UpdateLoanAsync(CGLInsured loan)
-        //{
-        //    var existingLoan = await _context.CGL_INSURED.FindAsync(loan.ID);
-        //    if (existingLoan != null)
-        //    {
-        //        existingLoan.MultipleLoan = loan.MultipleLoan;
-        //        await _context.SaveChangesAsync();
-        //    }
-        //}
-        //public async Task<CGLInsured?> GetTestInformationByIdAsync(int id)
-        //{
-        //    return await _context.TestInformation.FirstOrDefaultAsync(ti => ti.ID == id);
-        //}
-
-
+        public async Task<List<CGLInsured>> GetInsuredRecordsAsync()
+        {
+            return await _context.CGL_INSURED.ToListAsync();
+        }
     }
 }

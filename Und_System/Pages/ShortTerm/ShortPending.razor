@@ -1,10 +1,211 @@
 ﻿@page "/shortterm/pendinglist"
 @using Microsoft.EntityFrameworkCore;
-@using Und_System.Context
-@using Und_System.Data
+@using Und_System.Context;
+@using Und_System.Data;
+@inject CGLInsuredService CGLInsuredService
+@inject CGLPolicyHolderServices CGLPolicyHolderServices
+@inject StateService StateService
+@inject CGLCreditDebitServices CGLCreditDebitServices
+@inject CGLUndStatusService CGLUndStatusService
 
-<h3>ShortPending</h3>
+<h1><b>PENDING APPLICATIONS</b></h1>
+<hr />
+<div class="container my-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+    <h3 class="text-center fw-bold text-decoration-underline">SHORT TERM</h3>
+    <h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
+    <div class="card-body">
+        <div class="row justify-content-evenly">
+            <div class="col-md-8 mb-3">
+                <input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
+            </div>
+            <div class="col-md-4 mb-3 d-flex align-items-center">
+                <label for="yearDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 120px;">Filter by Year:</label>
+                <select class="form-control flex-grow-1" id="yearDropdown" @bind="selectedYear" @bind:event="onchange">
+                    <option value="">Select Year</option>
+                    @foreach (var year in years)
+                    {
+                        <option value="@year">@year</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="text-white" style="background-color: #5d835c;">
+                    <tr>
+                        <th class="text-center">Release Date</th>
+                        <th class="text-center">Total Applications</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (releaseList != null && releaseList.Count > 0)
+                    {
+                        foreach (var item in releaseList)
+                        {
+                            <tr>
+                                <td class="text-center">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
+                                <td class="text-center">@item.Total_Application</td>
+                                <td class="text-center">
+                                    <button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
+                                        @(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
+                                    </button>
+                                </td>
+                            </tr>
+
+                            @if (expandedRowId == item.ID_CB)
+                            {
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead class="text-white" style="background-color: #5d835c;">
+                                                    <tr>
+                                                        <th class="text-center">Last Name</th>
+                                                        <th class="text-center">First Name</th>
+                                                        <th class="text-center">Middle Name</th>
+                                                        <th class="text-center">Date of Birth</th>
+                                                        <th class="text-center">Status</th>
+                                                        <th class="text-center">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+                                                    {
+                                                        @foreach (var insured in insuredDetailsList)
+                                                        {
+                                                            <tr>
+                                                                <td class="text-center">@insured.LastName</td>
+                                                                <td class="text-center">@insured.FirstName</td>
+                                                                <td class="text-center">@insured.MiddleName</td>
+                                                                <td class="text-center">@insured.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                                                                <td class="text-center">@insured.Status</td>
+                                                                <td class="text-center">
+                                                                    <button class="btn btn-outline-info btn-sm" @onclick="() => ViewDetails(insured)">View Details</button>
+                                                                    <button class="btn btn-outline-primary btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="6" class="text-center">No insured details available</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center">No data available</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 @code {
+    public class InsuredDetails
+    {
+        public required string LastName { get; set; }
+        public required string FirstName { get; set; }
+        public string? MiddleName { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public required string Status { get; set; }
+    }
 
+    private int? selectedYear;
+    private string searchText = string.Empty;
+    private List<int> years = new List<int>();
+    private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
+    private List<InsuredDetails> insuredDetailsList = new List<InsuredDetails>();
+    private int? expandedRowId = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        int currentYear = DateTime.Now.Year;
+        years = Enumerable.Range(2000, currentYear - 2000 + 1).ToList();
+        await LoadCreditDebitData();
+    }
+
+    private async Task LoadCreditDebitData()
+    {
+        int? selectedPolicyHolderIdNullable = StateService.SelectedBankId;
+
+        if (selectedPolicyHolderIdNullable.HasValue)
+        {
+            int selectedPolicyHolderId = selectedPolicyHolderIdNullable.Value;
+
+            var allCreditDebits = await CGLCreditDebitServices.GetTestInformationAsync();
+            var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
+            var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+
+            releaseList = (from credit in allCreditDebits
+                           join insured in allInsuredRecords on credit.DCHS_From equals insured.DCHS
+                           join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+                           where credit.ID_Policy_Holder == selectedPolicyHolderId &&
+                                 insured.Type == "Short Term" &&
+                                 status.Und_Status == "Pending"
+                           select credit).ToList();
+
+            if (selectedYear.HasValue)
+            {
+                releaseList = releaseList
+                    .Where(x => x.Submitted_Date.Year == selectedYear.Value)
+                    .ToList();
+            }
+        }
+        else
+        {
+            releaseList = new List<CGLCreditDebit>();
+        }
+    }
+
+    private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
+    {
+        if (expandedRowId == idCB)
+        {
+            expandedRowId = null;
+        }
+        else
+        {
+            expandedRowId = idCB;
+            await LoadInsuredDetails(dchsFrom, dchsTo);
+        }
+    }
+
+    private async Task LoadInsuredDetails(string dchsFrom, string dchsTo)
+    {
+        insuredDetailsList.Clear();
+        var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
+        var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+
+        insuredDetailsList = allInsuredRecords
+            .Where(i => i.DCHS == dchsFrom || i.DCHS == dchsTo)
+            .Select(i => new InsuredDetails
+                {
+                    LastName = i.Last_Name,
+                    FirstName = i.First_Name,
+                    MiddleName = i.Middle_Name,
+                    DateOfBirth = i.Date_Of_Birth,
+                    Status = allUndStatuses.FirstOrDefault(u => u.InsuredID == i.ID_Insured)?.Und_Status ?? "Unknown"
+                }).ToList();
+    }
+
+    private void ViewDetails(InsuredDetails insured)
+    {
+    }
+
+    private void ViewLoanHistory(InsuredDetails insured)
+    {
+    }
 }
