@@ -15,7 +15,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddBootstrapBlazor();
 builder.Services.AddScoped<CGLInsuredService>();
-//builder.Services.AddScoped<CGLCreditDebit>();
+builder.Services.AddScoped<CGLCreditDebitServices>();
 builder.Services.AddScoped<CGLPolicyHolderServices>();
 builder.Services.AddScoped<CGLInsuredStatusService>();
 builder.Services.AddScoped<CGLUndStatusService>();
