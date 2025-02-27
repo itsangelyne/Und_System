@@ -18,5 +18,9 @@ namespace Und_System.Data
             _context.CGL_Policy_Holder.Add(bank);
             await _context.SaveChangesAsync();
         }
+        public async Task<CGLPolicyHolder> GetPolicyHolderByIdAsync(int id)
+        {
+            return await _context.CGL_Policy_Holder.FindAsync(id); // Adjust according to your DbSet name
+        }
     }
 }

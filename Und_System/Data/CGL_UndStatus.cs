@@ -11,5 +11,6 @@ namespace Und_System.Data
         public required string PSD_Status { get; set; }
         public required string Receive_Status { get; set; }
         public string? Multiple_Loan { get; set; }
+        public string? Remarks { get; set; }
     }
 }

@@ -17,6 +17,7 @@ builder.Services.AddBootstrapBlazor();
 builder.Services.AddScoped<CGLInsuredService>();
 builder.Services.AddScoped<CGLCreditDebitServices>();
 builder.Services.AddScoped<CGLPolicyHolderServices>();
+builder.Services.AddScoped<CGLCoverageService>();
 builder.Services.AddScoped<CGLInsuredStatusService>();
 builder.Services.AddScoped<CGLUndStatusService>();
 builder.Services.AddScoped<StateService>();

@@ -10,6 +10,7 @@ namespace Und_System.Context
         public DbSet<CGLCreditDebit> CGL_CreditDebit { get; set; }
         public DbSet<CGLPolicyHolder> CGL_Policy_Holder { get; set; }
         public DbSet<CGL_Insured_Status> CGL_Insured_Status { get; set; }
+        public DbSet<CGLCoverage> CGL_Coverage { get; set; }
         public DbSet<CGL_UndStatus> CGL_UndStatus { get; set; }
     }
 }

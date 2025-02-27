@@ -246,7 +246,7 @@
         if (firstRender)
         {
             await StateService.LoadStateAsync();
-            allApplications = await CGLInsuredService.GetTestInformationAsync();
+            allApplications = await CGLInsuredService.GetInsuredAsync();
             banks = await CGLPolicyHolderServices.GetBanksAsync();
             insuredStatuses = await CGLInsuredStatusService.GetStatusAsync();
             undStatuses = await CGLUndStatusService.GetStatusAsync();
