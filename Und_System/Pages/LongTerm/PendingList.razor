@@ -473,7 +473,7 @@
         {
             int selectedPolicyHolderId = selectedPolicyHolderIdNullable.Value;
 
-            var allCreditDebits = await CGLCreditDebitServices.GetTestInformationAsync();
+            var allCreditDebits = await CGLCreditDebitServices.GetCredDebitAsync();
             var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
             var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
 

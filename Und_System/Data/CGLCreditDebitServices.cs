@@ -7,7 +7,7 @@ namespace Und_System.Data
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<List<CGLCreditDebit>> GetTestInformationAsync()
+        public async Task<List<CGLCreditDebit>> GetCredDebitAsync()
         {
             return await _context.CGL_CreditDebit.ToListAsync();
         }
