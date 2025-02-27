@@ -24,7 +24,7 @@ namespace Und_System.Data
         public required string Place_Of_Birth { get; set; }
         public required string Nationality { get; set; }
         public required string TIN_SSS_GSIS_NO { get; set; }
-        public required string Source_Of_FUnds { get; set; }
+        public required string Source_Of_Funds { get; set; }
         public required string Nature_of_Self_Employment_Business { get; set; }
         public required string Address_Of_Business_or_Employer { get; set; }
         public required string Occupation_And_Livelihood { get; set; }
