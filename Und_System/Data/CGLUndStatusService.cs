@@ -11,6 +11,18 @@ namespace Und_System.Data
         {
             return await _context.CGL_UndStatus.ToListAsync();
         }
+        public async Task UpdateStatusAsync(CGL_UndStatus status)
+        {
+            var existingStatus = await _context.CGL_UndStatus.FindAsync(status.UndStatusID);
+            if (existingStatus != null)
+            {
+                existingStatus.Und_Status = status.Und_Status;
+                existingStatus.PSD_Status = status.PSD_Status;
+                existingStatus.Remarks = status.Remarks;
+
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
 

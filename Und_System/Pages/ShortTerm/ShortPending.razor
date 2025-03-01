@@ -45,8 +45,8 @@
 						foreach (var item in releaseList)
 						{
 							<tr>
-								<td class="text-center">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
-								<td class="text-center">@item.Total_Application</td>
+								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
+								<td class="text-center fw-bold">@item.Total_Application</td>
 								<td class="text-center">
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
 										@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
@@ -178,28 +178,28 @@
 										<div class="row">
 											<div class="col-md-4 mb-3">
 												<label for="dob" class="form-label">Date of Birth</label>
-												<input type="date" class="form-control" id="dob" value="@selectedInsured?.Date_Of_Birth.ToString("yyyy-MM-dd")" readonly />
+												<input type="date" class="form-control" id="dob" @bind="selectedInsured.Date_Of_Birth" readonly="@(!isEditing)" />
 											</div>
 											<div class="col-md-1 mb-3">
 												<label for="age" class="form-label">Age</label>
-												<input type="number" class="form-control" id="age" value="@selectedInsured?.Age" readonly />
+												<input type="number" class="form-control" id="age" @bind="selectedInsured.Age" readonly="@(!isEditing)" />
 											</div>
 											<div class="row">
 												<div class="col-md-4 mb-3">
 													<label for="lastName" class="form-label">Last Name</label>
-													<input type="text" class="form-control" id="lastName" value="@selectedInsured?.Last_Name" readonly />
+													<input type="text" class="form-control" id="lastName" @bind="selectedInsured.Last_Name" readonly="@(!isEditing)" />
 												</div>
 												<div class="col-md-4 mb-3">
 													<label for="firstName" class="form-label">First Name</label>
-													<input type="text" class="form-control" id="firstName" value="@selectedInsured?.First_Name" readonly />
+													<input type="text" class="form-control" id="firstName" @bind="selectedInsured.First_Name" readonly="@(!isEditing)" />
 												</div>
 												<div class="col-md-3 mb-3">
 													<label for="middleName" class="form-label">Middle Name</label>
-													<input type="text" class="form-control" id="middleName" value="@selectedInsured?.Middle_Name" readonly />
+													<input type="text" class="form-control" id="middleName" @bind="selectedInsured.Middle_Name" readonly="@(!isEditing)" />
 												</div>
 												<div class="col-sm-1 mb-3">
 													<label for="suffix" class="form-label">Suffix</label>
-													<input type="text" class="form-control" id="suffix" value="@selectedInsured?.Suffix" readonly />
+													<input type="text" class="form-control" id="suffix" @bind="selectedInsured.Suffix" readonly="@(!isEditing)" />
 												</div>
 											</div>
 										</div>
@@ -242,14 +242,14 @@
 													<input type="text" class="form-control" id="DCHS" value="@selectedInsured?.DCHS" readonly />
 												</div>
 												<div class="col-md mb-3">
-													<label for="Class" class="form-label">Class</label>
-													<input type="text" class="form-control" id="Class" readonly />
-												</div>
-												<div class="col-md mb-3">
 													<label for="prem" class="form-label">Premium</label>
 													<input type="number" class="form-control" id="prem" @bind="selectedCoverage.Premium" readonly />
 												</div>
 
+												<div class="col-md mb-3">
+													<label for="Class" class="form-label">Rider</label>
+													<input type="text" class="form-control" id="Class" value="@selectedCoverage.Rider" readonly />
+												</div>
 											</div>
 										</div>
 										<div class="col-md mb-3">
@@ -258,7 +258,7 @@
 													<div class="row">
 														<div class="col-md mb-3">
 															<label for="status" class="form-label">Underwriting Status</label>
-															<select class="form-select" id="status" @bind-value="status.Und_Status" @bind-value:event="onchange" disabled>
+															<select class="form-select" id="status" @bind-value="status.Und_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
 																<option disabled>Select Status</option>
 																<option value="Pending">Pending</option>
 																<option value="Approved">Approved</option>
@@ -271,10 +271,10 @@
 														</div>
 														<div class="col-md mb-3">
 															<label for="psdstatus" class="form-label">PSD Status</label>
-															<select class="form-select" id="psdstatus" @bind-value="status.PSD_Status" @bind-value:event="onchange" disabled>
-																<option disabled>Select Status</option>
-																<option value="">Active</option>
-																<option value="">Inactive</option>
+															<select class="form-select" id="psdstatus" @bind-value="status.PSD_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
+																<option value="" disabled selected>Select Status</option>
+																<option value="Active">Active</option>
+																<option value="Inactive">Inactive</option>
 															</select>
 														</div>
 													</div>
@@ -282,7 +282,7 @@
 												<div class="col-md mb-3">
 													<div class="col-md mb-3">
 														<label for="remarks" class="form-label">Remarks</label>
-														<textarea class="form-control" rows="4" cols="50" style="resize:none;" id="remarks" value="@status.Remarks" readonly></textarea>
+														<textarea class="form-control" rows="4" cols="50" style="resize:none;" id="remarks" @bind="status.Remarks" readonly="@(!isRemarksEditable)"></textarea>
 													</div>
 												</div>
 											</div>
@@ -429,12 +429,57 @@
 					</div>
 				</div>
 				<div class="modal-footer">
+					@if (isRemarksEditable)
+					{
+						<button type="button" class="btn btn-primary" @onclick="ShowSaveRemarksConfirmation">Save Changes</button>
+					}
+					else
+					{
+						<button type="button" class="btn btn-outline-primary" @onclick="ToggleRemarksEditable">Underwriting Update</button>
+					}
+					@if (isEditing)
+					{
+						<button type="button" class="btn btn-outline-primary" @onclick="ShowSaveDetailsConfirmation">Save Details</button>
+					}
+					else
+					{
+						<button type="button" class="btn btn-outline-dark" @onclick="ToggleEdit">Edit Info</button>
+					}
 					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
 }
+<!--Confirmation Modal-->
+@if (isConfirmationVisible)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Confirm Changes</h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body">
+					@if (currentAction == "UpdateRemarks")
+					{
+						<p>Are you sure you want to save these changes?</p>
+					}
+					else if (currentAction == "SaveDetails")
+					{
+						<p>Are you sure you want to update these details for <b>@selectedInsured?.First_Name @selectedInsured?.Last_Name</b>?</p>
+					}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Cancel</button>
+					<button type="button" class="btn btn-outline-primary" @onclick="ConfirmSaveChanges">Confirm Changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
 
 @code {
 	public class InsuredDetailView
@@ -445,11 +490,15 @@
 	}
 
 	private int? selectedYear;
+	private string? currentAction;
+	private bool isEditing = false;
+	private int? expandedRowId = null;
+	private bool isConfirmationVisible = false;
+	private bool isRemarksEditable = false;
 	private string searchText = string.Empty;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
 	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
-	private int? expandedRowId = null;
 
 
 	private bool isModalVisible = false;
@@ -464,7 +513,6 @@
 		years = Enumerable.Range(2000, currentYear - 2000 + 1).ToList();
 		await LoadCreditDebitData();
 	}
-
 	private async Task LoadCreditDebitData()
 	{
 		int? selectedPolicyHolderIdNullable = StateService.SelectedBankId;
@@ -496,6 +544,8 @@
 		{
 			releaseList = new List<CGLCreditDebit>();
 		}
+
+		StateHasChanged();
 	}
 
 	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
@@ -509,6 +559,7 @@
 			expandedRowId = idCB;
 			await LoadInsuredDetails(dchsFrom, dchsTo);
 		}
+		StateHasChanged();
 	}
 
 	private async Task LoadInsuredDetails(string dchsFrom, string dchsTo)
@@ -528,6 +579,7 @@
 					UndStatus = allUndStatuses.FirstOrDefault(u => u.InsuredID == i.ID_Insured)
 				})
 			.ToList();
+		StateHasChanged();
 	}
 
 	private async Task ViewDetails(CGLInsured insured)
@@ -538,18 +590,58 @@
 		selectedCoverage = await CGLCoverageService.GetCoverageByInsuredIdAsync(insured.ID_Insured);
 		policyHolder = await CGLPolicyHolderServices.GetPolicyHolderByIdAsync(selectedInsured.ID_Policy_Holder);
 		isModalVisible = true;
+
+		StateHasChanged();
 	}
 
 	private void ViewLoanHistory(CGLInsured insured)
 	{
 
 	}
+	private void ToggleEdit()
+	{
+		isEditing = !isEditing;
+	}
 
+	private void ToggleRemarksEditable()
+	{
+		isRemarksEditable = !isRemarksEditable;
+	}
+	private void ShowSaveDetailsConfirmation()
+	{
+		currentAction = "SaveDetails";
+		isConfirmationVisible = true; 
+	}
+
+	private void ShowSaveRemarksConfirmation()
+	{
+		currentAction = "UpdateRemarks";
+		isConfirmationVisible = true; 
+	}
+
+	private async Task ConfirmSaveChanges()
+	{
+		if (currentAction == "UpdateRemarks" && status != null)
+		{
+			await CGLUndStatusService.UpdateStatusAsync(status);
+		}
+		else if (currentAction == "SaveDetails" && selectedInsured != null)
+		{
+			await CGLInsuredService.UpdateInsuredAsync(selectedInsured);
+		}
+		isConfirmationVisible = false;
+		isEditing = false;
+		isRemarksEditable = false;
+		await LoadCreditDebitData();
+	}
 	private void CloseModal()
 	{
+		status = null;
 		selectedInsured = null;
 		selectedCoverage = null;
-		status = null;
+
+		isEditing = false;
 		isModalVisible = false;
+		isRemarksEditable = false;
 	}
 }
