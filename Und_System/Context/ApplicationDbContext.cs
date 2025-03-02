@@ -12,5 +12,8 @@ namespace Und_System.Context
         public DbSet<CGL_Insured_Status> CGL_Insured_Status { get; set; }
         public DbSet<CGLCoverage> CGL_Coverage { get; set; }
         public DbSet<CGL_UndStatus> CGL_UndStatus { get; set; }
+        public DbSet<CGL_Substandard_Rating> CGL_Substandard_Rating { get; set; }
+        public DbSet<CGL_Health_Question> CGL_HEALTH_QUESTION { get; set; }
+        public DbSet<CGL_Health_Answer> CGL_Health_Answer { get; set; }
     }
 }

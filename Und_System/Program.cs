@@ -20,6 +20,9 @@ builder.Services.AddScoped<CGLPolicyHolderServices>();
 builder.Services.AddScoped<CGLCoverageService>();
 builder.Services.AddScoped<CGLInsuredStatusService>();
 builder.Services.AddScoped<CGLUndStatusService>();
+builder.Services.AddScoped<CGLSubstandardRatingService>();
+builder.Services.AddScoped<CGLHealthQuestionsService>();
+builder.Services.AddScoped<CGLHealthAnswerService>();
 builder.Services.AddScoped<StateService>();
 var app = builder.Build();
 
