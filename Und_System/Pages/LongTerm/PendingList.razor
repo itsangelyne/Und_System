@@ -370,7 +370,9 @@
 															<td style="word-wrap: break-word; white-space: normal;" class="fw-bolder">
 																@if (question.InputType == "text")
 																{
-																	<input type="text" class="form-control" readonly style="height: 100px; resize: none;">@question.Question
+																	<input type="text" class="form-control" readonly style="height: 100px; resize: none;">
+
+																	@question.Question
 																}
 																else if (question.InputType == "select")
 																{
@@ -578,14 +580,12 @@
 
 @if (showLoanHistoryModal)
 {
-	<div class="modal fade show" style="display: block;" tabindex="-1" role="dialog" aria-modal="true">
-		<div class="modal-dialog modal-lg" role="document">
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog modal-xl" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Loan History</h5>
-					<button type="button" class="close" @onclick="CloseModal">
-						<span>&times;</span>
-					</button>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
 				</div>
 				<div class="modal-body">
 					<div class="table-responsive">
@@ -627,9 +627,6 @@
 						</table>
 					</div>
 				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" @onclick="CloseModal">Close</button>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -642,16 +639,16 @@
 		public CGL_UndStatus? UndStatus { get; set; }
 	}
 
-	 public class LoanHistory
-    {
-        public string LastName { get; set; }
-        public string FirstName { get; set; }
-        public string? MiddleName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public double AmountOfLoan { get; set; }
-        public string Status { get; set; }
-        public string BankName { get; set; }
-    }
+	public class LoanHistory
+	{
+		public string LastName { get; set; }
+		public string FirstName { get; set; }
+		public string? MiddleName { get; set; }
+		public DateTime DateOfBirth { get; set; }
+		public double AmountOfLoan { get; set; }
+		public string Status { get; set; }
+		public string BankName { get; set; }
+	}
 
 	private int? selectedYear;
 	private string? currentAction;
