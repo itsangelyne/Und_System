@@ -12,6 +12,7 @@
 @inject CGLUndStatusService CGLUndStatusService
 @inject CGLHealthQuestionsService CGLHealthQuestionsService
 @inject CGLHealthAnswerService CGLHealthAnswerService
+@inject CGLBeneficiaryService CGLBeneficiaryService
 
 <h1><b>PENDING APPLICATIONS</b></h1>
 <hr />
@@ -70,8 +71,8 @@
 														<th class="text-center">First Name</th>
 														<th class="text-center">Middle Name</th>
 														<th class="text-center">Date of Birth</th>
-														<th class="text-center">Effective Date</th>
-														<th class="text-center">Termination Date</th>
+														<th class="text-center">Effectivity</th>
+														<th class="text-center">Termination</th>
 														<th class="text-center">Status</th>
 														<th class="text-center">Action</th>
 													</tr>
@@ -292,9 +293,6 @@
 											</div>
 										</div>
 									</div>
-
-									@if (substandardRatings?.Any() == true)
-									{
 										<div class="border rounded p-3 mb-3">
 											<div class="table-responsive">
 												<table class="table table-bordered mb-0">
@@ -306,6 +304,8 @@
 														</tr>
 													</thead>
 													<tbody>
+														@if (substandardRatings != null && substandardRatings.Count > 0)
+														{
 														@foreach (var rating in substandardRatings)
 														{
 															<tr>
@@ -320,19 +320,19 @@
 																</td>
 															</tr>
 														}
-													</tbody>
-												</table>
-											</div>
+													}
+													else
+													{
+														<tr>
+															<td colspan="3" class="text-center">No Illness Declared</td>
+														</tr>
+													}
+													
+												</tbody>
+											</table>
 										</div>
-									}
-									else
-									{
-										<div class="border rounded p-3 mb-3">
-											<p class="text-center text-black fw-bold" style="margin: 0;">No Illness Declared</p>
-										</div>
-									}
-
-
+									</div>
+									
 									<table class="table table-borderless mb-0">
 										<thead class="text-white" style="background-color:#5d835c">
 											<tr>
@@ -501,6 +501,7 @@
 											</div>
 										</div>
 									</div>
+
 									<div class="border rounded p-3 mb-3">
 										<div class="table-responsive" style="overflow-x: auto">
 											<table class="table table-bordered mb-0">
@@ -512,16 +513,36 @@
 													</tr>
 												</thead>
 												<tbody>
-													<tr>
-														<td><input type="text" class="form-control" style="width:100%;" readonly /></td>
-														<td class="text-center" style="width:10%;"><input type="text" class="form-control" readonly /></td>
-														<td class="text-center"><input type="text" class="form-control" readonly /></td>
-													</tr>
+													@if (beneficiaries != null && beneficiaries.Count > 0)
+													{
+														@foreach (var beneficiary in beneficiaries)
+														{
+															<tr>
+																<td class="text-center">
+																	<input type="text" class="form-control text-center" value="@beneficiary.Full_Name" readonly />
+																</td>
+																<td class="text-center">
+																	<input type="text" class="form-control text-center" value="@beneficiary.Age" readonly />
+																</td>
+																<td class="text-center">
+																	<input type="text" class="form-control text-center" value="@beneficiary.Relation_To_The_Insured" readonly />
+																</td>
+															</tr>
+														}
+													}
+													else
+													{
+														<tr>
+															<td colspan="8" class="text-center">No Beneficiaries Added</td>
+														</tr>
+													}
+												
 												</tbody>
 											</table>
 										</div>
 									</div>
 								</div>
+
 							</form>
 						</div>
 					</div>
@@ -641,13 +662,13 @@
 
 	public class LoanHistory
 	{
-		public string LastName { get; set; }
-		public string FirstName { get; set; }
+		public required string LastName { get; set; }
+		public required string FirstName { get; set; }
 		public string? MiddleName { get; set; }
 		public DateTime DateOfBirth { get; set; }
 		public double AmountOfLoan { get; set; }
-		public string Status { get; set; }
-		public string BankName { get; set; }
+		public required string Status { get; set; }
+		public required string BankName { get; set; }
 	}
 
 	private int? selectedYear;
@@ -664,6 +685,7 @@
 	private List<CGL_Substandard_Rating> substandardRatings = new();
 	private List<CGL_Health_Question> healthQuestions = new();
 	private List<CGL_Health_Answer> healthAnswers = new();
+	private List<CGL_Beneficiary> beneficiaries = new();
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
 
 	private bool isModalVisible = false;
@@ -757,6 +779,7 @@
 
 		await LoadHealthQuestionsAndAnswers();
 		await LoadSubstandardRatings();
+		await LoadBeneficiaries();
 
 		isModalVisible = true;
 		StateHasChanged();
@@ -777,6 +800,14 @@
 		}
 	}
 
+	private async Task LoadBeneficiaries()
+	{
+		if (selectedInsured != null)
+		{
+			beneficiaries = await CGLBeneficiaryService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
+		}
+	}
+
 	private async Task ViewLoanHistory(CGLInsured insured)
 	{
 		loanHistoryList = await FetchLoanHistory(insured.Last_Name, insured.First_Name, insured.Middle_Name, insured.Date_Of_Birth, insured.ID_Insured);
@@ -785,7 +816,6 @@
 
 	private async Task<List<LoanHistory>> FetchLoanHistory(string lastName, string firstName, string middleName, DateTime dateOfBirth, int insuredId)
 	{
-		// Fetch all insured records that match the name and date of birth
 		var matchingInsureds = await _context.CGL_INSURED
 			.Where(i => i.Last_Name == lastName && i.First_Name == firstName && i.Middle_Name == middleName && i.Date_Of_Birth == dateOfBirth)
 			.ToListAsync();
@@ -794,14 +824,13 @@
 
 		foreach (var insured in matchingInsureds)
 		{
-			// Fetch coverage details for each matching insured
 			var coverage = await _context.CGL_Coverage
 				.Where(c => c.ID_Insured == insured.ID_Insured)
 				.ToListAsync();
 
 			foreach (var cov in coverage)
 			{
-				// Fetch the status for each coverage
+				
 				var status = await _context.CGL_UndStatus
 					.Where(s => s.InsuredID == insured.ID_Insured)
 					.FirstOrDefaultAsync();
@@ -810,7 +839,6 @@
 					.Where(ph => ph.ID_Policy_Holder == insured.ID_Policy_Holder)
 					.FirstOrDefaultAsync();
 
-				// Create a loan history entry
 				loanHistories.Add(new LoanHistory
 					{
 						LastName = insured.Last_Name,
@@ -823,8 +851,6 @@
 					});
 			}
 		}
-
-		// If no matching records found, return an empty list or the available data
 		return loanHistories;
 	}
 	private void ToggleEdit()

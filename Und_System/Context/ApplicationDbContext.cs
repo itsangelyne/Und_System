@@ -15,5 +15,6 @@ namespace Und_System.Context
         public DbSet<CGL_Substandard_Rating> CGL_Substandard_Rating { get; set; }
         public DbSet<CGL_Health_Question> CGL_HEALTH_QUESTION { get; set; }
         public DbSet<CGL_Health_Answer> CGL_Health_Answer { get; set; }
+        public DbSet<CGL_Beneficiary> CGL_Beneficiary { get; set; }
     }
 }

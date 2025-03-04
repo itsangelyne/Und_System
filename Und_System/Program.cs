@@ -23,6 +23,7 @@ builder.Services.AddScoped<CGLUndStatusService>();
 builder.Services.AddScoped<CGLSubstandardRatingService>();
 builder.Services.AddScoped<CGLHealthQuestionsService>();
 builder.Services.AddScoped<CGLHealthAnswerService>();
+builder.Services.AddScoped<CGLBeneficiaryService>();
 builder.Services.AddScoped<StateService>();
 var app = builder.Build();
 

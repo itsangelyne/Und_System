@@ -1,4 +1,7 @@
-﻿hr {
+﻿th {
+    text-align:center !important;
+}
+hr {
     color: #326f32;
     height: 2px !important;
     opacity: 1;
