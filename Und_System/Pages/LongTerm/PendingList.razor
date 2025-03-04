@@ -56,6 +56,7 @@
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
 										@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
 									</button>
+									<button class="btn btn-outline-success btn-sm">Receive</button>
 								</td>
 							</tr>
 
@@ -748,7 +749,7 @@
 		}
 		StateHasChanged();
 	}
-
+	
 	private async Task LoadInsuredDetails(string dchsFrom, string dchsTo)
 	{
 		insuredDetailsList.Clear();
