@@ -1,4 +1,4 @@
-﻿@page "/longterm/pendinglist"
+﻿@page "/longterm/approvedlist"
 @using Microsoft.EntityFrameworkCore;
 @using Und_System.Context;
 @using Und_System.Data;
@@ -14,7 +14,7 @@
 @inject CGLHealthAnswerService CGLHealthAnswerService
 @inject CGLBeneficiaryService CGLBeneficiaryService
 
-<h1><b>PENDING APPLICATIONS</b></h1>
+<h1><b>APPROVED APPLICATIONS</b></h1>
 <hr />
 <div class="container my-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
 	<h3 class="text-center fw-bold text-decoration-underline">LONG TERM</h3>
@@ -56,7 +56,6 @@
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
 										@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
 									</button>
-									<button class="btn btn-outline-success btn-sm">Receive</button>
 								</td>
 							</tr>
 
@@ -718,7 +717,7 @@
 									join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
 									where credit.ID_Policy_Holder == selectedPolicyHolderId &&
 									insured.Type == "Long Term" &&
-									status.Und_Status == "Pending"
+									status.Und_Status == "Approved"
 									select credit).ToList();
 
 			if (selectedYear.HasValue)
