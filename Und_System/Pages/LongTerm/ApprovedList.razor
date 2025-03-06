@@ -263,24 +263,11 @@
 													<div class="row">
 														<div class="col-md mb-3">
 															<label for="status" class="form-label">Underwriting Status</label>
-															<select class="form-select" id="status" @bind-value="status.Und_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
-																<option disabled>Select Status</option>
-																<option value="Pending">Pending</option>
-																<option value="Approved">Approved</option>
-																<option value="Declined">Declined</option>
-																<option value="For Medical">For Medical</option>
-																<option value="Pending with Reqs">Pending with Reqs</option>
-																<option value="For Refund">For Refund</option>
-																<option value="Renewal">Renewal</option>
-															</select>
+															<input type="text" class="form-control" id="Class" value="@status?.Und_Status" readonly />
 														</div>
 														<div class="col-md mb-3">
 															<label for="psdstatus" class="form-label">PSD Status</label>
-															<select class="form-select" id="psdstatus" @bind-value="status.PSD_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
-																<option value="" disabled selected>Select Status</option>
-																<option value="Active">Active</option>
-																<option value="Inactive">Inactive</option>
-															</select>
+															<input type="text" class="form-control" id="Class" value="@status?.PSD_Status" readonly />
 														</div>
 													</div>
 												</div>
