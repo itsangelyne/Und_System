@@ -25,16 +25,16 @@
 				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
-				<label for="yearDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
-				<select class="form-control flex-grow-1" id="yearDropdown" @bind="selectedYear" @bind:event="onchange">
-					<option value="">Select Amount</option>
-					<option value="">100K and Below</option>
-					<option value="">100K and Above</option>
-					<option value="">300K and Above</option>
+				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
+				<select class="form-control flex-grow-1" id="amountDropdown">
+					<option>Select Amount</option>
+					<option>100K and Below</option>
+					<option>100K and Above</option>
+					<option>300K and Above</option>
 				</select>
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
-				<label for="yearDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 130px;">Filter by Year:</label>
+				<label for="yearDropdown" class="me-1 fw-bold" style="white-space: nowrap; min-width: 120px;">Filter by Year:</label>
 				<select class="form-control flex-grow-1" id="yearDropdown" @bind="selectedYear" @bind:event="onchange">
 					<option value="">Select Year</option>
 					@foreach (var year in years)
@@ -62,10 +62,12 @@
 								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
 								<td class="text-center fw-bold">@item.Total_Application</td>
 								<td class="text-center">
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
-										@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
-									</button>
-									<button class="btn btn-outline-success btn-sm">Receive</button>
+									<div class="d-flex flex-wrap justify-content-center gap-2">
+										<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
+											@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
+										</button>
+											<button class="btn btn-outline-success btn-sm">Receive</button>
+									</div>
 								</td>
 							</tr>
 
@@ -88,13 +90,13 @@
 													</tr>
 												</thead>
 												<tbody>
-													@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
-													{
-														foreach (var detail in insuredDetailsList)
+														@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
 														{
-															var insured = detail.Insured;
-															var coverage = detail.Coverage;
-															var undStatus = detail.UndStatus;
+															foreach (var detail in insuredDetailsList)
+															{
+																var insured = detail.Insured;
+																var coverage = detail.Coverage;
+																var undStatus = detail.UndStatus; 
 
 															<tr>
 																<td class="text-center">@insured?.Last_Name</td>
@@ -109,14 +111,14 @@
 																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
 																</td>
 															</tr>
+															}
 														}
-													}
-													else
-													{
+														else
+														{
 														<tr>
 															<td colspan="8" class="text-center">No insured details available</td>
 														</tr>
-													}
+														}
 												</tbody>
 											</table>
 										</div>
@@ -380,7 +382,7 @@
 															<td style="word-wrap: break-word; white-space: normal;" class="fw-bolder">
 																@if (question.InputType == "text")
 																{
-																	<input type="text" class="form-control" readonly style="height: 100px; resize: none;">
+																	<input type="text" class="form-control" readonly style="height: 500px; resize: none; font-weight:bolder;">
 
 																	@question.Question
 																}
@@ -623,9 +625,7 @@
 						<table class="table table-bordered">
 							<thead class="text-white" style="background-color: #5d835c;">
 								<tr>
-									<th>Last Name</th>
-									<th>First Name</th>
-									<th>Middle Name</th>
+									<th>Full Name</th>
 									<th>Date of Birth</th>
 									<th>Amount of Loan</th>
 									<th>Status</th>
@@ -638,9 +638,7 @@
 									foreach (var loan in loanHistoryList)
 									{
 										<tr>
-											<td class="text-center">@loan.LastName</td>
-											<td class="text-center">@loan.FirstName</td>
-											<td class="text-center">@loan.MiddleName</td>
+											<td class="text-center"><b>@loan.LastName</b>, @loan.FirstName @loan.MiddleName</td>
 											<td class="text-center">@loan.DateOfBirth.ToString("yyyy-MM-dd")</td>
 											<td class="text-center">@loan.AmountOfLoan</td>
 											<td class="text-center">@loan.Status</td>
@@ -651,7 +649,7 @@
 								else
 								{
 									<tr>
-										<td colspan="7" class="text-center">No loan history available</td>
+										<td colspan="5" class="text-center">No loan history available</td>
 									</tr>
 								}
 							</tbody>
@@ -856,8 +854,8 @@
 						MiddleName = insured?.Middle_Name,
 						DateOfBirth = insured.Date_Of_Birth,
 						AmountOfLoan = cov.Amount_Of_Insured,
-						Status = status?.Und_Status,
-						BankName = policyHolder?.Policy_Holder_Name
+						Status = status.Und_Status,
+						BankName = policyHolder.Policy_Holder_Name
 					});
 			}
 		}

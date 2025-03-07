@@ -21,11 +21,20 @@
 	<h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
 	<div class="card-body">
 		<div class="row justify-content-evenly">
-			<div class="col-md-8 mb-3">
+			<div class="col-md-4 mb-3">
 				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
-				<label for="yearDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 120px;">Filter by Year:</label>
+				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
+				<select class="form-control flex-grow-1" id="amountDropdown">
+					<option>Select Amount</option>
+					<option>100K and Below</option>
+					<option>100K and Above</option>
+					<option>300K and Above</option>
+				</select>
+			</div>
+			<div class="col-md-4 mb-3 d-flex align-items-center">
+				<label for="yearDropdown" class="me-1 fw-bold" style="white-space: nowrap; min-width: 120px;">Filter by Year:</label>
 				<select class="form-control flex-grow-1" id="yearDropdown" @bind="selectedYear" @bind:event="onchange">
 					<option value="">Select Year</option>
 					@foreach (var year in years)
@@ -600,9 +609,7 @@
 						<table class="table table-bordered">
 							<thead class="text-white" style="background-color: #5d835c;">
 								<tr>
-									<th>Last Name</th>
-									<th>First Name</th>
-									<th>Middle Name</th>
+									<th>Full Name</th>
 									<th>Date of Birth</th>
 									<th>Amount of Loan</th>
 									<th>Status</th>
@@ -615,20 +622,18 @@
 									foreach (var loan in loanHistoryList)
 									{
 										<tr>
-											<td>@loan.LastName</td>
-											<td>@loan.FirstName</td>
-											<td>@loan.MiddleName</td>
-											<td>@loan.DateOfBirth.ToString("yyyy-MM-dd")</td>
-											<td>@loan.AmountOfLoan</td>
-											<td>@loan.Status</td>
-											<td>@loan.BankName</td>
+											<td class="text-center"><b>@loan.LastName</b>, @loan.FirstName @loan.MiddleName</td>
+											<td class="text-center">@loan.DateOfBirth.ToString("yyyy-MM-dd")</td>
+											<td class="text-center">@loan.AmountOfLoan</td>
+											<td class="text-center">@loan.Status</td>
+											<td class="text-center">@loan.BankName</td>
 										</tr>
 									}
 								}
 								else
 								{
 									<tr>
-										<td colspan="7" class="text-center">No loan history available</td>
+										<td colspan="5" class="text-center">No loan history available</td>
 									</tr>
 								}
 							</tbody>

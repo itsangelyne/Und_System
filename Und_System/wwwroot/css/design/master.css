@@ -127,3 +127,9 @@ hr {
         background-color: #f8f9fa;
     }
 }
+
+#questionbox{
+    max-height:200px!important;
+    word-wrap:break-word!important;
+    font-weight:bolder!important;
+}
