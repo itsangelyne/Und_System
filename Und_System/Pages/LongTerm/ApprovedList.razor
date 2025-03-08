@@ -96,10 +96,10 @@
 															var undStatus = detail.UndStatus;
 
 															<tr>
-																<td class="text-center">@insured.Last_Name</td>
-																<td class="text-center">@insured.First_Name</td>
-																<td class="text-center">@insured.Middle_Name</td>
-																<td class="text-center">@insured.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
+																<td class="text-center">@insured?.Last_Name</td>
+																<td class="text-center">@insured.?First_Name</td>
+																<td class="text-center">@insured?.Middle_Name</td>
+																<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
 																<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
 																<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
 																<td class="text-center">@undStatus?.Und_Status</td>

@@ -48,87 +48,42 @@
 			<table class="table table-bordered">
 				<thead class="text-white" style="background-color: #5d835c;">
 					<tr>
-						<th class="text-center">Release Date</th>
-						<th class="text-center">Total Applications</th>
+						<th class="text-center">Last Name</th>
+						<th class="text-center">First Name</th>
+						<th class="text-center">Middle Name</th>
+						<th class="text-center">Date of Birth</th>
+						<th class="text-center">Amount of Loan</th>
+						<th class="text-center">Status</th>
 						<th class="text-center">Action</th>
 					</tr>
 				</thead>
 				<tbody>
-					@if (releaseList != null && releaseList.Count > 0)
+					@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
 					{
-						foreach (var item in releaseList)
+						foreach (var detail in insuredDetailsList)
 						{
+							var insured = detail.Insured;
+							var coverage = detail.Coverage;
+							var undStatus = detail.UndStatus;
+
 							<tr>
-								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
-								<td class="text-center fw-bold">@item.Total_Application</td>
+								<td class="text-center">@insured?.Last_Name</td>
+								<td class="text-center">@insured?.First_Name</td>
+								<td class="text-center">@insured?.Middle_Name</td>
+								<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
+								<td class="text-center">@coverage?.Amount_Of_Insured</td>
+								<td class="text-center">@undStatus?.Und_Status</td>
 								<td class="text-center">
-									<div class="d-flex flex-wrap justify-content-center gap-2">
-										<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
-											@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
-										</button>
-										<button class="btn btn-outline-success btn-sm">Receive</button>
-									</div>
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">View Details</button>
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
 								</td>
 							</tr>
-
-							@if (expandedRowId == item.ID_CB)
-							{
-								<tr>
-									<td colspan="3">
-										<div class="table-responsive">
-											<table class="table table-bordered">
-												<thead class="text-white" style="background-color: #5d835c;">
-													<tr>
-														<th class="text-center">Last Name</th>
-														<th class="text-center">First Name</th>
-														<th class="text-center">Middle Name</th>
-														<th class="text-center">Date of Birth</th>
-														<th class="text-center">Amount of Loan</th>
-														<th class="text-center">Status</th>
-														<th class="text-center">Action</th>
-													</tr>
-												</thead>
-												<tbody>
-													@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
-													{
-														foreach (var detail in insuredDetailsList)
-														{
-															var insured = detail.Insured;
-															var coverage = detail.Coverage;
-															var undStatus = detail.UndStatus;
-
-															<tr>
-																<td class="text-center">@insured?.Last_Name</td>
-																<td class="text-center">@insured?.First_Name</td>
-																<td class="text-center">@insured?.Middle_Name</td>
-																<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
-																<td class="text-center">@coverage?.Amount_Of_Insured</td>
-																<td class="text-center">@undStatus?.Und_Status</td>
-																<td class="text-center">
-																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">View Details</button>
-																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
-																</td>
-															</tr>
-														}
-													}
-													else
-													{
-														<tr>
-															<td colspan="8" class="text-center">No insured details available</td>
-														</tr>
-													}
-												</tbody>
-											</table>
-										</div>
-									</td>
-								</tr>
-							}
 						}
 					}
 					else
 					{
 						<tr>
-							<td colspan="3" class="text-center">No data available</td>
+							<td colspan="8" class="text-center">No insured details available</td>
 						</tr>
 					}
 				</tbody>
@@ -136,6 +91,7 @@
 		</div>
 	</div>
 </div>
+
 
 @if (isModalVisible)
 {
