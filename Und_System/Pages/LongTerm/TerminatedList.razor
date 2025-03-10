@@ -609,7 +609,7 @@
 									join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
 									where credit.ID_Policy_Holder == selectedPolicyHolderId &&
 									insured.Type == "Long Term" &&
-									status.Und_Status == "For Refund"
+									status.Und_Status == "Terminated"
 									select credit).ToList();
 
 			if (selectedYear.HasValue)

@@ -12,5 +12,6 @@ namespace Und_System.Data
         public required string Receive_Status { get; set; }
         public string? Multiple_Loan { get; set; }
         public string? Remarks { get; set; }
+        public string? ExtendedAge { get; set; }
     }
 }

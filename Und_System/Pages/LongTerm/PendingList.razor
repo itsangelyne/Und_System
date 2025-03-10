@@ -378,22 +378,16 @@
 															<td>
 																<input type="text" class="form-control" value="@question.NO" readonly style="width: 80px; text-align: center;" />
 															</td>
-															<td style="word-wrap: break-word; white-space: normal;" class="fw-bolder">
-																@if (question.InputType == "text")
+															<td>
+																@if (question.InputType == "textarea")
 																{
-																	<input type="text" class="form-control" readonly style="height: 500px; resize: none; font-weight:bolder;">
+																	<textarea style="word-wrap: break-word; white-space: normal;" class="fw-bolder" readonly>
 
-																	@question.Question
-																}
-																else if (question.InputType == "select")
-																{
-																	<select class="form-control" disabled>
-																		<option>@question.Question</option>
-																	</select>
+																	@question.Question</textarea>
 																}
 																else if (question.InputType == "date")
 																{
-																	<input type="date" class="form-control" value="@question.Question" readonly />
+																	<textarea style="word-wrap: break-word; white-space: normal;" class="form-control fw-bold" value="@question.Question" readonly />
 																}
 																else
 																{

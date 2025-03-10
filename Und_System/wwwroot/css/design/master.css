@@ -1,6 +1,7 @@
 ﻿th {
-    text-align:center !important;
+    text-align: center !important;
 }
+
 hr {
     color: #326f32;
     height: 2px !important;
@@ -126,10 +127,3 @@ hr {
     .card button:hover {
         background-color: #f8f9fa;
     }
-}
-
-#questionbox{
-    max-height:200px!important;
-    word-wrap:break-word!important;
-    font-weight:bolder!important;
-}
