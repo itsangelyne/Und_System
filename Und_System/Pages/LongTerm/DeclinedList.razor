@@ -97,7 +97,8 @@
 																<td class="text-center">@undStatus?.Und_Status</td>
 																<td class="text-center">
 																	<button class="btn btn-outline-success btn-sm">View ID</button>
-																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
+																	@* <button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button> *@
+																	<button class="btn btn-outline-success btn-sm">Send Notice</button>
 																	<button class="btn btn-outline-success btn-sm" @onclick="() => UpdateStatus(insured)">Update Status</button>
 																</td>
 															</tr>
@@ -134,45 +135,41 @@
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title"><b>Borrower's Details: </b></h5>
+					<h5 class="modal-title"><b>Update Status</b></h5>
 					<button type="button" class="btn-close" @onclick="CloseModal"></button>
 				</div>
 				<div class="modal-body">
-										<div class="col-md mb-3">
-											<div class="border rounded p-3 mb-3">
-												<div class="col-md mb-3">
-													<div class="row">
-														<div class="col-md mb-3">
-															<label for="status" class="form-label">Underwriting Status</label>
-															<select class="form-select" id="status" @bind-value="status.Und_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
-																<option disabled>Select Status</option>
-																<option value="Pending">Pending</option>
-																<option value="Approved">Approved</option>
-																<option value="Declined">Declined</option>
-																<option value="For Medical">For Medical</option>
-																<option value="For Refund">For Refund</option>
-																<option value="Renewal">Renewal</option>
-															</select>
-														</div>
-														<div class="col-md mb-3">
-															<label for="psdstatus" class="form-label">PSD Status</label>
-															<select class="form-select" id="psdstatus" @bind-value="status.PSD_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
-																<option value="" disabled selected>Select Status</option>
-																<option value="Active">Active</option>
-																<option value="Inactive">Inactive</option>
-															</select>
-														</div>
-													</div>
-												</div>
-												<div class="col-md mb-3">
-													<div class="col-md mb-3">
-														<label for="remarks" class="form-label">Remarks</label>
-														<textarea class="form-control" rows="4" cols="50" style="resize:none;" id="remarks" @bind="status.Remarks" readonly="@(!isRemarksEditable)"></textarea>
-													</div>
-												</div>
-											</div>
-										</div>
+					<div class="col-md mb-3">
+						<div class="border rounded p-3 mb-3">
+							<div class="col-md mb-3">
+								<div class="row">
+									<div class="col-md mb-3">
+										<label for="status" class="form-label">Underwriting Status</label>
+										<select class="form-select" id="status" @bind-value="status.Und_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
+											<option disabled>Select Status</option>
+											<option value="Pending">Pending</option>
+											<option value="Approved">Approved</option>
+											<option value="Declined">Declined</option>
+											<option value="For Medical">For Medical</option>
+											<option value="For Refund">For Refund</option>
+											<option value="Renewal">Renewal</option>
+										</select>
 									</div>
+									<div class="col-md mb-3">
+										<label for="psdstatus" class="form-label">PSD Status</label>
+										<input type="text" class="form-control" id="Class" value="@status?.PSD_Status" readonly />
+									</div>
+								</div>
+							</div>
+							<div class="col-md mb-3">
+								<div class="col-md mb-3">
+									<label for="remarks" class="form-label">Remarks</label>
+									<textarea class="form-control" rows="4" cols="50" style="resize:none;" id="remarks" @bind="status.Remarks" readonly="@(!isRemarksEditable)"></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
 				<div class="modal-footer">
 					@if (isRemarksEditable)
