@@ -267,7 +267,7 @@
     private void FilterApplications()
     {
         var filteredApplications = allApplications
-            .Where(x => x.ID_Policy_Holder == StateService.SelectedBankId.Value)
+            .Where(x => x.ID_Policy_Holder == StateService?.SelectedBankId.Value)
             .ToList();
 
         SetCounts(filteredApplications);
@@ -275,10 +275,8 @@
 
     private void SetCounts(List<CGLInsured> applications)
     {
-        // Reset counts
         ResetCounts();
 
-        // Count based on CGL_UndStatus
         foreach (var app in applications)
         {
             var undStatus = undStatuses.FirstOrDefault(u => u.InsuredID == app.ID_Insured);

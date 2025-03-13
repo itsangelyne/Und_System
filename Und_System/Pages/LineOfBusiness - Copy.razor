@@ -1,0 +1,51 @@
+﻿@page "/lineofbusiness2"
+@inject NavigationManager NavigationManager
+
+<style>
+    .lob-container {
+        position: relative;
+        height: 100vh;
+    }
+
+    .background-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+
+    img {
+        width: 100%; 
+        height: auto;
+    }
+</style>
+<h1 class="text-center"><b>LINE OF BUSINESS</b></h1>
+
+<div class="background-overlay"></div>
+<div class="lob-container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 d-none d-md-block">
+            <img src="~/assets/countrybankers.png" alt="Line of Business" class="img-fluid" />
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex flex-column justify-content-center h-100">
+                <button class="btn btn-outline-secondary mb-2 w-100" id="aspbtn" disabled>Alalay Sa Buhay Plan</button>
+                <button class="btn btn-outline-secondary mb-2 w-100" id="cglbtn" @onclick="NavigateToBankListing">Credit Group Life Plans</button>
+                <button class="btn btn-outline-secondary mb-2 w-100" id="gyrtpbtn" disabled>Group Yearly Renewable Term Plans</button>
+                <button class="btn btn-outline-secondary mb-2 w-100" id="mrpbtn" disabled>Mortgage Redemption Plans</button>
+                <button class="btn btn-outline-secondary mb-2 w-100" id="spbtn" disabled>Standard Plans</button>
+                <button class="btn btn-outline-secondary mb-2 w-100" id="dpbtn" disabled>DECS Plans</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void NavigateToBankListing()
+    {
+        NavigationManager.NavigateTo("/banklisting");
+    }
+}

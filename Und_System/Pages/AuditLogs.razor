@@ -1,0 +1,43 @@
+﻿@page "/auditlog"
+@using Und_System.Data
+
+<h1><b>AUDIT LOGS</b></h1>
+<hr />
+
+<div class="container my-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+	<div class="card-body">
+		<div class="row justify-content-evenly">
+			<div class="col-md-4 mb-3 align-items-center">
+				<label for="actiondropdown" class="form-label">Action</label>
+				<select class="form-select" id="actiondropdown">
+					<option>All Action</option>
+				</select>
+			</div>
+			<div class="col-md-4 mb-3 align-items-center">
+				<label for="userdropdown" class="form-label">User</label>
+				<select class="form-select" id="userdropdown">
+					<option>All User</option>
+				</select>
+			</div>
+			<div class="col-md-4 mb-3 align-items-center">
+				<label for="datedropdown" class="form-label">Date</label>
+				<input type="date" class="form-control" id="datedropdown"/>
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-bordered" style="overflow-x:scroll">
+				<thead class="text-white" style="background-color: #5d835c;">
+					<tr>
+						<th class="text-center">User</th>
+						<th class="text-center">Action</th>
+						<th class="text-center">Timestamp</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+</div>
+
+@code {
+
+}
