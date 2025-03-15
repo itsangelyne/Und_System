@@ -56,7 +56,7 @@
 				<tbody>
 					@if (releaseList != null && releaseList.Count > 0)
 					{
-						foreach (var item in releaseList)
+						foreach (var item in releaseList) 
 						{
 							<tr>
 								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
@@ -199,7 +199,7 @@
 											</div>
 											<div class="col-md-1 mb-3">
 												<label for="age" class="form-label">Age</label>
-												<input type="number" class="form-control" id="age" @bind="selectedInsured.Age" readonly="@(!isEditing)" />
+												<input type="number" class="form-control" id="age" @bind="selectedInsured.Age" readonly />
 											</div>
 											<div class="row">
 												<div class="col-md-4 mb-3">
@@ -281,7 +281,6 @@
 																<option value="Approved">Approved</option>
 																<option value="Declined">Declined</option>
 																<option value="For Medical">For Medical</option>
-																<option value="For Refund">For Refund</option>
 																<option value="Renewal">Renewal</option>
 															</select>
 														</div>

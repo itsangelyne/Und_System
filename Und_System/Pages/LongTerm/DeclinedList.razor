@@ -95,12 +95,12 @@
 																<td class="text-center"><b>@insured?.Last_Name</b>, @insured?.First_Name @insured?.Middle_Name</td>
 																<td class="text-center">@undStatus?.Remarks</td>
 																<td class="text-center">@undStatus?.Und_Status</td>
-																<td class="text-center">
+																@* <td class="text-center">
 																	<button class="btn btn-outline-success btn-sm">View ID</button>
-																	@* <button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button> *@
+																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
 																	<button class="btn btn-outline-success btn-sm">Send Notice</button>
 																	<button class="btn btn-outline-success btn-sm" @onclick="() => UpdateStatus(insured)">Update Status</button>
-																</td>
+																</td> *@
 															</tr>
 														}
 													}

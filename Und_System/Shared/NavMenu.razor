@@ -43,14 +43,10 @@
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/approvedlist">
                         <span class="oi oi-check" aria-hidden="true"></span> Approved
                     </NavLink>
-                    <!-- Renewal -->
-                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/renewedlist">
-                        <span class="oi oi-loop-circular" aria-hidden="true"></span> Renewal
-                    </NavLink>
                     <!-- Refund -->
-                    <NavLink class="nav-link d-flex justify-content-start" href="longterm/refund">
+                   @*  <NavLink class="nav-link d-flex justify-content-start" href="longterm/refund">
                         <span class="fas fa-coins" aria-hidden="true" style="margin-right: 19px;"></span> For Refund
-                    </NavLink>
+                    </NavLink> *@
                     <!-- Terminated -->
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/terminatedlist">
                         <span class="oi oi-x" aria-hidden="true"></span> Terminated
@@ -78,9 +74,9 @@
                         <span class="oi oi-check" aria-hidden="true"></span> Approved
                     </NavLink>
                     <!-- Refund -->
-                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/refund">
+                   @*  <NavLink class="nav-link d-flex justify-content-start" href="shortterm/refund">
                         <span class="fas fa-coins" aria-hidden="true" style="margin-right: 19px;"></span> For Refund
-                    </NavLink>
+                    </NavLink> *@
                     <!-- Terminated -->
                     <NavLink class="nav-link d-flex justify-content-start" href="shortterm/terminatedlist">
                         <span class="oi oi-x" aria-hidden="true"></span> Terminated
@@ -89,6 +85,14 @@
                     <NavLink class="nav-link d-flex justify-content-start" href="shortterm/declinedlist">
                         <span class="oi oi-ban" aria-hidden="true"></span> Declined
                     </NavLink>
+                </div>
+                <!-- Renewal -->
+                <div class="nav-item px-">
+                    <a class="nav-link d-flex justify-content-between" href="renewedlist">
+                        <span>
+                            <span class="oi oi-loop-circular" aria-hidden="true"></span> Renewal
+                        </span>
+                    </a>
                 </div>
             </div>
         </div>
