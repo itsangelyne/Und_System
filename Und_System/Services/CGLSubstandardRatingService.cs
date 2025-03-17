@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Und_System.Context;
+using Und_System.Data;
 
-namespace Und_System.Data
+namespace Und_System.Services
 {
     public class CGLSubstandardRatingService(ApplicationDbContext context)
     {

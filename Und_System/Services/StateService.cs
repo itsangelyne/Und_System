@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
-namespace Und_System.Data
+namespace Und_System.Services
 {
     public class StateService(ProtectedSessionStorage sessionStorage)
     {

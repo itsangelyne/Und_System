@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Und_System.Context;
+using Und_System.Data;
 using Und_System.Pages;
 
-namespace Und_System.Data
+namespace Und_System.Services
 {
     public class CGLUnderwritingUserService
     {
