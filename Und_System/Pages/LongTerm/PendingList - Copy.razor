@@ -5,6 +5,7 @@
 @using Und_System.Services;
 @inject ApplicationDbContext _context
 @inject CGLInsuredService CGLInsuredService
+@inject CGLParticularsService CGLParticularsService
 @inject CGLPolicyHolderServices CGLPolicyHolderServices
 @inject StateService StateService
 @inject CGLCreditDebitServices CGLCreditDebitServices
@@ -62,38 +63,107 @@
 				<tbody>
 					@if (releaseList != null && releaseList.Count > 0)
 					{
-						foreach (var item in releaseList) 
+						foreach (var item in releaseList)
 						{
 							<tr>
-								<td></td>
+								<td class="text-center">
+									<i class="fa @(expandedRowId_Row == item.ID_CB ? "fa-chevron-up" : "fa-chevron-down") cursor-pointer"
+									   style="cursor: pointer;"
+									   @onclick="() => ToggleRow(item.ID_CB)">
+									</i>
+								</td>
 								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
 								<td class="text-center fw-bold">@item.Total_Application</td>
 								<td class="text-center fw-bold">0</td>
 								<td class="text-center fw-bold">@item.Total_Application</td>
 								<td class="text-center">
-									<div class="d-flex flex-wrap justify-content-center gap-2">
-										<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
-											@(expandedRowId == item.ID_CB ? "Hide Particulars" : "View Particulars")
-										</button>
-									</div>
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleParticulars(item.ID_CB)">
+										@(expandedRowId_Particulars == item.ID_CB ? "Hide Particulars" : "View Particulars")
+									</button>
+
 								</td>
 								<td class="text-center">
-									<div class="d-flex flex-wrap justify-content-center gap-2">
-										<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
-											@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
-										</button>
-									</div>
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
+										@(expandedRowId_Applications == item.ID_CB ? "Hide Applications" : "View Applications")
+									</button>
 								</td>
 								<td class="text-center">
 									<button class="btn btn-outline-success btn-sm">Receive</button>
 								</td>
 							</tr>
+							@if (expandedRowId_Row == item.ID_CB)
+							{
+								<tr>
+									<td colspan="8" class="p-3" style="background-color: #f8f8f8;">
+										<div class="card shadow-sm">
 
-							@if (expandedRowId == item.ID_CB)
+											<div class="card-header text-white fw-bold p-3" style="background-color: #5d835c;">SUMMARY</div>
+											<div class="card-body bg-light p-4">
+												<div class="row">
+													<div class="col-md-6">
+														<p class="mb-2"><b class="text-dark">DCHS:</b> <i>@item.DCHS_From</i> <b>-</b> <i>@item.DCHS_To</i></p>
+														<p class="mb-2"><b class="text-dark">Period:</b> <i>@item.Period_From.ToString("yyyy-MM-dd")</i> <b>-</b> <i>@item.Period_To.ToString("yyyy-MM-dd")</i></p>
+														<p class="mb-2"><b class="text-dark">Gross Pay:</b> <span class="text-success"><i>@item.Gross_Pay.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</i></span></p>
+														<p class="mb-2"><b class="text-dark">Net Pay:</b> <span class="text-success"><i>@item.Net_Pay.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</i></span></p>
+														<p class="mb-2">
+															<b class="text-dark">Total Coverage:</b> <span class="text-danger">
+																<i>@item.Total_Coverage.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</i>
+															</span>
+														</p>
+														<p class="mb-2"><b class="text-dark">Submitted By:</b><i>@item.Submitted_By</i></p>
+													</div>
+												</div>
+											</div>
+										</div>
+
+									</td>
+								</tr>
+
+							}
+							@if (expandedRowId_Particulars == item.ID_CB)
 							{
 								<tr>
 									<td colspan="8" style="background-color: #f8f8f8;">
 										<div class="table-responsive">
+											<table class="table">
+												<thead class="text-white" style="background-color: #5d835c;">
+													<tr>
+														<th class="text-center">Particulars</th>
+														<th class="text-center">Amount</th>
+													</tr>
+												</thead>
+												<tbody>
+														@if (particularsList != null && particularsList.Count > 0)
+														{
+															@foreach (var particular in particularsList)
+															{
+															<tr>
+																<td class="text-center">
+																	<input type="text" class="form-control text-center" value="@particular.Particulars" />
+																</td>
+																<td class="text-center">
+																	<input type="text" class="form-control text-center" value="@particular.Amount?.ToString("C", new System.Globalization.CultureInfo("fil-PH"))" />
+																</td>
+															</tr>
+															}
+														}
+														else
+														{
+														<tr>
+															<td colspan="3" class="text-center">No particulars found.</td>
+														</tr>
+														}
+												</tbody>
+											</table>
+										</div>
+									</td>
+								</tr>
+							}
+							@if (expandedRowId_Applications == item.ID_CB)
+							{
+								<tr>
+									<td colspan="8" style="background-color: #f8f8f8;">
+										<div class="table-responsive mt-2">
 											<table class="table">
 												<thead class="text-white" style="background-color: #5d835c;">
 													<tr>
@@ -108,13 +178,13 @@
 													</tr>
 												</thead>
 												<tbody>
-														@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+													@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+													{
+														@foreach (var detail in insuredDetailsList)
 														{
-															foreach (var detail in insuredDetailsList)
-															{
-																var insured = detail.Insured;
-																var coverage = detail.Coverage;
-																var undStatus = detail.UndStatus; 
+															var insured = detail.Insured;
+															var coverage = detail.Coverage;
+															var undStatus = detail.UndStatus;
 
 															<tr>
 																<td class="text-center">@insured?.Last_Name</td>
@@ -129,14 +199,14 @@
 																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
 																</td>
 															</tr>
-															}
 														}
-														else
-														{
+													}
+													else
+													{
 														<tr>
-															<td colspan="8" class="text-center">No insured details available</td>
+															<td colspan="8" class="text-center">No insured details available.</td>
 														</tr>
-														}
+													}
 												</tbody>
 											</table>
 										</div>
@@ -148,7 +218,7 @@
 					else
 					{
 						<tr>
-							<td colspan="3" class="text-center">No data available</td>
+							<td colspan="8" class="text-center">No data available</td>
 						</tr>
 					}
 				</tbody>
@@ -400,7 +470,7 @@
 																{
 																	<textarea style="word-wrap: break-word; white-space: normal;" class="fw-bolder" readonly>
 
-																	@question.Question</textarea>
+																		@question.Question</textarea>
 																}
 																else if (question.InputType == "date")
 																{
@@ -692,13 +762,16 @@
 	private int? selectedYear;
 	private string? currentAction;
 	private bool isEditing = false;
-	private int? expandedRowId = null;
+	private int? expandedRowId_Applications = null;
+	private int? expandedRowId_Row = null;
+	private int? expandedRowId_Particulars = null;
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
 	private string searchText = string.Empty;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
+	private List<CGL_Particulars> particularsList = new();
 	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
 	private List<CGL_Substandard_Rating> substandardRatings = new();
 	private List<CGL_Health_Question> healthQuestions = new();
@@ -753,17 +826,97 @@
 		StateHasChanged();
 	}
 
-	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
+	private async Task ToggleRow(int idCB)
 	{
-		if (expandedRowId == idCB)
+		if (expandedRowId_Row == idCB)
 		{
-			expandedRowId = null;
+			expandedRowId_Row = null;
 		}
 		else
 		{
-			expandedRowId = idCB;
+			expandedRowId_Row = idCB;
+			expandedRowId_Applications = null;
+			expandedRowId_Particulars = null;
+			await LoadInsuredDetailsForRow(idCB);
+		}
+
+		StateHasChanged();
+	}
+
+	private async Task LoadInsuredDetailsForRow(int idCB)
+	{
+		insuredDetailsList = await FetchInsuredDetails(idCB);
+	}
+
+	private async Task<List<InsuredDetailView>> FetchInsuredDetails(int idCB)
+	{
+		var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
+		var allCoverages = await CGLCoverageService.GetCoverageAsync();
+		var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+
+		return allInsuredRecords
+		.Where(i => i.ID_Insured == idCB)
+		.Select(i => new InsuredDetailView
+			{
+				Insured = i,
+				Coverage = allCoverages.FirstOrDefault(c => c.ID_Insured == i.ID_Insured),
+				UndStatus = allUndStatuses.FirstOrDefault(u => u.InsuredID == i.ID_Insured)
+			})
+		.ToList();
+	}
+
+	private async Task ToggleParticulars(int idCB)
+	{
+		if (expandedRowId_Particulars == idCB)
+		{
+			expandedRowId_Particulars = null;
+			particularsList.Clear();
+		}
+		else
+		{
+			expandedRowId_Particulars = idCB;
+			expandedRowId_Row = null;
+			expandedRowId_Applications = null;
+			await LoadParticulars(idCB);
+		}
+		StateHasChanged();
+	}
+
+	private async Task LoadParticulars(int idCB)
+	{
+		if (CGLParticularsService == null)
+		{
+			Console.WriteLine("CGLParticularsService is null");
+			return;
+		}
+
+		var result = await CGLParticularsService.GetParticularsByCreditDebitIdAsync(idCB);
+		if (result == null)
+		{
+			Console.WriteLine("GetParticularsByCreditDebitIdAsync returned null");
+			particularsList = new List<CGL_Particulars>(); 
+		}
+		else
+		{
+			particularsList = result;
+		}
+	}
+
+
+	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
+	{
+		if (expandedRowId_Applications == idCB)
+		{
+			expandedRowId_Applications = null;
+		}
+		else
+		{
+			expandedRowId_Applications = idCB;
+			expandedRowId_Row = null;
+			expandedRowId_Particulars = null;
 			await LoadInsuredDetails(dchsFrom, dchsTo);
 		}
+
 		StateHasChanged();
 	}
 
