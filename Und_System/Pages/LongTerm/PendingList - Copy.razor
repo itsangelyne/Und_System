@@ -68,7 +68,7 @@
 							<tr>
 								<td class="text-center">
 									<i class="fa @(expandedRowId_Row == item.ID_CB ? "fa-chevron-up" : "fa-chevron-down") cursor-pointer"
-									   style="cursor: pointer;"
+									   style="cursor:pointer;"
 									   @onclick="() => ToggleRow(item.ID_CB)">
 									</i>
 								</td>
@@ -77,18 +77,18 @@
 								<td class="text-center fw-bold">0</td>
 								<td class="text-center fw-bold">@item.Total_Application</td>
 								<td class="text-center">
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleParticulars(item.ID_CB)">
+									<button class="btn btn-outline-success" @onclick="() => ToggleParticulars(item.ID_CB)">
 										@(expandedRowId_Particulars == item.ID_CB ? "Hide Particulars" : "View Particulars")
 									</button>
 
 								</td>
 								<td class="text-center">
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
+									<button class="btn btn-outline-success" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
 										@(expandedRowId_Applications == item.ID_CB ? "Hide Applications" : "View Applications")
 									</button>
 								</td>
 								<td class="text-center">
-									<button class="btn btn-outline-success btn-sm">Receive</button>
+									<button class="btn btn-outline-success">Receive</button>
 								</td>
 							</tr>
 							@if (expandedRowId_Row == item.ID_CB)
@@ -101,21 +101,24 @@
 											<div class="card-body bg-light p-4">
 												<div class="row">
 													<div class="col-md-6">
-														<p class="mb-2"><b class="text-dark">DCHS:</b> <i>@item.DCHS_From</i> <b>-</b> <i>@item.DCHS_To</i></p>
-														<p class="mb-2"><b class="text-dark">Period:</b> <i>@item.Period_From.ToString("yyyy-MM-dd")</i> <b>-</b> <i>@item.Period_To.ToString("yyyy-MM-dd")</i></p>
-														<p class="mb-2"><b class="text-dark">Gross Pay:</b> <span class="text-success"><i>@item.Gross_Pay.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</i></span></p>
-														<p class="mb-2"><b class="text-dark">Net Pay:</b> <span class="text-success"><i>@item.Net_Pay.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</i></span></p>
-														<p class="mb-2">
-															<b class="text-dark">Total Coverage:</b> <span class="text-danger">
-																<i>@item.Total_Coverage.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</i>
-															</span>
-														</p>
-														<p class="mb-2"><b class="text-dark">Submitted By:</b><i>@item.Submitted_By</i></p>
+														<p class="mb-2"><b class="text-dark">DCHS From:</b> @item.DCHS_From</p>
+														<p class="mb-2"><b class="text-dark">DCHS To :</b> @item.DCHS_To</p>
+														<p class="mb-2"><b class="text-dark">Period From:</b> @item.Period_From.ToString("yyyy-MM-dd")</p>
+														<p class="mb-2"><b class="text-dark">Period To:</b> @item.Period_To.ToString("yyyy-MM-dd")</p>
 													</div>
+													<div class="col-md-6">
+													<p class="mb-2"><b class="text-dark">Gross Pay:</b> <span class="text-success"> @item.Gross_Pay.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</span></p>
+													<p class="mb-2"><b class="text-dark">Net Pay:</b> <span class="text-success"> @item.Net_Pay.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</span></p>
+													<p class="mb-2">
+														<b class="text-dark">Total Coverage:</b> <span class="text-danger">
+															 @item.Total_Coverage.ToString("C", new System.Globalization.CultureInfo("fil-PH"))
+														</span>
+													</p>
+													<p class="mb-2"><b class="text-dark">Submitted By:</b> @item.Submitted_By</p>
+												</div>
 												</div>
 											</div>
 										</div>
-
 									</td>
 								</tr>
 
@@ -265,12 +268,8 @@
 												<input type="text" class="form-control" id="bankAddress" value="@policyHolder?.Bank_Address" readonly />
 											</div>
 											<div class="col-md-4 mb-3">
-												<label for="dbcr" class="form-label">DB/CR</label>
-												<input type="number" class="form-control" id="dbcr" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
 												<label for="ORDate" class="form-label">OR Date</label>
-												<input type="date" class="form-control" id="ORDate" readonly />
+												<input type="number" class="form-control" id="ORDate" readonly />
 											</div>
 											<div class="col-md-4 mb-3">
 												<label for="ORNumber" class="form-label">OR Number</label>
@@ -694,7 +693,7 @@
 @if (showLoanHistoryModal)
 {
 	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
-		<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Loan History</h5>
@@ -791,6 +790,8 @@
 		years = Enumerable.Range(2000, currentYear - 2000 + 1).ToList();
 		await LoadCreditDebitData();
 	}
+
+	//Display CreditDebit (Release Date)
 	private async Task LoadCreditDebitData()
 	{
 		int? selectedPolicyHolderIdNullable = StateService.SelectedBankId;
@@ -826,6 +827,8 @@
 		StateHasChanged();
 	}
 
+
+	//For View Summary
 	private async Task ToggleRow(int idCB)
 	{
 		if (expandedRowId_Row == idCB)
@@ -865,6 +868,7 @@
 		.ToList();
 	}
 
+	//For View Particulars
 	private async Task ToggleParticulars(int idCB)
 	{
 		if (expandedRowId_Particulars == idCB)
@@ -902,7 +906,7 @@
 		}
 	}
 
-
+	//For View Applications
 	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
 	{
 		if (expandedRowId_Applications == idCB)
@@ -940,6 +944,8 @@
 		StateHasChanged();
 	}
 
+
+	//Display Data in the Details Modal
 	private async Task ViewDetails(CGLInsured insured)
 	{
 		selectedInsured = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
@@ -955,6 +961,7 @@
 		isModalVisible = true;
 		StateHasChanged();
 	}
+	//Data for Substandard Category
 	private async Task LoadSubstandardRatings()
 	{
 		if (selectedInsured != null)
@@ -962,6 +969,7 @@
 			substandardRatings = await CGLSubstandardRatingService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
 		}
 	}
+	//Data for Questions and Answer Category
 	private async Task LoadHealthQuestionsAndAnswers()
 	{
 		if (selectedInsured != null)
@@ -971,6 +979,7 @@
 		}
 	}
 
+	//Data for Beneficiaries Category
 	private async Task LoadBeneficiaries()
 	{
 		if (selectedInsured != null)
@@ -979,6 +988,7 @@
 		}
 	}
 
+	//Loan History Modal for Cleint Details across all Banks 
 	private async Task ViewLoanHistory(CGLInsured insured)
 	{
 		loanHistoryList = await FetchLoanHistory(insured.Last_Name, insured.First_Name, insured.Middle_Name, insured.Date_Of_Birth, insured.ID_Insured);
@@ -1024,51 +1034,60 @@
 		}
 		return loanHistories;
 	}
+
+	//For Edit Info
 	private void ToggleEdit()
 	{
 		isEditing = !isEditing;
 	}
 
+	//For Underwriting Updates
 	private void ToggleRemarksEditable()
 	{
 		isRemarksEditable = !isRemarksEditable;
 	}
+
+	//To Trigger Confirm Modal for Edit Info
 	private void ShowSaveDetailsConfirmation()
 	{
 		currentAction = "SaveDetails";
 		isConfirmationVisible = true;
 	}
 
+	//To Trigger Confirm Modal for Underwriting Update
 	private void ShowSaveRemarksConfirmation()
 	{
 		currentAction = "UpdateRemarks";
 		isConfirmationVisible = true;
 	}
 
+	//To execute the updates
 	private async Task ConfirmSaveChanges()
 	{
-		if (currentAction == "UpdateRemarks" && status != null)
+		if (currentAction == "UpdateRemarks" && status != null) //Underwriting Updates
 		{
 			await CGLUndStatusService.UpdateStatusAsync(status);
 		}
-		else if (currentAction == "SaveDetails" && selectedInsured != null)
+		else if (currentAction == "SaveDetails" && selectedInsured != null) //Edit Info
 		{
 			await CGLInsuredService.UpdateInsuredAsync(selectedInsured);
 		}
-		isConfirmationVisible = false;
+		isConfirmationVisible = false; 
 		isEditing = false;
 		isRemarksEditable = false;
 		await LoadCreditDebitData();
 	}
+
+	//Closing of Modals thru Close Button and 'X' Button
 	private void CloseModal()
 	{
 		status = null;
 		selectedInsured = null;
 		selectedCoverage = null;
 
-		isEditing = false;
-		isModalVisible = false;
-		isRemarksEditable = false;
-		showLoanHistoryModal = false;
+		isEditing = false; //Close the Editable Fields for Edit Info
+		isModalVisible = false; //Close View Details Modal
+		isRemarksEditable = false; //Close the Editable Fields for Underwriting Update
+		showLoanHistoryModal = false; //Close Loan History Modal
 	}
 }
