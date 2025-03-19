@@ -1,5 +1,4 @@
-﻿@page "/longterm/withnotices"
-@using Microsoft.EntityFrameworkCore;
+﻿@using Microsoft.EntityFrameworkCore;
 @using Und_System.Context;
 @using Und_System.Data;
 @using Und_System.Services;
@@ -15,7 +14,7 @@
 @inject CGLHealthAnswerService CGLHealthAnswerService
 @inject CGLBeneficiaryService CGLBeneficiaryService
 
-<h1><b>WITH NOTICE</b></h1>
+<h1><b>TERMINATED APPLICATIONS</b></h1>
 <hr />
 <div class="container my-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
 	<h3 class="text-center fw-bold text-decoration-underline">LONG TERM</h3>
@@ -79,9 +78,9 @@
 												<thead class="text-white" style="background-color: #5d835c;">
 													<tr>
 														<th class="text-center">Full Name</th>
-														<th class="text-center">Remarks</th>
+														<th class="text-center">Effectivity Date</th>
+														<th class="text-center">Termination Date</th>
 														<th class="text-center">Status</th>
-														<th class="text-center">Action</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -94,13 +93,10 @@
 															var undStatus = detail.UndStatus;
 
 															<tr>
-																<td class="text-center"><b>@insured.Last_Name</b>, @insured.First_Name @insured.Middle_Name</td>
-																<td class="text-center">@undStatus?.Remarks</td>
+																<td class="text-center"><b>@insured?.Last_Name</b>, @insured?.First_Name @insured?.Middle_Name</td>
+																<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
+																<td class="text-center text-danger">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
 																<td class="text-center">@undStatus?.Und_Status</td>
-																<td class="text-center">
-																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">View Notice(s)</button>
-																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
-																</td>
 															</tr>
 														}
 													}
@@ -130,7 +126,6 @@
 	</div>
 </div>
 
-
 @code {
 	public class InsuredDetailView
 	{
@@ -154,7 +149,6 @@
 	private string? currentAction;
 	private bool isEditing = false;
 	private int? expandedRowId = null;
-	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
 	private string searchText = string.Empty;
@@ -196,7 +190,7 @@
 									join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
 									where credit.ID_Policy_Holder == selectedPolicyHolderId &&
 									insured.Type == "Long Term" &&
-									status.Und_Status == "Approved"
+									status.Und_Status == "Terminated"
 									select credit).ToList();
 
 			if (selectedYear.HasValue)
@@ -325,59 +319,17 @@
 						MiddleName = insured?.Middle_Name,
 						DateOfBirth = insured.Date_Of_Birth,
 						AmountOfLoan = cov.Amount_Of_Insured,
-						Status = status?.Und_Status,
-						BankName = policyHolder?.Policy_Holder_Name
+						Status = status.Und_Status,
+						BankName = policyHolder.Policy_Holder_Name
 					});
 			}
 		}
 		return loanHistories;
 	}
-	private void ToggleEdit()
-	{
-		isEditing = !isEditing;
-	}
 
-	private void ToggleRemarksEditable()
-	{
-		isRemarksEditable = !isRemarksEditable;
-	}
-	private void ShowSaveDetailsConfirmation()
-	{
-		currentAction = "SaveDetails";
-		isConfirmationVisible = true;
-	}
-
-	private void ShowSaveRemarksConfirmation()
-	{
-		currentAction = "UpdateRemarks";
-		isConfirmationVisible = true;
-	}
-
-	private async Task ConfirmSaveChanges()
-	{
-		if (currentAction == "UpdateRemarks" && status != null)
-		{
-			await CGLUndStatusService.UpdateStatusAsync(status);
-		}
-		else if (currentAction == "SaveDetails" && selectedInsured != null)
-		{
-			await CGLInsuredService.UpdateInsuredAsync(selectedInsured);
-		}
-		isConfirmationVisible = false;
-		isEditing = false;
-		isRemarksEditable = false;
-		await LoadCreditDebitData();
-	}
 	private void CloseModal()
 	{
-		status = null;
-		selectedInsured = null;
-		selectedCoverage = null;
-
-		isEditing = false;
 		isModalVisible = false;
-		isRemarksEditable = false;
 		showLoanHistoryModal = false;
 	}
 }
-

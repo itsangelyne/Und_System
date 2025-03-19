@@ -127,3 +127,71 @@ hr {
     .card button:hover {
         background-color: #f8f9fa;
     }
+
+/*CSS for the Bank List Card/Button */
+.cardbank {
+    display: block;
+    border-radius: 8px;
+    transition: all 0.5s ease-in-out;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+    .cardbank::after {
+        content: '\27A4';
+        position: absolute;
+        opacity: 0;
+        top: 50%;
+        right: -30px;
+        transform: translateY(-50%);
+        transition: right 0.5s, opacity 0.5s;
+        font-size: 1.5rem;
+        color: #4f704e;
+        font-weight: bold;
+    }
+
+    .cardbank:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+        .cardbank:hover::after {
+            opacity: 1;
+            right: 10px;
+        }
+
+/*CSS for the Back to Bank List Button*/
+.btn-back {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease-in-out !important;
+    border: 2px solid #198754 !important;
+    color: #198754 !important;
+    background-color: transparent !important;
+    padding-right: 20px !important;
+}
+
+    .btn-back::after {
+        content: '\00bb';
+        position: absolute;
+        opacity: 0;
+        top: 50%;
+        right: -30px;
+        transform: translateY(-50%);
+        transition: right 0.5s ease, opacity 0.5s ease;
+        font-size: 1.5rem;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-back:hover {
+        padding-right: 40px !important;
+        background-color: #198754 !important;
+        color: white !important;
+    }
+
+        .btn-back:hover::after {
+            opacity: 1;
+            right: 10px;
+        }

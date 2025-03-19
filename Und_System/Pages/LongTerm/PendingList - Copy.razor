@@ -4,6 +4,7 @@
 @using Und_System.Data;
 @using Und_System.Services;
 @inject ApplicationDbContext _context
+@inject NavigationManager NavigationManager
 @inject CGLInsuredService CGLInsuredService
 @inject CGLParticularsService CGLParticularsService
 @inject CGLPolicyHolderServices CGLPolicyHolderServices
@@ -15,6 +16,8 @@
 @inject CGLHealthQuestionsService CGLHealthQuestionsService
 @inject CGLHealthAnswerService CGLHealthAnswerService
 @inject CGLBeneficiaryService CGLBeneficiaryService
+@inject IJSRuntime JS
+
 
 <h1><b>PENDING APPLICATIONS</b></h1>
 <hr />
@@ -88,8 +91,11 @@
 									</button>
 								</td>
 								<td class="text-center">
-									<button class="btn btn-outline-success">Receipt</button>
+									<button class="btn btn-outline-success" @onclick="() => OpenReceipt(item.ID_CB)">
+										Receipt
+									</button>
 								</td>
+
 							</tr>
 							@if (expandedRowId_Row == item.ID_CB)
 							{
@@ -739,6 +745,7 @@
 	</div>
 }
 @code {
+
 	public class InsuredDetailView
 	{
 		public CGLInsured? Insured { get; set; }
@@ -1034,6 +1041,18 @@
 		return loanHistories;
 	}
 
+	//For Receipts column
+	private async Task OpenReceipt(int id)
+	{
+		var creditDebitRecord = await CGLCreditDebitServices.GetCreditDebitByIdAsync(id);
+		if (creditDebitRecord != null && !string.IsNullOrEmpty(creditDebitRecord.Receipt))
+		{
+			var imageUrl = $"{NavigationManager.BaseUri}receipts/{creditDebitRecord.Receipt}";
+			await JS.InvokeVoidAsync("open", imageUrl, "_blank");
+		}
+	}
+
+	
 	//For Edit Info
 	private void ToggleEdit()
 	{

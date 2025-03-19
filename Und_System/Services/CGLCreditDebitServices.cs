@@ -12,5 +12,9 @@ namespace Und_System.Services
         {
             return await _context.CGL_CreditDebit.ToListAsync();
         }
+        public async Task<CGLCreditDebit?> GetCreditDebitByIdAsync(int id)
+        {
+            return await _context.CGL_CreditDebit.FirstOrDefaultAsync(c => c.ID_CB == id);
+        }
     }
 }
