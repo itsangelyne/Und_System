@@ -1,0 +1,336 @@
+﻿@page "/longterm/terminatedlist"
+@using Microsoft.EntityFrameworkCore;
+@using Und_System.Context;
+@using Und_System.Data;
+@using Und_System.Services;
+@inject ApplicationDbContext _context
+@inject CGLInsuredService CGLInsuredService
+@inject CGLPolicyHolderServices CGLPolicyHolderServices
+@inject StateService StateService
+@inject CGLCreditDebitServices CGLCreditDebitServices
+@inject CGLCoverageService CGLCoverageService
+@inject CGLSubstandardRatingService CGLSubstandardRatingService
+@inject CGLUndStatusService CGLUndStatusService
+@inject CGLHealthQuestionsService CGLHealthQuestionsService
+@inject CGLHealthAnswerService CGLHealthAnswerService
+@inject CGLBeneficiaryService CGLBeneficiaryService
+
+<h1><b>TERMINATED APPLICATIONS</b></h1>
+<hr />
+<div class="container my-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+	<h3 class="text-center fw-bold text-decoration-underline">LONG TERM</h3>
+	<h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
+	<div class="card-body">
+		<div class="row justify-content-evenly">
+			<div class="col-md-4 mb-3">
+				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
+			</div>
+			<div class="col-md-4 mb-3 d-flex align-items-center">
+				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
+				<select class="form-control flex-grow-1" id="amountDropdown">
+					<option>Select Amount</option>
+					<option>100K and Below</option>
+					<option>100K and Above</option>
+					<option>300K and Above</option>
+				</select>
+			</div>
+			<div class="col-md-4 mb-3 d-flex align-items-center">
+				<label for="yearDropdown" class="me-1 fw-bold" style="white-space: nowrap; min-width: 120px;">Filter by Year:</label>
+				<select class="form-control flex-grow-1" id="yearDropdown" @bind="selectedYear" @bind:event="onchange">
+					<option value="">Select Year</option>
+					@foreach (var year in years)
+					{
+						<option value="@year">@year</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-bordered">
+				<thead class="text-white" style="background-color: #5d835c;">
+					<tr>
+						<th class="text-center">Release Date</th>
+						<th class="text-center">Total Applications</th>
+						<th class="text-center">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					@if (releaseList != null && releaseList.Count > 0)
+					{
+						foreach (var item in releaseList)
+						{
+							<tr>
+								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
+								<td class="text-center fw-bold">@item.Total_Application</td>
+								<td class="text-center">
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
+										@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
+									</button>
+								</td>
+							</tr>
+
+							@if (expandedRowId == item.ID_CB)
+							{
+
+								<tr>
+									<td colspan="3">
+										<div class="table-responsive">
+											<table class="table table-bordered">
+												<thead class="text-white" style="background-color: #5d835c;">
+													<tr>
+														<th class="text-center">Full Name</th>
+														<th class="text-center">Effectivity Date</th>
+														<th class="text-center">Termination Date</th>
+														<th class="text-center">Status</th>
+													</tr>
+												</thead>
+												<tbody>
+													@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+													{
+														foreach (var detail in insuredDetailsList)
+														{
+															var insured = detail.Insured;
+															var coverage = detail.Coverage;
+															var undStatus = detail.UndStatus;
+
+															<tr>
+																<td class="text-center"><b>@insured?.Last_Name</b>, @insured?.First_Name @insured?.Middle_Name</td>
+																<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
+																<td class="text-center text-danger">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
+																<td class="text-center">@undStatus?.Und_Status</td>
+															</tr>
+														}
+													}
+													else
+													{
+														<tr>
+															<td colspan="8" class="text-center">No insured details available</td>
+														</tr>
+													}
+												</tbody>
+											</table>
+										</div>
+									</td>
+								</tr>
+							}
+						}
+					}
+					else
+					{
+						<tr>
+							<td colspan="3" class="text-center">No data available</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+@code {
+	public class InsuredDetailView
+	{
+		public CGLInsured? Insured { get; set; }
+		public CGLCoverage? Coverage { get; set; }
+		public CGL_UndStatus? UndStatus { get; set; }
+	}
+
+	public class LoanHistory
+	{
+		public required string LastName { get; set; }
+		public required string FirstName { get; set; }
+		public string? MiddleName { get; set; }
+		public DateTime DateOfBirth { get; set; }
+		public double AmountOfLoan { get; set; }
+		public required string Status { get; set; }
+		public required string BankName { get; set; }
+	}
+
+	private int? selectedYear;
+	private string? currentAction;
+	private bool isEditing = false;
+	private int? expandedRowId = null;
+	private bool isRemarksEditable = false;
+	private bool showLoanHistoryModal = false;
+	private string searchText = string.Empty;
+	private List<int> years = new List<int>();
+	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
+	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
+	private List<CGL_Substandard_Rating> substandardRatings = new();
+	private List<CGL_Health_Question> healthQuestions = new();
+	private List<CGL_Health_Answer> healthAnswers = new();
+	private List<CGL_Beneficiary> beneficiaries = new();
+	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
+
+	private bool isModalVisible = false;
+	private CGLInsured? selectedInsured;
+	private CGLCoverage? selectedCoverage;
+	private CGL_UndStatus? status;
+	private CGLPolicyHolder? policyHolder;
+
+	protected override async Task OnInitializedAsync()
+	{
+		int currentYear = DateTime.Now.Year;
+		years = Enumerable.Range(2000, currentYear - 2000 + 1).ToList();
+		await LoadCreditDebitData();
+	}
+	private async Task LoadCreditDebitData()
+	{
+		int? selectedPolicyHolderIdNullable = StateService.SelectedBankId;
+
+		if (selectedPolicyHolderIdNullable.HasValue)
+		{
+			int selectedPolicyHolderId = selectedPolicyHolderIdNullable.Value;
+
+			var allCreditDebits = await CGLCreditDebitServices.GetCredDebitAsync();
+			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
+			var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+
+			releaseList = (from credit in allCreditDebits
+									join insured in allInsuredRecords on credit.DCHS_From equals insured.DCHS
+									join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+									where credit.ID_Policy_Holder == selectedPolicyHolderId &&
+									insured.Type == "Long Term" &&
+									status.Und_Status == "Terminated"
+									select credit).ToList();
+
+			if (selectedYear.HasValue)
+			{
+				releaseList = releaseList
+					.Where(x => x.Submitted_Date.Year == selectedYear.Value)
+					.ToList();
+			}
+		}
+		else
+		{
+			releaseList = new List<CGLCreditDebit>();
+		}
+
+		StateHasChanged();
+	}
+
+	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
+	{
+		if (expandedRowId == idCB)
+		{
+			expandedRowId = null;
+		}
+		else
+		{
+			expandedRowId = idCB;
+			await LoadInsuredDetails(dchsFrom, dchsTo);
+		}
+		StateHasChanged();
+	}
+
+	private async Task LoadInsuredDetails(string dchsFrom, string dchsTo)
+	{
+		insuredDetailsList.Clear();
+
+		var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
+		var allCoverages = await CGLCoverageService.GetCoverageAsync();
+		var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+
+		insuredDetailsList = allInsuredRecords
+			.Where(i => i.DCHS == dchsFrom || i.DCHS == dchsTo)
+			.Select(i => new InsuredDetailView
+				{
+					Insured = i,
+					Coverage = allCoverages.FirstOrDefault(c => c.ID_Insured == i.ID_Insured),
+					UndStatus = allUndStatuses.FirstOrDefault(u => u.InsuredID == i.ID_Insured)
+				})
+			.ToList();
+		StateHasChanged();
+	}
+
+	private async Task ViewDetails(CGLInsured insured)
+	{
+		selectedInsured = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
+		var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+		status = allUndStatuses.FirstOrDefault(u => u.InsuredID == insured.ID_Insured);
+		selectedCoverage = await CGLCoverageService.GetCoverageByInsuredIdAsync(insured.ID_Insured);
+		policyHolder = await CGLPolicyHolderServices.GetPolicyHolderByIdAsync(selectedInsured.ID_Policy_Holder);
+
+		await LoadHealthQuestionsAndAnswers();
+		await LoadSubstandardRatings();
+		await LoadBeneficiaries();
+
+		isModalVisible = true;
+		StateHasChanged();
+	}
+	private async Task LoadSubstandardRatings()
+	{
+		if (selectedInsured != null)
+		{
+			substandardRatings = await CGLSubstandardRatingService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
+		}
+	}
+	private async Task LoadHealthQuestionsAndAnswers()
+	{
+		if (selectedInsured != null)
+		{
+			healthQuestions = await CGLHealthQuestionsService.GetSubstandardAsync();
+			healthAnswers = await CGLHealthAnswerService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
+		}
+	}
+
+	private async Task LoadBeneficiaries()
+	{
+		if (selectedInsured != null)
+		{
+			beneficiaries = await CGLBeneficiaryService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
+		}
+	}
+
+	private async Task ViewLoanHistory(CGLInsured insured)
+	{
+		loanHistoryList = await FetchLoanHistory(insured.Last_Name, insured.First_Name, insured.Middle_Name, insured.Date_Of_Birth, insured.ID_Insured);
+		showLoanHistoryModal = true;
+	}
+
+	private async Task<List<LoanHistory>> FetchLoanHistory(string lastName, string firstName, string middleName, DateTime dateOfBirth, int insuredId)
+	{
+		var matchingInsureds = await _context.CGL_INSURED
+			.Where(i => i.Last_Name == lastName && i.First_Name == firstName && i.Middle_Name == middleName && i.Date_Of_Birth == dateOfBirth)
+			.ToListAsync();
+
+		var loanHistories = new List<LoanHistory>();
+
+		foreach (var insured in matchingInsureds)
+		{
+			var coverage = await _context.CGL_Coverage
+				.Where(c => c.ID_Insured == insured.ID_Insured)
+				.ToListAsync();
+
+			foreach (var cov in coverage)
+			{
+
+				var status = await _context.CGL_UndStatus
+					.Where(s => s.InsuredID == insured.ID_Insured)
+					.FirstOrDefaultAsync();
+
+				var policyHolder = await _context.CGL_Policy_Holder
+					.Where(ph => ph.ID_Policy_Holder == insured.ID_Policy_Holder)
+					.FirstOrDefaultAsync();
+
+				loanHistories.Add(new LoanHistory
+					{
+						LastName = insured.Last_Name,
+						FirstName = insured.First_Name,
+						MiddleName = insured?.Middle_Name,
+						DateOfBirth = insured.Date_Of_Birth,
+						AmountOfLoan = cov.Amount_Of_Insured,
+						Status = status.Und_Status,
+						BankName = policyHolder.Policy_Holder_Name
+					});
+			}
+		}
+		return loanHistories;
+	}
+
+	private void CloseModal()
+	{
+		isModalVisible = false;
+		showLoanHistoryModal = false;
+	}
+}

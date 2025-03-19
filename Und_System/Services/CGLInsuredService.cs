@@ -22,9 +22,10 @@ namespace Und_System.Services
                 existingInsured.Middle_Name = insured.Middle_Name;
                 existingInsured.Suffix = insured.Suffix;
                 existingInsured.Date_Of_Birth = insured.Date_Of_Birth;
-                existingInsured.Age = insured.Age;
+                
                 await _context.SaveChangesAsync();
             }
+
         }
         public async Task<List<CGLInsured>> GetInsuredRecordsAsync()
         {
