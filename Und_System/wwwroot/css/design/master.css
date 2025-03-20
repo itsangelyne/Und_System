@@ -147,7 +147,7 @@ hr {
         transform: translateY(-50%);
         transition: right 0.5s, opacity 0.5s;
         font-size: 1.5rem;
-        color: #4f704e;
+        color: #326f32;
         font-weight: bold;
     }
 
@@ -162,18 +162,18 @@ hr {
         }
 
 /*CSS for the Back to Bank List Button*/
-.btn-back {
+.btn-back, .btn-login {
     position: relative;
     overflow: hidden;
     transition: all 0.5s ease-in-out !important;
-    border: 2px solid #198754 !important;
-    color: #198754 !important;
+    border: 1px solid #326f32 !important;
+    color: #326f32 !important;
     background-color: transparent !important;
     padding-right: 20px !important;
 }
 
-    .btn-back::after {
-        content: '\00bb';
+    .btn-back::after, .btn-login::after {
+        content: '\00AB';
         position: absolute;
         opacity: 0;
         top: 50%;
@@ -185,13 +185,17 @@ hr {
         font-weight: bold;
     }
 
-    .btn-back:hover {
+    .btn-back:hover, .btn-login:hover {
         padding-right: 40px !important;
-        background-color: #198754 !important;
+        background-color: #326f32 !important;
         color: white !important;
     }
 
-        .btn-back:hover::after {
+        .btn-back:hover::after, .btn-login:hover::after {
             opacity: 1;
             right: 10px;
         }
+
+    .btn-login::after {
+        content: '\00BB' !important;
+    }

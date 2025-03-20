@@ -173,7 +173,10 @@
 								<tr>
 									<td colspan="8" style="background-color: #f8f8f8;">
 										<div class="table-responsive mt-2">
-											<table class="table">
+											<div class="card-header text-white fw-bold p-3" style="background-color: #5d835c;">REGULAR PENDING APPLICATIONS</div>
+											<div class="card-body bg-light p-2">
+
+												<table class="table table-bordered">
 												<thead class="text-white" style="background-color: #5d835c;">
 													<tr>
 														<th class="text-center">Last Name</th>
@@ -218,6 +221,25 @@
 													}
 												</tbody>
 											</table>
+										</div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="8" style="background-color: #f8f8f8;">
+										<div class="table-responsive mt-2">
+											<div class="card-header text-white fw-bold p-3" style="background-color: #5d835c;">EXTENDED AGE PENDING APPLICATIONS</div>
+											<div class="card-body bg-light p-2">
+										</div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="8" style="background-color: #f8f8f8;">
+										<div class="table-responsive mt-2">
+											<div class="card-header text-white fw-bold p-3" style="background-color: #5d835c;">CHECKED APPLICATIONS</div>
+											<div class="card-body bg-light p-2">
+										</div>
 										</div>
 									</td>
 								</tr>
@@ -894,16 +916,9 @@
 
 	private async Task LoadParticulars(int idCB)
 	{
-		if (CGLParticularsService == null)
-		{
-			Console.WriteLine("CGLParticularsService is null");
-			return;
-		}
-
 		var result = await CGLParticularsService.GetParticularsByCreditDebitIdAsync(idCB);
 		if (result == null)
 		{
-			Console.WriteLine("GetParticularsByCreditDebitIdAsync returned null");
 			particularsList = new List<CGL_Particulars>(); 
 		}
 		else

@@ -13,20 +13,20 @@
 <div class="@NavMenuCssClass">
     <nav class="flex-column">
         <!-- Dashboard -->
-        <div class="nav-item px-3">
+        <div class="nav-item px-0">
             <NavLink class="nav-link" href="cgldashboard" Match="NavLinkMatch.All" @onclick="CloseAllMenus">
                 <span class="oi oi-home" aria-hidden="true"></span> Dashboard
             </NavLink>
         </div>
         <!-- Loan Applications -->
-        <div class="nav-item px-3">
+        <div class="nav-item px-0">
             <a class="nav-link d-flex justify-content-between" @onclick="ToggleLoansDropdown">
                 <span>
                     <span class="oi oi-document" aria-hidden="true"></span> Applications
                 </span>
                 <span class="@GetArrowClass(showLoansDropdown) ms-2"></span>
             </a>
-            <div class="nested-menu ps-3 @LoansDropdownClass">
+            <div class="nested-menu ps-0 @LoansDropdownClass">
                 <!-- Long Term Applications -->
                 <a class="nav-link d-flex justify-content-between" @onclick="ToggleLongTermDropdown">
                     <span>
@@ -34,7 +34,7 @@
                     </span>
                     <span class="@GetArrowClass(showLongTermDropdown) ms-2"></span>
                 </a>
-                <div class="nested-menu ps-3 @LongTermDropdownClass">
+                <div class="nested-menu ps-4 @LongTermDropdownClass">
                     <!-- Pending -->
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/pendinglist">
                         <span class="oi oi-clock" aria-hidden="true"></span> Pending
@@ -64,7 +64,7 @@
                     </span>
                     <span class="@GetArrowClass(showShortTermDropdown) ms-2"></span>
                 </a>
-                <div class="nested-menu ps-3 @ShortTermDropdownClass">
+                <div class="nested-menu ps-4 @ShortTermDropdownClass">
                     <!-- Pending -->
                    @*  <NavLink class="nav-link d-flex justify-content-start" href="shortterm/pendinglist">
                         <span class="oi oi-clock" aria-hidden="true"></span> Pending
@@ -90,7 +90,7 @@
                     </NavLink>
                 </div>
                 <!-- Renewal -->
-                <div class="nav-item px-">
+                <div class="nav-item px-0">
                     <a class="nav-link d-flex justify-content-between" href="renewedlist">
                         <span>
                             <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Renewal
@@ -99,14 +99,14 @@
                 </div>
             </div>
         </div>
-        <div class="nav-item px-3">
+        <div class="nav-item px-0">
             <a class="nav-link d-flex justify-content-between" @onclick="ToggleComplianceDropdown">
                 <span>
                     <span class="bi bi-clipboard-pulse" aria-hidden="true" style="margin-right: 17px; font-size:18px;"></span> Compliance
                     </span>
                 <span class="@GetArrowClass(showComplianceDropdown) ms-2"></span>
             </a>
-            <div class="nested-menu ps-3 @ComplianceDropdownClass">
+            <div class="nested-menu ps-4 @ComplianceDropdownClass">
                 <!-- Long Term Compliance -->
                 <a class="nav-link d-flex justify-content-between" href="longterm/medical">
                     <span>
@@ -122,31 +122,35 @@
             </div>
         </div>
         <!-- Extended Age -->
-        <div class="nav-item px-3">
+        <div class="nav-item px-0">
             <a class="nav-link d-flex justify-content-between" @onclick="ToggleExtendedAgeDropdown">
                 <span>
                     <span class="fas fa-users" aria-hidden="true" style="margin-right: 14px;font-size:18px;"></span> Extended Age
                 </span>
                 <span class="@GetArrowClass(showExtendedAgeDropdown) ms-2"></span>
             </a>
-            <div class="nested-menu ps-3 @ExtendedAgeDropdownClass">
+            <div class="nested-menu ps-4 @ExtendedAgeDropdownClass">
                 <NavLink class="nav-link" href="extendedage/longterm">
                     <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Long Term
                 </NavLink>
                 <NavLink class="nav-link" href="extendedage/shortterm">
                     <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span>Short Term
                 </NavLink>
+                <NavLink class="nav-link" href="renewedlist">
+                    <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Renewal
+                </NavLink>
+                
             </div>
         </div>
         <!-- Admin Control -->
-        <div class="nav-item px-3">
+        <div class="nav-item px-0">
             <a class="nav-link d-flex justify-content-between" @onclick="ToggleUsersDropdown">
                 <span>
                     <span class="oi oi-wrench" aria-hidden="true"></span> Admin Control
                 </span>
                 <span class="@GetArrowClass(showUsersDropdown) ms-2"></span>
             </a>
-            <div class="nested-menu ps-3 @UsersDropdownClass">
+            <div class="nested-menu ps-4 @UsersDropdownClass">
                 <NavLink class="nav-link" href="emplisting">
                     <span class="oi oi-people" aria-hidden="true"></span> Employees
                 </NavLink>
@@ -156,7 +160,7 @@
             </div>
         </div>
         <!-- Logout -->
-        <div class="nav-item px-3 mt-auto">
+        <div class="nav-item px-0 mt-auto">
             <a class="nav-link d-flex justify-content-between" @onclick="ShowLogoutPopup">
                 <span>
                     <span class="oi oi-account-logout" aria-hidden="true"></span> Logout

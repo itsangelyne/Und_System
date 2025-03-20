@@ -103,14 +103,14 @@
                 </div>
                 <div class="card-body">
                     <div class="row text-center">
-                        <div class="col-6 border-end">
-                            <h6 class="fw-bold mb-1">Long Term</h6>
-                            <p class="mb-0" style="font-size:24px;">@terminatedLongTermCount</p>
-                        </div>
-                        <div class="col-6">
-                            <h6 class="fw-bold mb-1">Short Term</h6>
-                            <p class="mb-0" style="font-size:24px;">@terminatedShortTermCount</p>
-                        </div>
+                            <div class="col-6 border-end">
+                                <h6 class="fw-bold mb-1">Long Term</h6>
+                                <p class="mb-0" style="font-size:24px;">@terminatedLongTermCount</p>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="fw-bold mb-1">Short Term</h6>
+                                <p class="mb-0" style="font-size:24px;">@terminatedShortTermCount</p>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -123,14 +123,14 @@
                 </div>
                 <div class="card-body">
                     <div class="row text-center">
-                        <div class="col-6 border-end">
-                            <h6 class="fw-bold mb-1">Long Term</h6>
-                            <p class="mb-0" style="font-size:24px;">@declinedLongTermCount</p>
-                        </div>
-                        <div class="col-6">
-                            <h6 class="fw-bold mb-1">Short Term</h6>
-                            <p class="mb-0" style="font-size:24px;">@declinedShortTermCount</p>
-                        </div>
+                            <div class="col-6 border-end">
+                                <h6 class="fw-bold mb-1">Long Term</h6>
+                                <p class="mb-0" style="font-size:24px;">@declinedLongTermCount</p>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="fw-bold mb-1">Short Term</h6>
+                                <p class="mb-0" style="font-size:24px;">@declinedShortTermCount</p>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -139,8 +139,8 @@
 
         <!-- Compliance and Others Section -->
         <div class="container mt-3">
-            <h2 class="text-center fw-bold mb-4">COMPLIANCE AND OTHERS</h2>
-            <div class="row g-3">
+            <h2 class="text-center fw-bold mb-4">COMPLIANCE AND RENEWAL</h2>
+            <div class="row g-3 justify-content-center">
                 <!-- Compliance Section -->
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow-sm rounded" style="z-index: -1;">
@@ -167,35 +167,15 @@
                         <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
                             Renewal
                         </div>
-                        <div class="card-body">
-                            <div class="row text-center">
-                                <h6 class="fw-bold mb-1">Long Term</h6>
-                                <p class="mb-0" style="font-size:24px;">@renewalLongTermCount</p>
-                            </div>
-                        </div>
+						<div class="card-body">
+							<div class="row text-center">
+									<h6 class="fw-bold mb-1">Long Term</h6>
+									<p class="mb-0" style="font-size:24px;">@renewalLongTermCount</p>
+							</div>
+						</div>
                     </div>
                 </div>
-                <!-- Others Section -->
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card shadow-sm rounded" style="z-index: -1;">
-                        <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
-                            Extended Age
-                        </div>
-                        <div class="card-body">
-                            <div class="row text-center">
-                                <div class="col-6 border-end">
-                                    <h6 class="fw-bold mb-1">Long Term</h6>
-                                    <p class="mb-0" style="font-size:24px;">@extendedLongTermCount</p>
-                                </div>
-                                <div class="col-6">
-                                    <h6 class="fw-bold mb-1">Short Term</h6>
-                                    <p class="mb-0" style="font-size:24px;">@extendedShortTermCount</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </div> 
         </div>
     </div>
 </div>
@@ -203,22 +183,24 @@
 @code {
     private int pendingLongTermCount = 0;
     private int pendingShortTermCount = 0;
+    private int pendingExtendedCount = 0;
     private int approvedLongTermCount = 0;
     private int approvedShortTermCount = 0;
+    private int approvedExtendedCount = 0;
     private int terminatedLongTermCount = 0;
     private int terminatedShortTermCount = 0;
+    private int terminatedExtendedCount = 0;
     private int declinedLongTermCount = 0;
     private int declinedShortTermCount = 0;
+    private int declinedExtendedCount = 0;
     private int medicalLongTermCount = 0;
     private int medicalShortTermCount = 0;
+    private int medicalExtendedCount = 0;
     private int refundLongTermCount = 0;
     private int refundShortTermCount = 0;
+    private int refundExtendedCount = 0;
     private int renewalLongTermCount = 0;
-    private int renewalShortTermCount = 0;
-    private int extendedLongTermCount = 0;
-    private int extendedShortTermCount = 0;
-    private int withnoticesLongTermCount = 0;
-    private int withnoticesShortTermCount = 0;
+    private int renewalExtendedCount = 0;
 
     private string selectedBank = "";
     private List<CGLPolicyHolder> banks = new List<CGLPolicyHolder>();
@@ -272,6 +254,7 @@
                     case "Pending":
                         pendingLongTermCount += app.Type == "Long Term" ? 1 : 0;
                         pendingShortTermCount += app.Type == "Short Term" ? 1 : 0;
+                        pendingExtendedCount += undStatus.ExtendedAge == "Yes" ? 1 : 0;
                         break;
                     case "Approved":
                         approvedLongTermCount += app.Type == "Long Term" ? 1 : 0;
@@ -291,16 +274,9 @@
                         break;
                     case "Renewal":
                         renewalLongTermCount += app.Type == "Long Term" ? 1 : 0;
-                        renewalShortTermCount += app.Type == "Short Term" ? 1 : 0;
+                        renewalExtendedCount += undStatus.ExtendedAge == "Yes" ? 1 : 0;
                         break;
-                    case "Extended Age":
-                        extendedLongTermCount += app.Type == "Long Term" ? 1 : 0;
-                        extendedShortTermCount += app.Type == "Short Term" ? 1 : 0;
-                        break;
-                    // case "With Notice":
-                    //     withnoticesLongTermCount += app.Type == "Long Term" ? 1 : 0;
-                    //     withnoticesShortTermCount += app.Type == "Short Term" ? 1 : 0;
-                    //     break;
+                    
                     case "Terminated":
                         terminatedLongTermCount += app.Type == "Long Term" ? 1 : 0;
                         terminatedShortTermCount += app.Type == "Short Term" ? 1 : 0;
@@ -312,24 +288,26 @@
 
     private void ResetCounts()
     {
-        pendingLongTermCount = 0;
-        pendingShortTermCount = 0;
-        approvedLongTermCount = 0;
-        approvedShortTermCount = 0;
-        terminatedLongTermCount = 0;
-        terminatedShortTermCount = 0;
-        declinedLongTermCount = 0;
-        declinedShortTermCount = 0;
-        medicalLongTermCount = 0;
-        medicalShortTermCount = 0;
-        refundLongTermCount = 0;
-        refundShortTermCount = 0;
-        renewalLongTermCount = 0;
-        renewalShortTermCount = 0;
-        extendedLongTermCount = 0;
-        extendedShortTermCount = 0;
-        withnoticesLongTermCount = 0;
-        withnoticesShortTermCount = 0;
+		pendingLongTermCount = 0;
+		pendingShortTermCount = 0;
+		pendingExtendedCount = 0;
+		approvedLongTermCount = 0;
+		approvedShortTermCount = 0;
+		approvedExtendedCount = 0;
+		terminatedLongTermCount = 0;
+		terminatedShortTermCount = 0;
+		terminatedExtendedCount = 0;
+		declinedLongTermCount = 0;
+		declinedShortTermCount = 0;
+		declinedExtendedCount = 0;
+		medicalLongTermCount = 0;
+		medicalShortTermCount = 0;
+		medicalExtendedCount = 0;
+		refundLongTermCount = 0;
+		refundShortTermCount = 0;
+		refundExtendedCount = 0;
+		renewalLongTermCount = 0;
+		renewalExtendedCount = 0;
     }
 
     private async Task GoBackToBankList()
