@@ -66,9 +66,6 @@
                 </a>
                 <div class="nested-menu ps-4 @ShortTermDropdownClass">
                     <!-- Pending -->
-                   @*  <NavLink class="nav-link d-flex justify-content-start" href="shortterm/pendinglist">
-                        <span class="oi oi-clock" aria-hidden="true"></span> Pending
-                    </NavLink> *@
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/pendinglist2">
                         <span class="oi oi-clock" aria-hidden="true"></span> Pending
                     </NavLink>
@@ -103,7 +100,7 @@
             <a class="nav-link d-flex justify-content-between" @onclick="ToggleComplianceDropdown">
                 <span>
                     <span class="bi bi-clipboard-pulse" aria-hidden="true" style="margin-right: 17px; font-size:18px;"></span> Compliance
-                    </span>
+                </span>
                 <span class="@GetArrowClass(showComplianceDropdown) ms-2"></span>
             </a>
             <div class="nested-menu ps-4 @ComplianceDropdownClass">
@@ -129,17 +126,74 @@
                 </span>
                 <span class="@GetArrowClass(showExtendedAgeDropdown) ms-2"></span>
             </a>
-            <div class="nested-menu ps-4 @ExtendedAgeDropdownClass">
-                <NavLink class="nav-link" href="extendedage/longterm">
-                    <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Long Term
-                </NavLink>
-                <NavLink class="nav-link" href="extendedage/shortterm">
-                    <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span>Short Term
-                </NavLink>
-                <NavLink class="nav-link" href="renewedlist">
-                    <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Renewal
-                </NavLink>
-                
+            <div class="nested-menu ps-0 @ExtendedAgeDropdownClass">
+                <!-- Long Term Extended Age -->
+                <a class="nav-link d-flex justify-content-between" @onclick="ToggleLongTermExtendedAgeDropdown">
+                    <span>
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Long Term
+                    </span>
+                    <span class="@GetArrowClass(showLongTermExtendedAgeDropdown) ms-2"></span>
+                </a>
+                <div class="nested-menu ps-4 @LongTermExtendedAgeDropdownClass">
+                    <!-- Pending -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/pendinglist">
+                        <span class="oi oi-clock" aria-hidden="true"></span> Pending
+                    </NavLink>
+                    <!-- Approved -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/approvedlist">
+                        <span class="oi oi-check" aria-hidden="true"></span> Approved
+                    </NavLink>
+                    <!-- Refund -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/refundlist">
+                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px;"></span> For Refund
+                    </NavLink>
+                    <!-- Terminated -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/terminatedlist">
+                        <span class="oi oi-x" aria-hidden="true"></span> Terminated
+                    </NavLink>
+                    <!-- Declined -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/declinedlist">
+                        <span class="oi oi-ban" aria-hidden="true"></span> Declined
+                    </NavLink>
+                </div>
+
+                <!-- Short Term Extended Age -->
+                <a class="nav-link d-flex justify-content-between" @onclick="ToggleShortTermExtendedAgeDropdown">
+                    <span>
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Short Term
+                    </span>
+                    <span class="@GetArrowClass(showShortTermExtendedAgeDropdown) ms-2"></span>
+                </a>
+                <div class="nested-menu ps-4 @ShortTermExtendedAgeDropdownClass">
+                    <!-- Pending -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/pendinglist">
+                        <span class="oi oi-clock" aria-hidden="true"></span> Pending
+                    </NavLink>
+                    <!-- Approved -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/approvedlist">
+                        <span class="oi oi-check" aria-hidden="true"></span> Approved
+                    </NavLink>
+                    <!-- Refund -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/refundlist">
+                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px;"></span> For Refund
+                    </NavLink>
+                    <!-- Terminated -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/terminatedlist">
+                        <span class="oi oi-x" aria-hidden="true"></span> Terminated
+                    </NavLink>
+                    <!-- Declined -->
+                    <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/declinedlist">
+                        <span class="oi oi-ban" aria-hidden="true"></span> Declined
+                    </NavLink>
+                </div>
+                <!-- Renewal -->
+                <div class="nav-item px-0">
+                    <a class="nav-link d-flex justify-content-between" href="extended/longterm/renewal">
+                        <span>
+                            <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Renewal
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
         <!-- Admin Control -->
@@ -198,21 +252,24 @@
     private bool showLongTermDropdown = false;
     private bool showShortTermDropdown = false;
     private bool showComplianceDropdown = false;
-    private bool showLongTermComplianceDropdown = false;
-    private bool showShortTermComplianceDropdown = false;
     private bool showExtendedAgeDropdown = false;
     private bool showUsersDropdown = false;
     private bool showLogoutPopup = false;
+
+    // Extended Age Dropdowns
+    private bool showLongTermExtendedAgeDropdown = false;
+    private bool showShortTermExtendedAgeDropdown = false;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
     private string LoansDropdownClass => showLoansDropdown ? "show" : "d-none";
     private string LongTermDropdownClass => showLongTermDropdown ? "show" : "d-none";
     private string ShortTermDropdownClass => showShortTermDropdown ? "show" : "d-none";
     private string ComplianceDropdownClass => showComplianceDropdown ? "show" : "d-none";
-    private string LongTermComplianceDropdownClass => showLongTermComplianceDropdown ? "show" : "d-none";
-    private string ShortTermComplianceDropdownClass => showShortTermComplianceDropdown ? "show" : "d-none";
     private string ExtendedAgeDropdownClass => showExtendedAgeDropdown ? "show" : "d-none";
     private string UsersDropdownClass => showUsersDropdown ? "show" : "d-none";
+
+    private string LongTermExtendedAgeDropdownClass => showLongTermExtendedAgeDropdown ? "show" : "d-none";
+    private string ShortTermExtendedAgeDropdownClass => showShortTermExtendedAgeDropdown ? "show" : "d-none";
 
     private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
 
@@ -265,31 +322,6 @@
             showExtendedAgeDropdown = false;
             showUsersDropdown = false;
         }
-        else
-        {
-            showLongTermComplianceDropdown = false;
-            showShortTermComplianceDropdown = false;
-        }
-    }
-
-    private void ToggleLongTermComplianceDropdown()
-    {
-        showLongTermComplianceDropdown = !showLongTermComplianceDropdown;
-
-        if (showLongTermComplianceDropdown)
-        {
-            showShortTermComplianceDropdown = false;
-        }
-    }
-
-    private void ToggleShortTermComplianceDropdown()
-    {
-        showShortTermComplianceDropdown = !showShortTermComplianceDropdown;
-
-        if (showShortTermComplianceDropdown)
-        {
-            showLongTermComplianceDropdown = false;
-        }
     }
 
     private void ToggleExtendedAgeDropdown()
@@ -304,6 +336,26 @@
         }
     }
 
+    private void ToggleLongTermExtendedAgeDropdown()
+    {
+        showLongTermExtendedAgeDropdown = !showLongTermExtendedAgeDropdown;
+
+        if (showLongTermExtendedAgeDropdown)
+        {
+            showShortTermExtendedAgeDropdown = false; // Close Short Term if Long Term is opened
+        }
+    }
+
+    private void ToggleShortTermExtendedAgeDropdown()
+    {
+        showShortTermExtendedAgeDropdown = !showShortTermExtendedAgeDropdown;
+
+        if (showShortTermExtendedAgeDropdown)
+        {
+            showLongTermExtendedAgeDropdown = false; // Close Long Term if Short Term is opened
+        }
+    }
+
     private void ToggleUsersDropdown()
     {
         showUsersDropdown = !showUsersDropdown;
@@ -315,16 +367,17 @@
             showExtendedAgeDropdown = false;
         }
     }
+
     private void CloseAllMenus()
     {
         showLoansDropdown = false;
         showLongTermDropdown = false;
         showShortTermDropdown = false;
         showComplianceDropdown = false;
-        showLongTermComplianceDropdown = false;
-        showShortTermComplianceDropdown = false;
         showExtendedAgeDropdown = false;
         showUsersDropdown = false;
+        showLongTermExtendedAgeDropdown = false;
+        showShortTermExtendedAgeDropdown = false;
     }
 
     private void ShowLogoutPopup() => showLogoutPopup = true;
