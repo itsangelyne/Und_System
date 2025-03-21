@@ -20,13 +20,13 @@ hr {
     max-width: 100%;
 }
 
-#loginbtn, #resetbtn, #lostpassbtn, #aspbtn, #cglbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn {
+#loginbtn, #resetbtn, #lostpassbtn, #aspbtn, #cglbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn, .btn-outline-success {
     border-color: #326f32;
     color: #326f32;
     transition: all 0.3s ease;
 }
 
-    #loginbtn:hover, #lostpassbtn:hover, #resetbtn:hover, #aspbtn:hover, #cglbtn:hover, #gyrtpbtn:hover, #mrpbtn:hover, #spbtn:hover, #dpbtn:hover {
+    #loginbtn:hover, #lostpassbtn:hover, #resetbtn:hover, #aspbtn:hover, #cglbtn:hover, #gyrtpbtn:hover, #mrpbtn:hover, #spbtn:hover, #dpbtn:hover, .btn-outline-success:hover{
         background-color: #326f32;
         border-color: #326f32;
         color: #ffff;

@@ -49,86 +49,44 @@
 			<table class="table table-bordered">
 				<thead class="text-white" style="background-color: #5d835c;">
 					<tr>
-						<th class="text-center">Release Date</th>
-						<th class="text-center">Total Applications</th>
+						<th class="text-center">Last Name</th>
+						<th class="text-center">First Name</th>
+						<th class="text-center">Middle Name</th>
+						<th class="text-center">Date of Birth</th>
+						<th class="text-center">Effectivity</th>
+						<th class="text-center">Termination</th>
+						<th class="text-center">Status</th>
 						<th class="text-center">Action</th>
 					</tr>
 				</thead>
 				<tbody>
-					@if (releaseList != null && releaseList.Count > 0)
+					@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
 					{
-						foreach (var item in releaseList)
+						foreach (var detail in insuredDetailsList)
 						{
+							var insured = detail.Insured;
+							var coverage = detail.Coverage;
+							var undStatus = detail.UndStatus;
+
 							<tr>
-								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
-								<td class="text-center fw-bold">@item.Total_Application</td>
+								<td class="text-center">@insured?.Last_Name</td>
+								<td class="text-center">@insured?.First_Name</td>
+								<td class="text-center">@insured?.Middle_Name</td>
+								<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
+								<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
+								<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
+								<td class="text-center">@undStatus?.Und_Status</td>
 								<td class="text-center">
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
-										@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
-									</button>
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">Underwrite</button>
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
 								</td>
 							</tr>
-
-							@if (expandedRowId == item.ID_CB)
-							{
-								<tr>
-									<td colspan="3">
-										<div class="table-responsive">
-											<table class="table table-bordered">
-												<thead class="text-white" style="background-color: #5d835c;">
-													<tr>
-														<th class="text-center">Last Name</th>
-														<th class="text-center">First Name</th>
-														<th class="text-center">Middle Name</th>
-														<th class="text-center">Date of Birth</th>
-														<th class="text-center">Effectivity</th>
-														<th class="text-center">Termination</th>
-														<th class="text-center">Status</th>
-														<th class="text-center">Action</th>
-													</tr>
-												</thead>
-												<tbody>
-													@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
-													{
-														foreach (var detail in insuredDetailsList)
-														{
-															var insured = detail.Insured;
-															var coverage = detail.Coverage;
-															var undStatus = detail.UndStatus;
-
-															<tr>
-																<td class="text-center">@insured?.Last_Name</td>
-																<td class="text-center">@insured?.First_Name</td>
-																<td class="text-center">@insured?.Middle_Name</td>
-																<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
-																<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
-																<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
-																<td class="text-center">@undStatus?.Und_Status</td>
-																<td class="text-center">
-																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">View Details</button>
-																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
-																</td>
-															</tr>
-														}
-													}
-													else
-													{
-														<tr>
-															<td colspan="8" class="text-center">No insured details available</td>
-														</tr>
-													}
-												</tbody>
-											</table>
-										</div>
-									</td>
-								</tr>
-							}
 						}
 					}
 					else
 					{
 						<tr>
-							<td colspan="3" class="text-center">No data available</td>
+							<td colspan="8" class="text-center">No insured details available</td>
 						</tr>
 					}
 				</tbody>
@@ -175,12 +133,8 @@
 												<input type="text" class="form-control" id="bankAddress" value="@policyHolder?.Bank_Address" readonly />
 											</div>
 											<div class="col-md-4 mb-3">
-												<label for="dbcr" class="form-label">DB/CR</label>
-												<input type="number" class="form-control" id="dbcr" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
 												<label for="ORDate" class="form-label">OR Date</label>
-												<input type="date" class="form-control" id="ORDate" readonly />
+												<input type="number" class="form-control" id="ORDate" readonly />
 											</div>
 											<div class="col-md-4 mb-3">
 												<label for="ORNumber" class="form-label">OR Number</label>
@@ -193,28 +147,28 @@
 										<div class="row">
 											<div class="col-md-4 mb-3">
 												<label for="dob" class="form-label">Date of Birth</label>
-												<input type="date" class="form-control" id="dob" @bind="selectedInsured.Date_Of_Birth" readonly="@(!isEditing)" />
+												<input type="date" class="form-control" id="dob" @bind="selectedInsured.Date_Of_Birth" readonly="@(!isRemarksEditable)" />
 											</div>
 											<div class="col-md-1 mb-3">
 												<label for="age" class="form-label">Age</label>
-												<input type="number" class="form-control" id="age" @bind="selectedInsured.Age" readonly="@(!isEditing)" />
+												<input type="number" class="form-control" id="age" @bind="selectedInsured.Age" readonly />
 											</div>
 											<div class="row">
 												<div class="col-md-4 mb-3">
 													<label for="lastName" class="form-label">Last Name</label>
-													<input type="text" class="form-control" id="lastName" @bind="selectedInsured.Last_Name" readonly="@(!isEditing)" />
+													<input type="text" class="form-control" id="lastName" @bind="selectedInsured.Last_Name" readonly="@(!isRemarksEditable)" />
 												</div>
 												<div class="col-md-4 mb-3">
 													<label for="firstName" class="form-label">First Name</label>
-													<input type="text" class="form-control" id="firstName" @bind="selectedInsured.First_Name" readonly="@(!isEditing)" />
+													<input type="text" class="form-control" id="firstName" @bind="selectedInsured.First_Name" readonly="@(!isRemarksEditable)" />
 												</div>
 												<div class="col-md-3 mb-3">
 													<label for="middleName" class="form-label">Middle Name</label>
-													<input type="text" class="form-control" id="middleName" @bind="selectedInsured.Middle_Name" readonly="@(!isEditing)" />
+													<input type="text" class="form-control" id="middleName" @bind="selectedInsured.Middle_Name" readonly="@(!isRemarksEditable)" />
 												</div>
 												<div class="col-sm-1 mb-3">
 													<label for="suffix" class="form-label">Suffix</label>
-													<input type="text" class="form-control" id="suffix" @bind="selectedInsured.Suffix" readonly="@(!isEditing)" />
+													<input type="text" class="form-control" id="suffix" @bind="selectedInsured.Suffix" readonly="@(!isRemarksEditable)" />
 												</div>
 											</div>
 										</div>
@@ -249,9 +203,8 @@
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-md-4 mb-3">
+										<div class="col-md-5 mb-3">
 											<div class="border rounded p-3 mb-3">
-
 												<div class="col-md mb-3">
 													<label for="DCHS" class="form-label">DCHS Number</label>
 													<input type="text" class="form-control" id="DCHS" value="@selectedInsured?.DCHS" readonly />
@@ -260,10 +213,9 @@
 													<label for="prem" class="form-label">Premium</label>
 													<input type="number" class="form-control" id="prem" @bind="selectedCoverage.Premium" readonly />
 												</div>
-
 												<div class="col-md mb-3">
-													<label for="Class" class="form-label">Rider</label>
-													<input type="text" class="form-control" id="Class" value="@selectedCoverage.Rider" readonly />
+													<label for="rider" class="form-label">Rider</label>
+													<input type="text" class="form-control" id="rider" value="@selectedCoverage.Rider" readonly />
 												</div>
 											</div>
 										</div>
@@ -273,18 +225,14 @@
 													<div class="row">
 														<div class="col-md mb-3">
 															<label for="status" class="form-label">Underwriting Status</label>
-															<input type="text" class="form-control" id="Class" value="@status?.Und_Status" readonly />
-														</div>
-														<div class="col-md mb-3">
-															<label for="psdstatus" class="form-label">PSD Status</label>
-															<input type="text" class="form-control" id="Class" value="@status?.PSD_Status" readonly />
+															<input type="text" class="form-control" id="status" value="@status.Und_Status" readonly />
 														</div>
 													</div>
 												</div>
 												<div class="col-md mb-3">
 													<div class="col-md mb-3">
 														<label for="remarks" class="form-label">Remarks</label>
-														<textarea class="form-control" rows="4" cols="50" style="resize:none;" id="remarks" @bind="status.Remarks" readonly="@(!isRemarksEditable)"></textarea>
+														<textarea class="form-control" rows="4" cols="50" style="resize:none;" id="remarks" @bind="status.Remarks" readonly></textarea>
 													</div>
 												</div>
 											</div>
@@ -324,7 +272,6 @@
 															<td colspan="3" class="text-center">No Illness Declared</td>
 														</tr>
 													}
-
 												</tbody>
 											</table>
 										</div>
@@ -364,22 +311,14 @@
 															<td>
 																<input type="text" class="form-control" value="@question.NO" readonly style="width: 80px; text-align: center;" />
 															</td>
-															<td style="word-wrap: break-word; white-space: normal;" class="fw-bolder">
-																@if (question.InputType == "text")
+															<td>
+																@if (question.InputType == "textarea")
 																{
-																	<input type="text" class="form-control" readonly style="height: 100px; resize: none;">
-
-																	@question.Question
-																}
-																else if (question.InputType == "select")
-																{
-																	<select class="form-control" disabled>
-																		<option>@question.Question</option>
-																	</select>
+																	<textarea style="word-wrap: break-word; white-space: normal;" class="fw-bolder" readonly>@question.Question</textarea>
 																}
 																else if (question.InputType == "date")
 																{
-																	<input type="date" class="form-control" value="@question.Question" readonly />
+																	<textarea style="word-wrap: break-word; white-space: normal;" class="form-control fw-bold" value="@question.Question" readonly />
 																}
 																else
 																{
@@ -493,7 +432,7 @@
 												<input type="text" class="form-control" id="business" value="@selectedInsured?.Address_Of_Business_or_Employer" readonly />
 											</div>
 											<div class="col-md-4 mb-3">
-												<label for="occupation" class="form-label">Occupation</label>
+												<label for="occupation" class="form-label">Occu pation</label>
 												<input type="text" class="form-control" id="occupation" value="@selectedInsured?.Occupation_And_Livelihood" readonly />
 											</div>
 										</div>
@@ -530,37 +469,20 @@
 													else
 													{
 														<tr>
-															<td colspan="8" class="text-center">No Beneficiaries Added</td>
+															<td colspan="3" class="text-center">No Beneficiaries Added</td>
 														</tr>
 													}
-
 												</tbody>
 											</table>
 										</div>
 									</div>
 								</div>
-
 							</form>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					@if (isRemarksEditable)
-					{
-						<button type="button" class="btn btn-primary" @onclick="ShowSaveRemarksConfirmation">Save Changes</button>
-					}
-					else
-					{
-						<button type="button" class="btn btn-outline-primary" @onclick="ToggleRemarksEditable">Underwriting Update</button>
-					}
-					@if (isEditing)
-					{
-						<button type="button" class="btn btn-outline-primary" @onclick="ShowSaveDetailsConfirmation">Save Details</button>
-					}
-					else
-					{
-						<button type="button" class="btn btn-outline-dark" @onclick="ToggleEdit">Edit Info</button>
-					}
+					<button type="button" class="btn btn-outline-success" @onclick="ShowSaveRemarksConfirmation">@((isRemarksEditable) ? "Save Changes" : "Update")</button>
 					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
 				</div>
 			</div>
@@ -581,10 +503,6 @@
 					@if (currentAction == "UpdateRemarks")
 					{
 						<p>Are you sure you want to save these changes?</p>
-					}
-					else if (currentAction == "SaveDetails")
-					{
-						<p>Are you sure you want to update these details for <b>@selectedInsured?.First_Name @selectedInsured?.Last_Name</b>?</p>
 					}
 				</div>
 				<div class="modal-footer">
@@ -846,51 +764,48 @@
 		}
 		return loanHistories;
 	}
-	private void ToggleEdit()
-	{
-		isEditing = !isEditing;
-	}
-
+	//For Underwriting Updates
 	private void ToggleRemarksEditable()
 	{
 		isRemarksEditable = !isRemarksEditable;
 	}
-	private void ShowSaveDetailsConfirmation()
-	{
-		currentAction = "SaveDetails";
-		isConfirmationVisible = true;
-	}
 
+	//To Trigger Confirm Modal for Underwriting Update
 	private void ShowSaveRemarksConfirmation()
 	{
-		currentAction = "UpdateRemarks";
-		isConfirmationVisible = true;
+		if (isRemarksEditable)
+		{
+			currentAction = "UpdateRemarks";
+			isConfirmationVisible = true;
+		}
+		else
+		{
+			ToggleRemarksEditable();
+		}
 	}
 
+	//To execute the updates
 	private async Task ConfirmSaveChanges()
 	{
-		if (currentAction == "UpdateRemarks" && status != null)
-		{
-			await CGLUndStatusService.UpdateStatusAsync(status);
-		}
-		else if (currentAction == "SaveDetails" && selectedInsured != null)
+		if (currentAction == "UpdateRemarks")
 		{
 			await CGLInsuredService.UpdateInsuredAsync(selectedInsured);
 		}
 		isConfirmationVisible = false;
-		isEditing = false;
 		isRemarksEditable = false;
 		await LoadCreditDebitData();
 	}
+
+	//Closing of Modals thru Close Button and 'X' Button
 	private void CloseModal()
 	{
 		status = null;
 		selectedInsured = null;
 		selectedCoverage = null;
 
-		isEditing = false;
-		isModalVisible = false;
-		isRemarksEditable = false;
-		showLoanHistoryModal = false;
+		isModalVisible = false; //Close View Details Modal
+		isConfirmationVisible = false;  //Close Confirmation Modal
+		isRemarksEditable = false; //Close the Editable Fields for Underwriting Update
+		showLoanHistoryModal = false; //Close Loan History Modal
 	}
 }

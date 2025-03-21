@@ -26,8 +26,9 @@
 	<h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
 	<div class="card-body">
 		<div class="row justify-content-evenly">
-			<div class="col-md-4 mb-3">
-				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
+			<div class="col-md-4 mb-3 d-flex mb-3 align-items-center">
+				<label for="searchbar" class="form-label me-2 fw-bold mb-0">Search:</label>
+				<input type="text" class="form-control" placeholder="Search" id="searchbar" @bind="searchText" @bind:event="oninput" />
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
 				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
@@ -69,29 +70,29 @@
 						foreach (var item in releaseList)
 						{
 							<tr>
-								<td class="text-center">
+								<td class="text-center align-content-center">
 									<i class="fa @(expandedRowId_Row == item.ID_CB ? "fa-chevron-up" : "fa-chevron-down") cursor-pointer"
-									style="cursor:pointer;"
-									@onclick="() => ToggleRow(item.ID_CB)">
+									   style="cursor:pointer;"
+									   @onclick="() => ToggleRow(item.ID_CB)">
 									</i>
 								</td>
-								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
-								<td class="text-center fw-bold">@item.Total_Application</td>
-								<td class="text-center fw-bold">0</td>
-								<td class="text-center fw-bold">@item.Total_Application</td>
-								<td class="text-center">
-									<button class="btn btn-outline-success" @onclick="() => ToggleParticulars(item.ID_CB)">
-										@(expandedRowId_Particulars == item.ID_CB ? "Hide Particulars" : "View Particulars")
+								<td class="text-center fw-bold align-content-center">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
+								<td class="text-center fw-bold align-content-center">@item.Total_Application</td>
+								<td class="text-center fw-bold align-content-center">0</td>
+								<td class="text-center fw-bold align-content-center">@item.Total_Application</td>
+								<td class="text-center align-content-center">
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewParticulars(item.ID_CB)">
+										View
 									</button>
 
 								</td>
-								<td class="text-center">
-									<button class="btn btn-outline-success" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
-										@(expandedRowId_Applications == item.ID_CB ? "Hide Applications" : "View Applications")
+								<td class="text-center align-content-center">
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
+										@(expandedRowId_Applications == item.ID_CB ? "Hide" : "View")
 									</button>
 								</td>
-								<td class="text-center">
-									<button class="btn btn-outline-success" @onclick="() => OpenReceipt(item.ID_CB)">
+								<td class="text-center align-content-center">
+									<button class="btn btn-outline-success btn-sm" @onclick="() => OpenReceipt(item.ID_CB)">
 										Receipt
 									</button>
 								</td>
@@ -129,51 +130,13 @@
 								</tr>
 
 							}
-							@if (expandedRowId_Particulars == item.ID_CB)
-							{
-								<tr>
-									<td colspan="8" style="background-color: #f8f8f8;">
-										<div class="table-responsive">
-											<table class="table">
-												<thead class="text-white" style="background-color: #5d835c;">
-													<tr>
-														<th class="text-center">Particulars</th>
-														<th class="text-center">Amount</th>
-													</tr>
-												</thead>
-												<tbody>
-													@if (particularsList != null && particularsList.Count > 0)
-													{
-														@foreach (var particular in particularsList)
-														{
-															<tr>
-																<td class="text-center">
-																	<input type="text" class="form-control text-center" value="@particular.Particulars" />
-																</td>
-																<td class="text-center">
-																	<input type="text" class="form-control text-center" value="@particular.Amount?.ToString("C", new System.Globalization.CultureInfo("fil-PH"))" />
-																</td>
-															</tr>
-														}
-													}
-													else
-													{
-														<tr>
-															<td colspan="3" class="text-center">No particulars found.</td>
-														</tr>
-													}
-												</tbody>
-											</table>
-										</div>
-									</td>
-								</tr>
-							}
+
 							@if (expandedRowId_Applications == item.ID_CB)
 							{
 								<tr>
 									<td colspan="8" style="background-color: #f8f8f8;">
 										<div class="table-responsive mt-2">
-											<div class="card-header text-white fw-bold p-3" style="background-color: #5d835c;">REGULAR PENDING APPLICATIONS</div>
+											<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">REGULAR PENDING APPLICATIONS</div>
 											<div class="card-body bg-light p-2">
 
 												<table class="table table-bordered">
@@ -182,10 +145,10 @@
 															<th class="text-center">Last Name</th>
 															<th class="text-center">First Name</th>
 															<th class="text-center">Middle Name</th>
-															<th class="text-center">Date of Birth</th>
-															<th class="text-center">Effectivity</th>
+															<th class="text-center">D.O.B</th>
+															<th class="text-center">Effective</th>
 															<th class="text-center">Termination</th>
-															<th class="text-center">Status</th>
+															@* <th class="text-center">Status</th> *@
 															<th class="text-center">Action</th>
 														</tr>
 													</thead>
@@ -205,10 +168,11 @@
 																	<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
 																	<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
 																	<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
-																	<td class="text-center">@undStatus?.Und_Status</td>
+																	@*<td class="text-center">@undStatus?.Und_Status</td> *@
 																	<td class="text-center">
-																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">View Details</button>
-																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">Underwrite</button>
+																		@* <button class="btn btn-outline-success btn-sm">View ID</button> *@
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
 																	</td>
 																</tr>
 															}
@@ -228,8 +192,21 @@
 								<tr>
 									<td colspan="8" style="background-color: #f8f8f8;">
 										<div class="table-responsive mt-2">
-											<div class="card-header text-white fw-bold p-3" style="background-color: #5d835c;">EXTENDED AGE PENDING APPLICATIONS</div>
+											<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">EXTENDED AGE PENDING APPLICATIONS</div>
 											<div class="card-body bg-light p-2">
+												<table class="table table-bordered">
+													<thead class="text-white" style="background-color: #5d835c;">
+														<tr>
+															<th class="text-center">Last Name</th>
+															<th class="text-center">First Name</th>
+															<th class="text-center">Middle Name</th>
+															<th class="text-center">Date of Birth</th>
+															<th class="text-center">Effectivity</th>
+															<th class="text-center">Termination</th>
+															<th class="text-center">Status</th>
+														</tr>
+													</thead>
+												</table>
 											</div>
 										</div>
 									</td>
@@ -237,8 +214,22 @@
 								<tr>
 									<td colspan="8" style="background-color: #f8f8f8;">
 										<div class="table-responsive mt-2">
-											<div class="card-header text-white fw-bold p-3" style="background-color: #5d835c;">CHECKED APPLICATIONS</div>
+											<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">CHECKED APPLICATIONS</div>
 											<div class="card-body bg-light p-2">
+												<table class="table table-bordered">
+													<thead class="text-white" style="background-color: #5d835c;">
+														<tr>
+															<th class="text-center">Last Name</th>
+															<th class="text-center">First Name</th>
+															<th class="text-center">Middle Name</th>
+															<th class="text-center">Date of Birth</th>
+															<th class="text-center">Effectivity</th>
+															<th class="text-center">Termination</th>
+															<th class="text-center">Status</th>
+															<th class="text-center">Action</th>
+														</tr>
+													</thead>
+												</table>
 											</div>
 										</div>
 									</td>
@@ -258,6 +249,7 @@
 	</div>
 </div>
 
+<!--To Underwrite Applications Modal-->
 @if (isModalVisible)
 {
 	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
@@ -601,7 +593,7 @@
 												<input type="text" class="form-control" id="business" value="@selectedInsured?.Address_Of_Business_or_Employer" readonly />
 											</div>
 											<div class="col-md-4 mb-3">
-												<label for="occupation" class="form-label">Occupation</label>
+												<label for="occupation" class="form-label">Occu pation</label>
 												<input type="text" class="form-control" id="occupation" value="@selectedInsured?.Occupation_And_Livelihood" readonly />
 											</div>
 										</div>
@@ -684,6 +676,56 @@
 	</div>
 }
 
+<!--Pariculars Modal-->
+@if (isParticularModal)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Particulars</h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table rounded-1">
+							<thead class="text-white" style="background-color: #5d835c;">
+								<tr>
+									<th class="text-center">Particulars</th>
+									<th class="text-center">Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (particularsList != null && particularsList.Count > 0)
+								{
+									@foreach (var particular in particularsList)
+									{
+										<tr>
+											<td class="text-center">
+												<input type="text" class="form-control text-center" value="@particular.Particulars" />
+											</td>
+											<td class="text-center">
+												<input type="text" class="form-control text-center" value="@particular.Amount?.ToString("C", new System.Globalization.CultureInfo("fil-PH"))" />
+											</td>
+										</tr>
+									}
+								}
+								else
+								{
+									<tr>
+										<td colspan="3" class="text-center">No particulars found.</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+<!--Loan History Modal-->
 @if (showLoanHistoryModal)
 {
 	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
@@ -733,8 +775,8 @@
 		</div>
 	</div>
 }
-@code {
 
+@code {
 	public class InsuredDetailView
 	{
 		public CGLInsured? Insured { get; set; }
@@ -758,6 +800,8 @@
 	private int? expandedRowId_Applications = null;
 	private int? expandedRowId_Row = null;
 	private int? expandedRowId_Particulars = null;
+	private bool isModalVisible = false;
+	private bool isParticularModal = false;
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
@@ -772,7 +816,7 @@
 	private List<CGL_Beneficiary> beneficiaries = new();
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
 
-	private bool isModalVisible = false;
+
 	private CGLInsured? selectedInsured;
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
@@ -833,7 +877,6 @@
 		{
 			expandedRowId_Row = idCB;
 			expandedRowId_Applications = null;
-			expandedRowId_Particulars = null;
 			await LoadInsuredDetailsForRow(idCB);
 		}
 
@@ -862,35 +905,18 @@
 		.ToList();
 	}
 
-	//For View Particulars
-	private async Task ToggleParticulars(int idCB)
-	{
-		if (expandedRowId_Particulars == idCB)
-		{
-			expandedRowId_Particulars = null;
-			particularsList.Clear();
-		}
-		else
-		{
-			expandedRowId_Particulars = idCB;
-			expandedRowId_Row = null;
-			expandedRowId_Applications = null;
-			await LoadParticulars(idCB);
-		}
-		StateHasChanged();
-	}
-
-	private async Task LoadParticulars(int idCB)
+	private async Task ViewParticulars(int idCB)
 	{
 		var result = await CGLParticularsService.GetParticularsByCreditDebitIdAsync(idCB);
 		if (result == null)
 		{
-			particularsList = new List<CGL_Particulars>(); 
+			particularsList = new List<CGL_Particulars>();
 		}
 		else
 		{
 			particularsList = result;
 		}
+		isParticularModal = true;
 	}
 
 	//For View Applications
@@ -904,7 +930,6 @@
 		{
 			expandedRowId_Applications = idCB;
 			expandedRowId_Row = null;
-			expandedRowId_Particulars = null;
 			await LoadInsuredDetails(dchsFrom, dchsTo);
 		}
 
@@ -975,7 +1000,7 @@
 		}
 	}
 
-	//Loan History Modal for Cleint Details across all Banks 
+	//Loan History Modal for Cleint Details across all Banks
 	private async Task ViewLoanHistory(CGLInsured insured)
 	{
 		loanHistoryList = await FetchLoanHistory(insured.Last_Name, insured.First_Name, insured.Middle_Name, insured.Date_Of_Birth, insured.ID_Insured);
@@ -1033,6 +1058,17 @@
 		}
 	}
 
+	// For Valid ID Displaying
+	// private async Task DisplayID(int id)
+	// {
+	// 	var insuredRecord = await CGLInsuredService.GetInsuredByIdAsync(id);
+	// 	if (insuredRecord != null && !string.IsNullOrEmpty(insuredRecord.Image))
+	// 	{
+	// 		var imageUrl = $"{NavigationManager.BaseUri}validid/{insuredRecord.Image}";
+	// 		await JS.InvokeVoidAsync("open", imageUrl, "_blank");
+	// 	}
+	// }
+
 	//For Underwriting Updates
 	private void ToggleRemarksEditable()
 	{
@@ -1077,5 +1113,6 @@
 		isConfirmationVisible = false;  //Close Confirmation Modal
 		isRemarksEditable = false; //Close the Editable Fields for Underwriting Update
 		showLoanHistoryModal = false; //Close Loan History Modal
+		isParticularModal = false;
 	}
 }
