@@ -72,8 +72,8 @@
 							<tr>
 								<td class="text-center align-content-center">
 									<i class="fa @(expandedRowId_Row == item.ID_CB ? "fa-chevron-up" : "fa-chevron-down") cursor-pointer"
-									   style="cursor:pointer;"
-									   @onclick="() => ToggleRow(item.ID_CB)">
+									style="cursor:pointer;"
+									@onclick="() => ToggleRow(item.ID_CB)">
 									</i>
 								</td>
 								<td class="text-center fw-bold align-content-center">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
@@ -148,7 +148,6 @@
 															<th class="text-center">D.O.B</th>
 															<th class="text-center">Effective</th>
 															<th class="text-center">Termination</th>
-															@* <th class="text-center">Status</th> *@
 															<th class="text-center">Action</th>
 														</tr>
 													</thead>
@@ -168,10 +167,9 @@
 																	<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
 																	<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
 																	<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
-																	@*<td class="text-center">@undStatus?.Und_Status</td> *@
 																	<td class="text-center">
 																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">Underwrite</button>
-																		@* <button class="btn btn-outline-success btn-sm">View ID</button> *@
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewIDInModal(insured)">View ID</button>
 																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
 																	</td>
 																</tr>
@@ -725,6 +723,41 @@
 	</div>
 }
 
+<!--Receipt Modal-->
+@if (isReceiptlVisible)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Receipt: </h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body text-center">
+					<img src="@imageUrl" class="img-fluid" alt="ID Image" />
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+<!--Valid ID Modal-->
+@if (isImageModalVisible)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Receipt </h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body text-center">
+					<img src="@imageUrl" class="img-fluid" alt="Receipt" />
+				</div>
+			</div>
+		</div>
+	</div>
+}
 <!--Loan History Modal-->
 @if (showLoanHistoryModal)
 {
@@ -797,6 +830,7 @@
 
 	private int? selectedYear;
 	private string? currentAction;
+	private string imageUrl;
 	private int? expandedRowId_Applications = null;
 	private int? expandedRowId_Row = null;
 	private int? expandedRowId_Particulars = null;
@@ -806,6 +840,8 @@
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
 	private string searchText = string.Empty;
+	private bool isImageModalVisible = false;
+	private bool isReceiptlVisible = false;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
 	private List<CGL_Particulars> particularsList = new();
@@ -1053,21 +1089,21 @@
 		var creditDebitRecord = await CGLCreditDebitServices.GetCreditDebitByIdAsync(id);
 		if (creditDebitRecord != null && !string.IsNullOrEmpty(creditDebitRecord.Receipt))
 		{
-			var imageUrl = $"{NavigationManager.BaseUri}receipts/{creditDebitRecord.Receipt}";
-			await JS.InvokeVoidAsync("open", imageUrl, "_blank");
+			imageUrl = $"{NavigationManager.BaseUri}receipts/{creditDebitRecord.Receipt}";
+			isReceiptlVisible = true;
 		}
 	}
 
 	// For Valid ID Displaying
-	// private async Task DisplayID(int id)
-	// {
-	// 	var insuredRecord = await CGLInsuredService.GetInsuredByIdAsync(id);
-	// 	if (insuredRecord != null && !string.IsNullOrEmpty(insuredRecord.Image))
-	// 	{
-	// 		var imageUrl = $"{NavigationManager.BaseUri}validid/{insuredRecord.Image}";
-	// 		await JS.InvokeVoidAsync("open", imageUrl, "_blank");
-	// 	}
-	// }
+	private async Task ViewIDInModal(CGLInsured insured)
+	{
+		var insuredRecord = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
+		if (insuredRecord != null && !string.IsNullOrEmpty(insuredRecord.Image))
+		{
+			imageUrl = $"{NavigationManager.BaseUri}validid/{insuredRecord.Image}";
+			isImageModalVisible = true;
+		}
+	}
 
 	//For Underwriting Updates
 	private void ToggleRemarksEditable()
@@ -1114,5 +1150,7 @@
 		isRemarksEditable = false; //Close the Editable Fields for Underwriting Update
 		showLoanHistoryModal = false; //Close Loan History Modal
 		isParticularModal = false;
+		isImageModalVisible = false;
+		isReceiptlVisible = false;
 	}
 }
