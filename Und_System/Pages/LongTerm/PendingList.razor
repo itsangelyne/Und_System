@@ -4,7 +4,9 @@
 @using Und_System.Data;
 @using Und_System.Services;
 @inject ApplicationDbContext _context
+@inject NavigationManager NavigationManager
 @inject CGLInsuredService CGLInsuredService
+@inject CGLParticularsService CGLParticularsService
 @inject CGLPolicyHolderServices CGLPolicyHolderServices
 @inject StateService StateService
 @inject CGLCreditDebitServices CGLCreditDebitServices
@@ -14,6 +16,8 @@
 @inject CGLHealthQuestionsService CGLHealthQuestionsService
 @inject CGLHealthAnswerService CGLHealthAnswerService
 @inject CGLBeneficiaryService CGLBeneficiaryService
+@inject IJSRuntime JS
+
 
 <h1><b>PENDING APPLICATIONS</b></h1>
 <hr />
@@ -22,8 +26,9 @@
 	<h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
 	<div class="card-body">
 		<div class="row justify-content-evenly">
-			<div class="col-md-4 mb-3">
-				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
+			<div class="col-md-4 mb-3 d-flex mb-3 align-items-center">
+				<label for="searchbar" class="form-label me-2 fw-bold mb-0">Search:</label>
+				<input type="text" class="form-control" placeholder="Search" id="searchbar" @bind="searchText" @bind:event="oninput" />
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
 				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
@@ -49,89 +54,243 @@
 			<table class="table table-bordered">
 				<thead class="text-white" style="background-color: #5d835c;">
 					<tr>
+						<th></th>
 						<th class="text-center">Release Date</th>
+						<th class="text-center">Pending</th>
+						<th class="text-center">Checked</th>
 						<th class="text-center">Total Applications</th>
-						<th class="text-center">Action</th>
+						<th class="text-center">Particulars</th>
+						<th class="text-center">Applications</th>
+						<th class="text-center">Receipt</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if (releaseList != null && releaseList.Count > 0)
 					{
-						foreach (var item in releaseList) 
+						foreach (var item in releaseList)
 						{
 							<tr>
-								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
-								<td class="text-center fw-bold">@item.Total_Application</td>
-								<td class="text-center">
-									<div class="d-flex flex-wrap justify-content-center gap-2">
-										<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
-											@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
-										</button>
-											<button class="btn btn-outline-success btn-sm">Receive</button>
-									</div>
+								<td class="text-center align-content-center">
+									<i class="fa @(expandedRowId_Row == item.ID_CB ? "fa-chevron-up" : "fa-chevron-down") cursor-pointer"
+									style="cursor:pointer;"
+									@onclick="() => ToggleRow(item.ID_CB)">
+									</i>
 								</td>
-							</tr>
+								<td class="text-center fw-bold align-content-center">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
+								<td class="text-center fw-bold align-content-center">
+									@pendingApplicationsCount.GetValueOrDefault(item.ID_CB, 0)
+								</td>
 
-							@if (expandedRowId == item.ID_CB)
+								<td class="text-center fw-bold align-content-center">
+									@checkedApplicationsCount.GetValueOrDefault(item.ID_CB, 0)
+								</td>
+								<td class="text-center fw-bold align-content-center">@item.Total_Application</td>
+								<td class="text-center align-content-center">
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewParticulars(item.ID_CB)">
+										View
+									</button>
+
+								</td>
+								<td class="text-center align-content-center">
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
+										@(expandedRowId_Applications == item.ID_CB ? "Hide" : "View")
+									</button>
+								</td>
+								<td class="text-center align-content-center">
+									<button class="btn btn-outline-success btn-sm" @onclick="() => OpenReceipt(item.ID_CB)">
+										Receipt
+									</button>
+								</td>
+
+							</tr>
+							@if (expandedRowId_Row == item.ID_CB)
 							{
 								<tr>
-									<td colspan="3" style="background-color: #f8f8f8;">
-										<div class="table-responsive">
-											<table class="table">
-												<thead class="text-white" style="background-color: #5d835c;">
-													<tr>
-														<th class="text-center">Last Name</th>
-														<th class="text-center">First Name</th>
-														<th class="text-center">Middle Name</th>
-														<th class="text-center">Date of Birth</th>
-														<th class="text-center">Effectivity</th>
-														<th class="text-center">Termination</th>
-														<th class="text-center">Status</th>
-														<th class="text-center">Action</th>
-													</tr>
-												</thead>
-												<tbody>
+									<td colspan="8" class="p-3" style="background-color: #f8f8f8;">
+										<div class="card shadow-sm">
+
+											<div class="card-header text-white fw-bold p-3" style="background-color: #5d835c;">SUMMARY</div>
+											<div class="card-body bg-light p-4">
+												<div class="row">
+													<div class="col-md-6">
+														<p class="mb-2"><b class="text-dark">DCHS From:</b> @item.DCHS_From</p>
+														<p class="mb-2"><b class="text-dark">DCHS To :</b> @item.DCHS_To</p>
+														<p class="mb-2"><b class="text-dark">Period From:</b> @item.Period_From.ToString("yyyy-MM-dd")</p>
+														<p class="mb-2"><b class="text-dark">Period To:</b> @item.Period_To.ToString("yyyy-MM-dd")</p>
+													</div>
+													<div class="col-md-6">
+														<p class="mb-2"><b class="text-dark">Gross Pay:</b> <span class="text-success"> @item.Gross_Pay.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</span></p>
+														<p class="mb-2"><b class="text-dark">Net Pay:</b> <span class="text-success"> @item.Net_Pay.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</span></p>
+														<p class="mb-2">
+															<b class="text-dark">Total Coverage:</b> <span class="text-danger">
+																@item.Total_Coverage.ToString("C", new System.Globalization.CultureInfo("fil-PH"))
+															</span>
+														</p>
+														<p class="mb-2"><b class="text-dark">Submitted By:</b> @item.Submitted_By</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</td>
+								</tr>
+
+							}
+
+							@if (expandedRowId_Applications == item.ID_CB)
+							{
+								<tr>
+									<td colspan="8" style="background-color: #f8f8f8;">
+										<div class="table-responsive mt-2">
+											<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">REGULAR PENDING APPLICATIONS</div>
+											<div class="card-body bg-light p-2">
+
+												<table class="table table-bordered">
+													<thead class="text-white" style="background-color: #5d835c;">
+														<tr>
+															<th class="text-center">Last Name</th>
+															<th class="text-center">First Name</th>
+															<th class="text-center">Middle Name</th>
+															<th class="text-center">D.O.B</th>
+															<th class="text-center">Effective</th>
+															<th class="text-center">Termination</th>
+															<th class="text-center">Action</th>
+														</tr>
+													</thead>
+													<tbody>
 														@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
 														{
-															foreach (var detail in insuredDetailsList)
+															@foreach (var detail in insuredDetailsList)
 															{
 																var insured = detail.Insured;
 																var coverage = detail.Coverage;
-																var undStatus = detail.UndStatus; 
+																var undStatus = detail.UndStatus;
 
-															<tr>
-																<td class="text-center">@insured?.Last_Name</td>
-																<td class="text-center">@insured?.First_Name</td>
-																<td class="text-center">@insured?.Middle_Name</td>
-																<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
-																<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
-																<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
-																<td class="text-center">@undStatus?.Und_Status</td>
-																<td class="text-center">
-																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">View Details</button>
-																	<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
-																</td>
-															</tr>
+																<tr>
+																	<td class="text-center">@insured?.Last_Name</td>
+																	<td class="text-center">@insured?.First_Name</td>
+																	<td class="text-center">@insured?.Middle_Name</td>
+																	<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">Underwrite</button>
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewIDInModal(insured)">View ID</button>
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
+																	</td>
+																</tr>
 															}
 														}
 														else
 														{
-														<tr>
-															<td colspan="8" class="text-center">No insured details available</td>
-														</tr>
+															<tr>
+																<td colspan="8" class="text-center">No insured details available.</td>
+															</tr>
 														}
-												</tbody>
-											</table>
+													</tbody>
+												</table>
+											</div>
 										</div>
 									</td>
 								</tr>
+								@if (extendedAgeInsuredList != null && extendedAgeInsuredList.Count > 0)
+								{
+									<tr>
+										<td colspan="8" style="background-color: #f8f8f8;">
+											<div class="table-responsive mt-2">
+												<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">EXTENDED AGE PENDING APPLICATIONS</div>
+												<div class="card-body bg-light p-2">
+													<table class="table table-bordered">
+														<thead class="text-white" style="background-color: #5d835c;">
+															<tr>
+																<th class="text-center">Last Name</th>
+																<th class="text-center">First Name</th>
+																<th class="text-center">Middle Name</th>
+																<th class="text-center">Date of Birth</th>
+																<th class="text-center">Effectivity</th>
+																<th class="text-center">Termination</th>
+																<th class="text-center">Status</th>
+															</tr>
+														</thead>
+														<tbody>
+															@foreach (var detail in extendedAgeInsuredList)
+															{
+																var insured = detail.Insured;
+																var coverage = detail.Coverage;
+																var undStatus = detail.UndStatus;
+
+																<tr>
+																	<td class="text-center">@insured?.Last_Name</td>
+																	<td class="text-center">@insured?.First_Name</td>
+																	<td class="text-center">@insured?.Middle_Name</td>
+																	<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@undStatus?.Und_Status</td>
+																</tr>
+															}
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</td>
+									</tr>
+								}
+
+								@if (checkedInsuredList != null && checkedInsuredList.Count > 0)
+								{
+									<tr>
+										<td colspan="8" style="background-color: #f8f8f8;">
+											<div class="table-responsive mt-2">
+												<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">CHECKED APPLICATIONS</div>
+												<div class="card-body bg-light p-2">
+													<table class="table table-bordered">
+														<thead class="text-white" style="background-color: #5d835c;">
+															<tr>
+																<th class="text-center">Last Name</th>
+																<th class="text-center">First Name</th>
+																<th class="text-center">Middle Name</th>
+																<th class="text-center">Date of Birth</th>
+																<th class="text-center">Effectivity</th>
+																<th class="text-center">Termination</th>
+																<th class="text-center">Status</th>
+																<th class="text-center">Action</th>
+															</tr>
+														</thead>
+														<tbody>
+															@foreach (var detail in checkedInsuredList)
+															{
+																var insured = detail.Insured;
+																var coverage = detail.Coverage;
+																var undStatus = detail.UndStatus;
+
+																<tr>
+																	<td class="text-center">@insured?.Last_Name</td>
+																	<td class="text-center">@insured?.First_Name</td>
+																	<td class="text-center">@insured?.Middle_Name</td>
+																	<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@undStatus?.Und_Status</td>
+																	<td class="text-center">
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewIDInModal(insured)">View ID</button>
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
+																	</td>
+																</tr>
+															}
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</td>
+									</tr>
+								}
 							}
 						}
 					}
 					else
 					{
 						<tr>
-							<td colspan="3" class="text-center">No data available</td>
+							<td colspan="8" class="text-center">No data available</td>
 						</tr>
 					}
 				</tbody>
@@ -140,6 +299,7 @@
 	</div>
 </div>
 
+<!--To Underwrite Applications Modal-->
 @if (isModalVisible)
 {
 	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
@@ -178,12 +338,8 @@
 												<input type="text" class="form-control" id="bankAddress" value="@policyHolder?.Bank_Address" readonly />
 											</div>
 											<div class="col-md-4 mb-3">
-												<label for="dbcr" class="form-label">DB/CR</label>
-												<input type="number" class="form-control" id="dbcr" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
 												<label for="ORDate" class="form-label">OR Date</label>
-												<input type="date" class="form-control" id="ORDate" readonly />
+												<input type="number" class="form-control" id="ORDate" readonly />
 											</div>
 											<div class="col-md-4 mb-3">
 												<label for="ORNumber" class="form-label">OR Number</label>
@@ -196,7 +352,7 @@
 										<div class="row">
 											<div class="col-md-4 mb-3">
 												<label for="dob" class="form-label">Date of Birth</label>
-												<input type="date" class="form-control" id="dob" @bind="selectedInsured.Date_Of_Birth" readonly="@(!isEditing)" />
+												<input type="date" class="form-control" id="dob" @bind="selectedInsured.Date_Of_Birth" readonly="@(!isRemarksEditable)" />
 											</div>
 											<div class="col-md-1 mb-3">
 												<label for="age" class="form-label">Age</label>
@@ -205,19 +361,19 @@
 											<div class="row">
 												<div class="col-md-4 mb-3">
 													<label for="lastName" class="form-label">Last Name</label>
-													<input type="text" class="form-control" id="lastName" @bind="selectedInsured.Last_Name" readonly="@(!isEditing)" />
+													<input type="text" class="form-control" id="lastName" @bind="selectedInsured.Last_Name" readonly="@(!isRemarksEditable)" />
 												</div>
 												<div class="col-md-4 mb-3">
 													<label for="firstName" class="form-label">First Name</label>
-													<input type="text" class="form-control" id="firstName" @bind="selectedInsured.First_Name" readonly="@(!isEditing)" />
+													<input type="text" class="form-control" id="firstName" @bind="selectedInsured.First_Name" readonly="@(!isRemarksEditable)" />
 												</div>
 												<div class="col-md-3 mb-3">
 													<label for="middleName" class="form-label">Middle Name</label>
-													<input type="text" class="form-control" id="middleName" @bind="selectedInsured.Middle_Name" readonly="@(!isEditing)" />
+													<input type="text" class="form-control" id="middleName" @bind="selectedInsured.Middle_Name" readonly="@(!isRemarksEditable)" />
 												</div>
 												<div class="col-sm-1 mb-3">
 													<label for="suffix" class="form-label">Suffix</label>
-													<input type="text" class="form-control" id="suffix" @bind="selectedInsured.Suffix" readonly="@(!isEditing)" />
+													<input type="text" class="form-control" id="suffix" @bind="selectedInsured.Suffix" readonly="@(!isRemarksEditable)" />
 												</div>
 											</div>
 										</div>
@@ -252,9 +408,8 @@
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-md-4 mb-3">
+										<div class="col-md-5 mb-3">
 											<div class="border rounded p-3 mb-3">
-
 												<div class="col-md mb-3">
 													<label for="DCHS" class="form-label">DCHS Number</label>
 													<input type="text" class="form-control" id="DCHS" value="@selectedInsured?.DCHS" readonly />
@@ -263,7 +418,6 @@
 													<label for="prem" class="form-label">Premium</label>
 													<input type="number" class="form-control" id="prem" @bind="selectedCoverage.Premium" readonly />
 												</div>
-
 												<div class="col-md mb-3">
 													<label for="Class" class="form-label">Rider</label>
 													<input type="text" class="form-control" id="Class" value="@selectedCoverage.Rider" readonly />
@@ -278,19 +432,10 @@
 															<label for="status" class="form-label">Underwriting Status</label>
 															<select class="form-select" id="status" @bind-value="status.Und_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
 																<option disabled>Select Status</option>
-																<option value="Pending">Pending</option>
+																<option disabled value="Pending">Pending</option>
 																<option value="Approved">Approved</option>
-																<option value="Declined">Declined</option>
-																<option value="For Medical">For Medical</option>
-																<option value="Renewal">Renewal</option>
-															</select>
-														</div>
-														<div class="col-md mb-3">
-															<label for="psdstatus" class="form-label">PSD Status</label>
-															<select class="form-select" id="psdstatus" @bind-value="status.PSD_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
-																<option value="" disabled selected>Select Status</option>
-																<option value="Active">Active</option>
-																<option value="Inactive">Inactive</option>
+																<option value="Declined">For Refund</option>
+																<option value="Compliance">Compliance</option>
 															</select>
 														</div>
 													</div>
@@ -338,7 +483,6 @@
 															<td colspan="3" class="text-center">No Illness Declared</td>
 														</tr>
 													}
-
 												</tbody>
 											</table>
 										</div>
@@ -381,9 +525,7 @@
 															<td>
 																@if (question.InputType == "textarea")
 																{
-																	<textarea style="word-wrap: break-word; white-space: normal;" class="fw-bolder" readonly>
-
-																	@question.Question</textarea>
+																	<textarea style="word-wrap: break-word; white-space: normal;" class="fw-bolder" readonly>@question.Question</textarea>
 																}
 																else if (question.InputType == "date")
 																{
@@ -501,7 +643,7 @@
 												<input type="text" class="form-control" id="business" value="@selectedInsured?.Address_Of_Business_or_Employer" readonly />
 											</div>
 											<div class="col-md-4 mb-3">
-												<label for="occupation" class="form-label">Occupation</label>
+												<label for="occupation" class="form-label">Occu pation</label>
 												<input type="text" class="form-control" id="occupation" value="@selectedInsured?.Occupation_And_Livelihood" readonly />
 											</div>
 										</div>
@@ -538,43 +680,27 @@
 													else
 													{
 														<tr>
-															<td colspan="8" class="text-center">No Beneficiaries Added</td>
+															<td colspan="3" class="text-center">No Beneficiaries Added</td>
 														</tr>
 													}
-
 												</tbody>
 											</table>
 										</div>
 									</div>
 								</div>
-
 							</form>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					@if (isRemarksEditable)
-					{
-						<button type="button" class="btn btn-primary" @onclick="ShowSaveRemarksConfirmation">Save Changes</button>
-					}
-					else
-					{
-						<button type="button" class="btn btn-outline-primary" @onclick="ToggleRemarksEditable">Underwriting Update</button>
-					}
-					@if (isEditing)
-					{
-						<button type="button" class="btn btn-outline-primary" @onclick="ShowSaveDetailsConfirmation">Save Details</button>
-					}
-					else
-					{
-						<button type="button" class="btn btn-outline-dark" @onclick="ToggleEdit">Edit Info</button>
-					}
+					<button type="button" class="btn btn-outline-success" @onclick="ShowSaveRemarksConfirmation">@((isRemarksEditable) ? "Save Changes" : "Update")</button>
 					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
 }
+
 <!--Confirmation Modal-->
 @if (isConfirmationVisible)
 {
@@ -590,10 +716,6 @@
 					{
 						<p>Are you sure you want to save these changes?</p>
 					}
-					else if (currentAction == "SaveDetails")
-					{
-						<p>Are you sure you want to update these details for <b>@selectedInsured?.First_Name @selectedInsured?.Last_Name</b>?</p>
-					}
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Cancel</button>
@@ -604,10 +726,95 @@
 	</div>
 }
 
+<!--Pariculars Modal-->
+@if (isParticularModal)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Particulars</h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table rounded-1">
+							<thead class="text-white" style="background-color: #5d835c;">
+								<tr>
+									<th class="text-center">Particulars</th>
+									<th class="text-center">Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (particularsList != null && particularsList.Count > 0)
+								{
+									@foreach (var particular in particularsList)
+									{
+										<tr>
+											<td class="text-center">
+												<input type="text" class="form-control text-center" value="@particular.Particulars" />
+											</td>
+											<td class="text-center">
+												<input type="text" class="form-control text-center" value="@particular.Amount?.ToString("C", new System.Globalization.CultureInfo("fil-PH"))" />
+											</td>
+										</tr>
+									}
+								}
+								else
+								{
+									<tr>
+										<td colspan="3" class="text-center">No particulars found.</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+<!--Receipt Modal-->
+@if (isReceiptlVisible)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Receipt: </h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body text-center">
+					<img src="@imageUrl" class="img-fluid" alt="ID Image" />
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+<!--Valid ID Modal-->
+@if (isImageModalVisible)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Receipt </h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body text-center">
+					<img src="@imageUrl" class="img-fluid" alt="Receipt" />
+				</div>
+			</div>
+		</div>
+	</div>
+}
+<!--Loan History Modal-->
 @if (showLoanHistoryModal)
 {
 	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
-		<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Loan History</h5>
@@ -653,12 +860,14 @@
 		</div>
 	</div>
 }
+
 @code {
 	public class InsuredDetailView
 	{
 		public CGLInsured? Insured { get; set; }
 		public CGLCoverage? Coverage { get; set; }
 		public CGL_UndStatus? UndStatus { get; set; }
+		public CGL_Substandard_Rating? Illness { get; set; }
 	}
 
 	public class LoanHistory
@@ -674,26 +883,42 @@
 
 	private int? selectedYear;
 	private string? currentAction;
-	private bool isEditing = false;
-	private int? expandedRowId = null;
+	private string? imageUrl;
+	private string? selectedDCHSFrom;
+	private string? selectedDCHSTo;
+	private int? expandedRowId_Applications = null;
+	private int? expandedRowId_Row = null;
+	private int? expandedRowId_Particulars = null;
+	private bool isModalVisible = false;
+	private bool isParticularModal = false;
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
 	private string searchText = string.Empty;
+	private bool isImageModalVisible = false;
+	private bool isReceiptlVisible = false;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
+	private List<CGL_Particulars> particularsList = new();
 	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
 	private List<CGL_Substandard_Rating> substandardRatings = new();
 	private List<CGL_Health_Question> healthQuestions = new();
 	private List<CGL_Health_Answer> healthAnswers = new();
 	private List<CGL_Beneficiary> beneficiaries = new();
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
+	private List<InsuredDetailView> extendedAgeInsuredList = new();
+	private List<InsuredDetailView> checkedInsuredList = new();
 
-	private bool isModalVisible = false;
+
+
 	private CGLInsured? selectedInsured;
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
+
+	private Dictionary<int, int> checkedApplicationsCount = new();
+	private Dictionary<int, int> pendingApplicationsCount = new();
+
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -701,6 +926,8 @@
 		years = Enumerable.Range(2000, currentYear - 2000 + 1).ToList();
 		await LoadCreditDebitData();
 	}
+
+	//Display CreditDebit (Release Date)
 	private async Task LoadCreditDebitData()
 	{
 		int? selectedPolicyHolderIdNullable = StateService.SelectedBankId;
@@ -713,13 +940,51 @@
 			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
 			var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
 
-			releaseList = (from credit in allCreditDebits
-									join insured in allInsuredRecords on credit.DCHS_From equals insured.DCHS
-									join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
-									where credit.ID_Policy_Holder == selectedPolicyHolderId &&
-									insured.Type == "Long Term" &&
-									status.Und_Status == "Pending"
-									select credit).ToList();
+			releaseList = (
+				from credit in allCreditDebits
+				from insured in allInsuredRecords
+				join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+				where (credit.DCHS_From == insured.DCHS || credit.DCHS_To == insured.DCHS) &&
+					credit.ID_Policy_Holder == selectedPolicyHolderId &&
+					insured.Type == "Long Term" &&
+					status.Und_Status == "Pending" &&
+					status.ExtendedAge == "No"
+				select credit
+				).Distinct().ToList();
+
+			//Checked Applications (Approved, Compliance, For Refund)
+			checkedApplicationsCount = (
+				from credit in allCreditDebits
+				from insured in allInsuredRecords
+				join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+				where (credit.DCHS_From == insured.DCHS || credit.DCHS_To == insured.DCHS) &&
+							credit.ID_Policy_Holder == selectedPolicyHolderId &&
+							insured.Type == "Long Term" &&
+							(status.Und_Status == "Approved" || status.Und_Status == "For Refund" || status.Und_Status == "Compliance")
+				group status by credit.ID_CB into g
+				select new
+				{
+					ID_CB = g.Key,
+					CheckedCount = g.Count()
+				}
+			).ToDictionary(x => x.ID_CB, x => x.CheckedCount);
+
+			//Pending Applications
+			pendingApplicationsCount = (
+				from credit in allCreditDebits
+				from insured in allInsuredRecords
+				join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+				where (credit.DCHS_From == insured.DCHS || credit.DCHS_To == insured.DCHS) &&
+							credit.ID_Policy_Holder == selectedPolicyHolderId &&
+							insured.Type == "Long Term" &&
+							status.Und_Status == "Pending"
+				group status by credit.ID_CB into g
+				select new
+				{
+					ID_CB = g.Key,
+					PendingCount = g.Count()
+				}
+			).ToDictionary(x => x.ID_CB, x => x.PendingCount);
 
 			if (selectedYear.HasValue)
 			{
@@ -736,18 +1001,142 @@
 		StateHasChanged();
 	}
 
-	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
+	//For View Summary
+	private async Task ToggleRow(int idCB)
 	{
-		if (expandedRowId == idCB)
+		if (expandedRowId_Row == idCB)
 		{
-			expandedRowId = null;
+			expandedRowId_Row = null;
 		}
 		else
 		{
-			expandedRowId = idCB;
-			await LoadInsuredDetails(dchsFrom, dchsTo);
+			expandedRowId_Row = idCB;
+			expandedRowId_Applications = null;
+			await LoadInsuredDetailsForRow(idCB);
 		}
+
 		StateHasChanged();
+	}
+
+	private async Task LoadInsuredDetailsForRow(int idCB)
+	{
+		insuredDetailsList = await FetchInsuredDetails(idCB);
+	}
+
+	private async Task<List<InsuredDetailView>> FetchInsuredDetails(int idCB)
+	{
+		var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
+		var allCoverages = await CGLCoverageService.GetCoverageAsync();
+		var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+
+		return allInsuredRecords
+		.Where(i => i.ID_Insured == idCB)
+		.Select(i => new InsuredDetailView
+			{
+				Insured = i,
+				Coverage = allCoverages.FirstOrDefault(c => c.ID_Insured == i.ID_Insured),
+				UndStatus = allUndStatuses.FirstOrDefault(u => u.InsuredID == i.ID_Insured)
+			})
+		.ToList();
+	}
+
+	//For Displaying Particulars
+	private async Task ViewParticulars(int idCB)
+	{
+		var result = await CGLParticularsService.GetParticularsByCreditDebitIdAsync(idCB);
+		if (result == null)
+		{
+			particularsList = new List<CGL_Particulars>();
+		}
+		else
+		{
+			particularsList = result;
+		}
+		isParticularModal = true;
+	}
+
+	//For View Applications
+	private async Task ToggleApplications(int idCB, string? dchsFrom, string? dchsTo)
+	{
+		if (expandedRowId_Applications == idCB)
+		{
+			expandedRowId_Applications = null;
+			insuredDetailsList = new();
+			extendedAgeInsuredList = new();
+			checkedInsuredList = new();
+		}
+		else
+		{
+			expandedRowId_Applications = idCB;
+
+			selectedDCHSFrom = dchsFrom;
+			selectedDCHSTo = dchsTo;
+
+			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
+			var allCoverages = await CGLCoverageService.GetCoverageAsync();
+			var allStatuses = await CGLUndStatusService.GetStatusAsync();
+			var allIllnesses = await CGLSubstandardRatingService.GetSubstandardAsync();
+
+			var joinedData = from insured in allInsuredRecords
+								join coverage in allCoverages on insured.ID_Insured equals coverage.ID_Insured
+								join status in allStatuses on insured.ID_Insured equals status.InsuredID
+								join illnessTemp in allIllnesses on insured.ID_Insured equals illnessTemp.ID_Insured into illnessGroup
+								from illness in illnessGroup.DefaultIfEmpty()
+								where String.Compare(insured.DCHS, dchsFrom) >= 0 &&
+											String.Compare(insured.DCHS, dchsTo) <= 0
+								select new InsuredDetailView
+								 {
+									 Insured = insured,
+									 Coverage = coverage,
+									 UndStatus = status,
+									 Illness = illness
+								 };
+			foreach (var record in joinedData)
+			{
+				if (record.UndStatus.Und_Status == "Pending" &&
+					record.Illness?.Illness_Name == "Others")
+				{
+					record.UndStatus.Und_Status = "Compliance";
+					await CGLUndStatusService.UpdateStatusAsync(record.UndStatus);
+				}
+
+				if (record.UndStatus.Und_Status == "Pending" &&
+					record.Coverage.Termination_Date.Date <= DateTime.Today)
+				{
+					record.UndStatus.Und_Status = "Terminated";
+					await CGLUndStatusService.UpdateStatusAsync(record.UndStatus);
+				}
+			}
+
+			// Refilter lists after auto-update
+			insuredDetailsList = joinedData
+				.Where(x => x.UndStatus?.Und_Status == "Pending" && x.UndStatus?.ExtendedAge == "No")
+				.ToList();
+
+			extendedAgeInsuredList = joinedData
+				.Where(x => x.UndStatus?.Und_Status == "Pending" && x.UndStatus?.ExtendedAge == "Yes")
+				.ToList();
+
+			checkedInsuredList = joinedData
+				.Where(x =>
+					x.UndStatus?.Und_Status == "Approved" ||
+					x.UndStatus?.Und_Status == "Compliance" ||
+					x.UndStatus?.Und_Status == "For Refund")
+				.ToList();
+		}
+
+		StateHasChanged();
+	}
+
+
+	private async Task RefreshApplicationsAsync()
+	{
+		await LoadCreditDebitData();
+
+		if (expandedRowId_Applications.HasValue && selectedDCHSFrom != null && selectedDCHSTo != null)
+		{
+			await ToggleApplications(expandedRowId_Applications.Value, selectedDCHSFrom, selectedDCHSTo);
+		}
 	}
 
 	private async Task LoadInsuredDetails(string dchsFrom, string dchsTo)
@@ -770,6 +1159,8 @@
 		StateHasChanged();
 	}
 
+
+	//Display Data in the Details Modal
 	private async Task ViewDetails(CGLInsured insured)
 	{
 		selectedInsured = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
@@ -785,6 +1176,7 @@
 		isModalVisible = true;
 		StateHasChanged();
 	}
+	//Data for Substandard Category
 	private async Task LoadSubstandardRatings()
 	{
 		if (selectedInsured != null)
@@ -792,6 +1184,7 @@
 			substandardRatings = await CGLSubstandardRatingService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
 		}
 	}
+	//Data for Questions and Answer Category
 	private async Task LoadHealthQuestionsAndAnswers()
 	{
 		if (selectedInsured != null)
@@ -801,6 +1194,7 @@
 		}
 	}
 
+	//Data for Beneficiaries Category
 	private async Task LoadBeneficiaries()
 	{
 		if (selectedInsured != null)
@@ -809,6 +1203,7 @@
 		}
 	}
 
+	//Loan History Modal for Cleint Details across all Banks
 	private async Task ViewLoanHistory(CGLInsured insured)
 	{
 		loanHistoryList = await FetchLoanHistory(insured.Last_Name, insured.First_Name, insured.Middle_Name, insured.Date_Of_Birth, insured.ID_Insured);
@@ -854,51 +1249,77 @@
 		}
 		return loanHistories;
 	}
-	private void ToggleEdit()
+
+	//For Receipts column
+	private async Task OpenReceipt(int id)
 	{
-		isEditing = !isEditing;
+		var creditDebitRecord = await CGLCreditDebitServices.GetCreditDebitByIdAsync(id);
+		if (creditDebitRecord != null && !string.IsNullOrEmpty(creditDebitRecord.Receipt))
+		{
+			imageUrl = $"{NavigationManager.BaseUri}receipts/{creditDebitRecord.Receipt}";
+			isReceiptlVisible = true;
+		}
 	}
 
+	// For Valid ID Displaying
+	private async Task ViewIDInModal(CGLInsured insured)
+	{
+		var insuredRecord = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
+		if (insuredRecord != null && !string.IsNullOrEmpty(insuredRecord.Image))
+		{
+			imageUrl = $"{NavigationManager.BaseUri}validid/{insuredRecord.Image}";
+			isImageModalVisible = true;
+		}
+	}
+
+	//For Underwriting Updates
 	private void ToggleRemarksEditable()
 	{
 		isRemarksEditable = !isRemarksEditable;
 	}
-	private void ShowSaveDetailsConfirmation()
-	{
-		currentAction = "SaveDetails";
-		isConfirmationVisible = true;
-	}
 
+	//To Trigger Confirm Modal for Underwriting Update
 	private void ShowSaveRemarksConfirmation()
 	{
-		currentAction = "UpdateRemarks";
-		isConfirmationVisible = true;
+		if (isRemarksEditable)
+		{
+			currentAction = "UpdateRemarks";
+			isConfirmationVisible = true;
+		}
+		else
+		{
+			ToggleRemarksEditable();
+		}
 	}
 
+	//To execute the updates
 	private async Task ConfirmSaveChanges()
 	{
 		if (currentAction == "UpdateRemarks" && status != null)
 		{
 			await CGLUndStatusService.UpdateStatusAsync(status);
-		}
-		else if (currentAction == "SaveDetails" && selectedInsured != null)
-		{
 			await CGLInsuredService.UpdateInsuredAsync(selectedInsured);
 		}
 		isConfirmationVisible = false;
-		isEditing = false;
 		isRemarksEditable = false;
+		isModalVisible = false;
 		await LoadCreditDebitData();
+		await RefreshApplicationsAsync();
 	}
+
+	//Closing of Modals thru Close Button and 'X' Button
 	private void CloseModal()
 	{
 		status = null;
 		selectedInsured = null;
 		selectedCoverage = null;
 
-		isEditing = false;
-		isModalVisible = false;
-		isRemarksEditable = false;
-		showLoanHistoryModal = false;
+		isModalVisible = false; //Close View Details Modal
+		isConfirmationVisible = false;  //Close Confirmation Modal
+		isRemarksEditable = false; //Close the Editable Fields for Underwriting Update
+		showLoanHistoryModal = false; //Close Loan History Modal
+		isParticularModal = false;
+		isImageModalVisible = false;
+		isReceiptlVisible = false;
 	}
 }

@@ -4,6 +4,7 @@
 @using Und_System.Data;
 @using Und_System.Services;
 @inject ApplicationDbContext _context
+@inject NavigationManager NavigationManager
 @inject CGLInsuredService CGLInsuredService
 @inject CGLPolicyHolderServices CGLPolicyHolderServices
 @inject StateService StateService
@@ -14,6 +15,7 @@
 @inject CGLHealthQuestionsService CGLHealthQuestionsService
 @inject CGLHealthAnswerService CGLHealthAnswerService
 @inject CGLBeneficiaryService CGLBeneficiaryService
+@inject IJSRuntime JS
 
 <h1><b>APPROVED APPLICATIONS</b></h1>
 <hr />
@@ -55,7 +57,6 @@
 						<th class="text-center">Date of Birth</th>
 						<th class="text-center">Effectivity</th>
 						<th class="text-center">Termination</th>
-						<th class="text-center">Status</th>
 						<th class="text-center">Action</th>
 					</tr>
 				</thead>
@@ -75,9 +76,8 @@
 								<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
 								<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
 								<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
-								<td class="text-center">@undStatus?.Und_Status</td>
 								<td class="text-center">
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">Underwrite</button>
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewIDInModal(insured)">View ID</button>
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
 								</td>
 							</tr>
@@ -482,38 +482,31 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-outline-success" @onclick="ShowSaveRemarksConfirmation">@((isRemarksEditable) ? "Save Changes" : "Update")</button>
 					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
 }
-<!--Confirmation Modal-->
-@if (isConfirmationVisible)
+<!--Valid ID Modal-->
+@if (isImageModalVisible)
 {
 	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Confirm Changes</h5>
+					<h5 class="modal-title">Receipt </h5>
 					<button type="button" class="btn-close" @onclick="CloseModal"></button>
 				</div>
-				<div class="modal-body">
-					@if (currentAction == "UpdateRemarks")
-					{
-						<p>Are you sure you want to save these changes?</p>
-					}
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Cancel</button>
-					<button type="button" class="btn btn-outline-primary" @onclick="ConfirmSaveChanges">Confirm Changes</button>
+				<div class="modal-body text-center">
+					<img src="@imageUrl" class="img-fluid" alt="Receipt" />
 				</div>
 			</div>
 		</div>
 	</div>
 }
 
+<!--Loan History Modal-->
 @if (showLoanHistoryModal)
 {
 	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
@@ -584,11 +577,13 @@
 
 	private int? selectedYear;
 	private string? currentAction;
+	private string? imageUrl;
 	private bool isEditing = false;
 	private int? expandedRowId = null;
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
+	private bool isImageModalVisible = false;
 	private string searchText = string.Empty;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
@@ -611,6 +606,7 @@
 		years = Enumerable.Range(2000, currentYear - 2000 + 1).ToList();
 		await LoadCreditDebitData();
 	}
+
 	private async Task LoadCreditDebitData()
 	{
 		int? selectedPolicyHolderIdNullable = StateService.SelectedBankId;
@@ -619,28 +615,33 @@
 		{
 			int selectedPolicyHolderId = selectedPolicyHolderIdNullable.Value;
 
-			var allCreditDebits = await CGLCreditDebitServices.GetCredDebitAsync();
 			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
 			var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+			var allCoverages = await CGLCoverageService.GetCoverageAsync();
 
-			releaseList = (from credit in allCreditDebits
-									join insured in allInsuredRecords on credit.DCHS_From equals insured.DCHS
-									join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
-									where credit.ID_Policy_Holder == selectedPolicyHolderId &&
-									insured.Type == "Long Term" &&
-									status.Und_Status == "Approved"
-									select credit).ToList();
+			insuredDetailsList = (from insured in allInsuredRecords
+										join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+										join coverage in allCoverages on insured.ID_Insured equals coverage.ID_Insured
+										where insured.Type == "Long Term"
+										&& status.Und_Status == "Approved"
+										&& insured.ID_Policy_Holder == selectedPolicyHolderId
+										select new InsuredDetailView
+									  {
+										  Insured = insured,
+										  UndStatus = status,
+										  Coverage = coverage
+									  }).ToList();
 
 			if (selectedYear.HasValue)
 			{
-				releaseList = releaseList
-					.Where(x => x.Submitted_Date.Year == selectedYear.Value)
+				insuredDetailsList = insuredDetailsList
+					.Where(x => x.Coverage.Effective_Date.Year == selectedYear.Value)
 					.ToList();
 			}
 		}
 		else
 		{
-			releaseList = new List<CGLCreditDebit>();
+			insuredDetailsList = new List<InsuredDetailView>();
 		}
 
 		StateHasChanged();
@@ -764,36 +765,16 @@
 		}
 		return loanHistories;
 	}
-	//For Underwriting Updates
-	private void ToggleRemarksEditable()
-	{
-		isRemarksEditable = !isRemarksEditable;
-	}
 
-	//To Trigger Confirm Modal for Underwriting Update
-	private void ShowSaveRemarksConfirmation()
+	// For Valid ID Displaying
+	private async Task ViewIDInModal(CGLInsured insured)
 	{
-		if (isRemarksEditable)
+		var insuredRecord = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
+		if (insuredRecord != null && !string.IsNullOrEmpty(insuredRecord.Image))
 		{
-			currentAction = "UpdateRemarks";
-			isConfirmationVisible = true;
+			imageUrl = $"{NavigationManager.BaseUri}validid/{insuredRecord.Image}";
+			isImageModalVisible = true;
 		}
-		else
-		{
-			ToggleRemarksEditable();
-		}
-	}
-
-	//To execute the updates
-	private async Task ConfirmSaveChanges()
-	{
-		if (currentAction == "UpdateRemarks")
-		{
-			await CGLInsuredService.UpdateInsuredAsync(selectedInsured);
-		}
-		isConfirmationVisible = false;
-		isRemarksEditable = false;
-		await LoadCreditDebitData();
 	}
 
 	//Closing of Modals thru Close Button and 'X' Button
@@ -804,8 +785,7 @@
 		selectedCoverage = null;
 
 		isModalVisible = false; //Close View Details Modal
-		isConfirmationVisible = false;  //Close Confirmation Modal
-		isRemarksEditable = false; //Close the Editable Fields for Underwriting Update
 		showLoanHistoryModal = false; //Close Loan History Modal
+		isImageModalVisible = false;
 	}
 }

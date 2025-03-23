@@ -49,78 +49,35 @@
 			<table class="table table-bordered">
 				<thead class="text-white" style="background-color: #5d835c;">
 					<tr>
-						<th class="text-center">Release Date</th>
-						<th class="text-center">Total Applications</th>
-						<th class="text-center">Action</th>
+						<th class="text-center">Full Name</th>
+						<th class="text-center">Termination Date</th>
 					</tr>
 				</thead>
 				<tbody>
-					@if (releaseList != null && releaseList.Count > 0)
+					<tr>
+						<td class="text-center">Soo, Stephen D.</td>
+						<td class="text-center text-danger">2025-02-10</td>
+					</tr>
+					@* @if (insuredDetailsList != null && insuredDetailsList.Count > 0)
 					{
-						foreach (var item in releaseList)
+						foreach (var detail in insuredDetailsList)
 						{
+							var insured = detail.Insured;
+							var coverage = detail.Coverage;
+							var undStatus = detail.UndStatus;
+
 							<tr>
-								<td class="text-center fw-bold">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
-								<td class="text-center fw-bold">@item.Total_Application</td>
-								<td class="text-center">
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">
-										@(expandedRowId == item.ID_CB ? "Hide Applications" : "View Applications")
-									</button>
-								</td>
+								<td class="text-center"><b>@insured?.Last_Name</b>, @insured?.First_Name @insured?.Middle_Name</td>
+								<td class="text-center text-danger">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
 							</tr>
-
-							@if (expandedRowId == item.ID_CB)
-							{
-
-								<tr>
-									<td colspan="3">
-										<div class="table-responsive">
-											<table class="table table-bordered">
-												<thead class="text-white" style="background-color: #5d835c;">
-													<tr>
-														<th class="text-center">Full Name</th>
-														<th class="text-center">Effectivity Date</th>
-														<th class="text-center">Termination Date</th>
-														<th class="text-center">Status</th>
-													</tr>
-												</thead>
-												<tbody>
-													@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
-													{
-														foreach (var detail in insuredDetailsList)
-														{
-															var insured = detail.Insured;
-															var coverage = detail.Coverage;
-															var undStatus = detail.UndStatus;
-
-															<tr>
-																<td class="text-center"><b>@insured?.Last_Name</b>, @insured?.First_Name @insured?.Middle_Name</td>
-																<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
-																<td class="text-center text-danger">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
-																<td class="text-center">@undStatus?.Und_Status</td>
-															</tr>
-														}
-													}
-													else
-													{
-														<tr>
-															<td colspan="8" class="text-center">No insured details available</td>
-														</tr>
-													}
-												</tbody>
-											</table>
-										</div>
-									</td>
-								</tr>
-							}
 						}
 					}
 					else
 					{
 						<tr>
-							<td colspan="3" class="text-center">No data available</td>
+							<td colspan="8" class="text-center">No insured details available</td>
 						</tr>
-					}
+					} *@
 				</tbody>
 			</table>
 		</div>
@@ -182,28 +139,33 @@
 		{
 			int selectedPolicyHolderId = selectedPolicyHolderIdNullable.Value;
 
-			var allCreditDebits = await CGLCreditDebitServices.GetCredDebitAsync();
 			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
 			var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+			var allCoverages = await CGLCoverageService.GetCoverageAsync();
 
-			releaseList = (from credit in allCreditDebits
-									join insured in allInsuredRecords on credit.DCHS_From equals insured.DCHS
-									join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
-									where credit.ID_Policy_Holder == selectedPolicyHolderId &&
-									insured.Type == "Long Term" &&
-									status.Und_Status == "Terminated"
-									select credit).ToList();
+			insuredDetailsList = (from insured in allInsuredRecords
+										join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+										join coverage in allCoverages on insured.ID_Insured equals coverage.ID_Insured
+										where insured.Type == "Long Term"
+										&& status.Und_Status == "Terminated"
+										&& insured.ID_Policy_Holder == selectedPolicyHolderId
+										select new InsuredDetailView
+									  {
+										  Insured = insured,
+										  UndStatus = status,
+										  Coverage = coverage
+									  }).ToList();
 
 			if (selectedYear.HasValue)
 			{
-				releaseList = releaseList
-					.Where(x => x.Submitted_Date.Year == selectedYear.Value)
+				insuredDetailsList = insuredDetailsList
+					.Where(x => x.Coverage.Effective_Date.Year == selectedYear.Value)
 					.ToList();
 			}
 		}
 		else
 		{
-			releaseList = new List<CGLCreditDebit>();
+			insuredDetailsList = new List<InsuredDetailView>();
 		}
 
 		StateHasChanged();

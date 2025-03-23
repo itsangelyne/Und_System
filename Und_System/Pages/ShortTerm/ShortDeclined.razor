@@ -51,12 +51,14 @@
 					<tr>
 						<th class="text-center">Full Name</th>
 						<th class="text-center">Remarks</th>
-						<th class="text-center">Status</th>
-						<th class="text-center">Action</th>
 					</tr>
 				</thead>
 				<tbody>
-					@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+					<tr>
+						<td class="text-center">Mendoza, Tory P</td>
+						<td class="text-center">Refunded</td>
+					</tr>
+					@* @if (insuredDetailsList != null && insuredDetailsList.Count > 0)
 					{
 						foreach (var detail in insuredDetailsList)
 						{
@@ -65,14 +67,8 @@
 							var undStatus = detail.UndStatus;
 
 							<tr>
-								<td class="text-center"><b>@insured.Last_Name</b>, @insured.First_Name @insured.Middle_Name</td>
+								<td class="text-center"><b>@insured?.Last_Name</b>, @insured?.First_Name @insured?.Middle_Name</td>
 								<td class="text-center">@undStatus?.Remarks</td>
-								<td class="text-center">@undStatus?.Und_Status</td>
-								<td class="text-center">
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">View ID</button>
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Loan History</button>
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">Update Status</button>
-								</td>
 							</tr>
 						}
 					}
@@ -81,13 +77,149 @@
 						<tr>
 							<td colspan="4" class="text-center">No insured details available</td>
 						</tr>
-					}
+					} *@
 				</tbody>
 			</table>
 		</div>
 	</div>
 </div>
 
+@if (StatusModal)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"><b>Update Status</b></h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="col-md mb-3">
+						<div class="border rounded p-3 mb-3">
+							<div class="col-md mb-3">
+								<div class="row">
+									<div class="col-md mb-3">
+										<label for="status" class="form-label">Underwriting Status</label>
+										<select class="form-select" id="status" @bind-value="status.Und_Status" @bind-value:event="onchange" disabled="@(!isRemarksEditable)">
+											<option disabled>Select Status</option>
+											<option value="Pending">Pending</option>
+											<option value="Approved">Approved</option>
+											<option value="Declined">Declined</option>
+											<option value="For Medical">For Medical</option>
+											<option value="For Refund">For Refund</option>
+											<option value="Renewal">Renewal</option>
+										</select>
+									</div>
+									<div class="col-md mb-3">
+										<label for="psdstatus" class="form-label">PSD Status</label>
+										<input type="text" class="form-control" id="Class" value="@status?.PSD_Status" readonly />
+									</div>
+								</div>
+							</div>
+							<div class="col-md mb-3">
+								<div class="col-md mb-3">
+									<label for="remarks" class="form-label">Remarks</label>
+									<textarea class="form-control" rows="4" cols="50" style="resize:none;" id="remarks" @bind="status.Remarks" readonly="@(!isRemarksEditable)"></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					@if (isRemarksEditable)
+					{
+						<button type="button" class="btn btn-primary" @onclick="ShowSaveRemarksConfirmation">Save Changes</button>
+					}
+					else
+					{
+						<button type="button" class="btn btn-outline-primary" @onclick="ToggleRemarksEditable">Underwriting Update</button>
+					}
+					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+<!--Confirmation Modal-->
+@if (isConfirmationVisible)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Confirm Changes</h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body">
+					@if (currentAction == "UpdateRemarks")
+					{
+						<p>Are you sure you want to save these changes?</p>
+					}
+					else if (currentAction == "SaveDetails")
+					{
+						<p>Are you sure you want to update these details for <b>@selectedInsured?.First_Name @selectedInsured?.Last_Name</b>?</p>
+					}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Cancel</button>
+					<button type="button" class="btn btn-outline-primary" @onclick="ConfirmSaveChanges">Confirm Changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+@if (showLoanHistoryModal)
+{
+	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Loan History</h5>
+					<button type="button" class="btn-close" @onclick="CloseModal"></button>
+				</div>
+				<div class="modal-body">
+					<div>Total Amount Of Loan: </div>
+					<div class="table-responsive">
+						<table class="table table-bordered">
+							<thead class="text-white" style="background-color: #5d835c;">
+								<tr>
+									<th>Full Name</th>
+									<th>Date of Birth</th>
+									<th>Amount of Loan</th>
+									<th>Status</th>
+									<th>Name of Bank</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (loanHistoryList != null && loanHistoryList.Count > 0)
+								{
+									foreach (var loan in loanHistoryList)
+									{
+										<tr>
+											<td class="text-center"><b>@loan.LastName</b>, @loan.FirstName @loan.MiddleName</td>
+											<td class="text-center">@loan.DateOfBirth.ToString("yyyy-MM-dd")</td>
+											<td class="text-center">@loan.AmountOfLoan</td>
+											<td class="text-center">@loan.Status</td>
+											<td class="text-center">@loan.BankName</td>
+										</tr>
+									}
+								}
+								else
+								{
+									<tr>
+										<td colspan="5" class="text-center">No loan history available</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
 
 @code {
 	public class InsuredDetailView
@@ -125,7 +257,7 @@
 	private List<CGL_Beneficiary> beneficiaries = new();
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
 
-	private bool isModalVisible = false;
+	private bool StatusModal = false;
 	private CGLInsured? selectedInsured;
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
@@ -145,28 +277,33 @@
 		{
 			int selectedPolicyHolderId = selectedPolicyHolderIdNullable.Value;
 
-			var allCreditDebits = await CGLCreditDebitServices.GetCredDebitAsync();
 			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
 			var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+			var allCoverages = await CGLCoverageService.GetCoverageAsync();
 
-			releaseList = (from credit in allCreditDebits
-									join insured in allInsuredRecords on credit.DCHS_From equals insured.DCHS
-									join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
-									where credit.ID_Policy_Holder == selectedPolicyHolderId &&
-									insured.Type == "Short Term" &&
-									status.Und_Status == "Declined"
-									select credit).ToList();
+			insuredDetailsList = (from insured in allInsuredRecords
+										join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+										join coverage in allCoverages on insured.ID_Insured equals coverage.ID_Insured
+										where insured.Type == "Short Term"
+										&& status.Und_Status == "Declined"
+										&& insured.ID_Policy_Holder == selectedPolicyHolderId
+										select new InsuredDetailView
+									  {
+										  Insured = insured,
+										  UndStatus = status,
+										  Coverage = coverage
+									  }).ToList();
 
 			if (selectedYear.HasValue)
 			{
-				releaseList = releaseList
-					.Where(x => x.Submitted_Date.Year == selectedYear.Value)
+				insuredDetailsList = insuredDetailsList
+					.Where(x => x.Coverage.Effective_Date.Year == selectedYear.Value)
 					.ToList();
 			}
 		}
 		else
 		{
-			releaseList = new List<CGLCreditDebit>();
+			insuredDetailsList = new List<InsuredDetailView>();
 		}
 
 		StateHasChanged();
@@ -206,7 +343,7 @@
 		StateHasChanged();
 	}
 
-	private async Task ViewDetails(CGLInsured insured)
+	private async Task UpdateStatus(CGLInsured insured)
 	{
 		selectedInsured = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
 		var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
@@ -214,11 +351,7 @@
 		selectedCoverage = await CGLCoverageService.GetCoverageByInsuredIdAsync(insured.ID_Insured);
 		policyHolder = await CGLPolicyHolderServices.GetPolicyHolderByIdAsync(selectedInsured.ID_Policy_Holder);
 
-		await LoadHealthQuestionsAndAnswers();
-		await LoadSubstandardRatings();
-		await LoadBeneficiaries();
-
-		isModalVisible = true;
+		StatusModal = true;
 		StateHasChanged();
 	}
 	private async Task LoadSubstandardRatings()
@@ -333,7 +466,7 @@
 		selectedCoverage = null;
 
 		isEditing = false;
-		isModalVisible = false;
+		StatusModal = false;
 		isRemarksEditable = false;
 		showLoanHistoryModal = false;
 	}

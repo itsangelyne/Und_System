@@ -1,5 +1,4 @@
-﻿@page "/longterm/pendinglist2"
-@using Microsoft.EntityFrameworkCore;
+﻿@using Microsoft.EntityFrameworkCore;
 @using Und_System.Context;
 @using Und_System.Data;
 @using Und_System.Services;
@@ -77,8 +76,13 @@
 									</i>
 								</td>
 								<td class="text-center fw-bold align-content-center">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
-								<td class="text-center fw-bold align-content-center">@item.Total_Application</td>
-								<td class="text-center fw-bold align-content-center">0</td>
+								<td class="text-center fw-bold align-content-center">
+									@pendingApplicationsCount.GetValueOrDefault(item.ID_CB, 0)
+								</td>
+
+								<td class="text-center fw-bold align-content-center">
+									@checkedApplicationsCount.GetValueOrDefault(item.ID_CB, 0)
+								</td>
 								<td class="text-center fw-bold align-content-center">@item.Total_Application</td>
 								<td class="text-center align-content-center">
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewParticulars(item.ID_CB)">
@@ -204,6 +208,33 @@
 															<th class="text-center">Status</th>
 														</tr>
 													</thead>
+													<tbody>
+														@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+														{
+															@foreach (var detail in extendedAgeInsuredList)
+															{
+																var insured = detail.Insured;
+																var coverage = detail.Coverage;
+																var undStatus = detail.UndStatus;
+
+																<tr>
+																	<td class="text-center">@insured?.Last_Name</td>
+																	<td class="text-center">@insured?.First_Name</td>
+																	<td class="text-center">@insured?.Middle_Name</td>
+																	<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@undStatus?.Und_Status</td>
+																</tr>
+															}
+														}
+														else
+														{
+															<tr>
+																<td colspan="8" class="text-center">No insured details available.</td>
+															</tr>
+														}
+													</tbody>
 												</table>
 											</div>
 										</div>
@@ -227,6 +258,37 @@
 															<th class="text-center">Action</th>
 														</tr>
 													</thead>
+													<tbody>
+														@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+														{
+															@foreach (var detail in checkedInsuredList)
+															{
+																var insured = detail.Insured;
+																var coverage = detail.Coverage;
+																var undStatus = detail.UndStatus;
+
+																<tr>
+																	<td class="text-center">@insured?.Last_Name</td>
+																	<td class="text-center">@insured?.First_Name</td>
+																	<td class="text-center">@insured?.Middle_Name</td>
+																	<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
+																	<td class="text-center">@undStatus?.Und_Status</td>
+																	<td class="text-center">
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewIDInModal(insured)">View ID</button>
+																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
+																	</td>
+																</tr>
+															}
+														}
+														else
+														{
+															<tr>
+																<td colspan="8" class="text-center">No insured details available.</td>
+															</tr>
+														}
+													</tbody>
 												</table>
 											</div>
 										</div>
@@ -830,7 +892,9 @@
 
 	private int? selectedYear;
 	private string? currentAction;
-	private string imageUrl;
+	private string? imageUrl;
+	private string? selectedDCHSFrom;
+	private string? selectedDCHSTo;
 	private int? expandedRowId_Applications = null;
 	private int? expandedRowId_Row = null;
 	private int? expandedRowId_Particulars = null;
@@ -851,12 +915,19 @@
 	private List<CGL_Health_Answer> healthAnswers = new();
 	private List<CGL_Beneficiary> beneficiaries = new();
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
+	private List<InsuredDetailView> extendedAgeInsuredList = new();
+	private List<InsuredDetailView> checkedInsuredList = new();
+
 
 
 	private CGLInsured? selectedInsured;
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
+
+	private Dictionary<int, int> checkedApplicationsCount = new();
+	private Dictionary<int, int> pendingApplicationsCount = new();
+
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -878,13 +949,51 @@
 			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
 			var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
 
-			releaseList = (from credit in allCreditDebits
-									join insured in allInsuredRecords on credit.DCHS_From equals insured.DCHS
-									join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
-									where credit.ID_Policy_Holder == selectedPolicyHolderId &&
-									insured.Type == "Long Term" &&
-									status.Und_Status == "Pending"
-									select credit).ToList();
+			releaseList = (
+				from credit in allCreditDebits
+				from insured in allInsuredRecords
+				join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+				where (credit.DCHS_From == insured.DCHS || credit.DCHS_To == insured.DCHS) &&
+					credit.ID_Policy_Holder == selectedPolicyHolderId &&
+					insured.Type == "Long Term" &&
+					status.Und_Status == "Pending" &&
+					status.ExtendedAge == "No"
+				select credit
+				).Distinct().ToList();
+
+			//Checked Applications (Approved, Compliance, For Refund)
+			checkedApplicationsCount = (
+				from credit in allCreditDebits
+				from insured in allInsuredRecords
+				join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+				where (credit.DCHS_From == insured.DCHS || credit.DCHS_To == insured.DCHS) &&
+							credit.ID_Policy_Holder == selectedPolicyHolderId &&
+							insured.Type == "Long Term" &&
+							(status.Und_Status == "Approved" || status.Und_Status == "For Refund" || status.Und_Status == "Compliance")
+				group status by credit.ID_CB into g
+				select new
+				{
+					ID_CB = g.Key,
+					CheckedCount = g.Count()
+				}
+			).ToDictionary(x => x.ID_CB, x => x.CheckedCount);
+
+			//Pending Applications
+			pendingApplicationsCount = (
+				from credit in allCreditDebits
+				from insured in allInsuredRecords
+				join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+				where (credit.DCHS_From == insured.DCHS || credit.DCHS_To == insured.DCHS) &&
+							credit.ID_Policy_Holder == selectedPolicyHolderId &&
+							insured.Type == "Long Term" &&
+							status.Und_Status == "Pending"
+				group status by credit.ID_CB into g
+				select new
+				{
+					ID_CB = g.Key,
+					PendingCount = g.Count()
+				}
+			).ToDictionary(x => x.ID_CB, x => x.PendingCount);
 
 			if (selectedYear.HasValue)
 			{
@@ -900,7 +1009,6 @@
 
 		StateHasChanged();
 	}
-
 
 	//For View Summary
 	private async Task ToggleRow(int idCB)
@@ -941,6 +1049,7 @@
 		.ToList();
 	}
 
+	//For Displaying Particulars
 	private async Task ViewParticulars(int idCB)
 	{
 		var result = await CGLParticularsService.GetParticularsByCreditDebitIdAsync(idCB);
@@ -956,20 +1065,66 @@
 	}
 
 	//For View Applications
-	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
+	private async Task ToggleApplications(int idCB, string? dchsFrom, string? dchsTo)
 	{
 		if (expandedRowId_Applications == idCB)
 		{
 			expandedRowId_Applications = null;
+			insuredDetailsList = new();
+			extendedAgeInsuredList = new();
+			checkedInsuredList = new();
 		}
 		else
 		{
 			expandedRowId_Applications = idCB;
-			expandedRowId_Row = null;
-			await LoadInsuredDetails(dchsFrom, dchsTo);
+
+			// Store for refresh later
+			selectedDCHSFrom = dchsFrom;
+			selectedDCHSTo = dchsTo;
+
+			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
+			var allCoverages = await CGLCoverageService.GetCoverageAsync();
+			var allStatuses = await CGLUndStatusService.GetStatusAsync();
+
+			var joinedData = from insured in allInsuredRecords
+								join coverage in allCoverages on insured.ID_Insured equals coverage.ID_Insured
+								join status in allStatuses on insured.ID_Insured equals status.InsuredID
+								where String.Compare(insured.DCHS, dchsFrom) >= 0 &&
+											String.Compare(insured.DCHS, dchsTo) <= 0
+								select new InsuredDetailView
+								 {
+									 Insured = insured,
+									 Coverage = coverage,
+									 UndStatus = status
+								 };
+
+			insuredDetailsList = joinedData
+				.Where(x => x.UndStatus?.Und_Status == "Pending" && x.UndStatus?.ExtendedAge == "No")
+				.ToList();
+
+			extendedAgeInsuredList = joinedData
+				.Where(x => x.UndStatus?.Und_Status == "Pending" && x.UndStatus?.ExtendedAge == "Yes")
+				.ToList();
+
+			checkedInsuredList = joinedData
+				.Where(x =>
+					x.UndStatus?.Und_Status == "Approved" ||
+					x.UndStatus?.Und_Status == "Compliance" ||
+					x.UndStatus?.Und_Status == "For Refund")
+				.ToList();
 		}
 
 		StateHasChanged();
+	}
+
+	private async Task RefreshApplicationsAsync()
+	{
+		await LoadCreditDebitData();
+
+		if (expandedRowId_Applications.HasValue && selectedDCHSFrom != null && selectedDCHSTo != null)
+		{
+			await ToggleApplications(expandedRowId_Applications.Value, selectedDCHSFrom, selectedDCHSTo);
+		}
 	}
 
 	private async Task LoadInsuredDetails(string dchsFrom, string dchsTo)
@@ -1136,6 +1291,7 @@
 		isConfirmationVisible = false;
 		isRemarksEditable = false;
 		await LoadCreditDebitData();
+		await RefreshApplicationsAsync();
 	}
 
 	//Closing of Modals thru Close Button and 'X' Button

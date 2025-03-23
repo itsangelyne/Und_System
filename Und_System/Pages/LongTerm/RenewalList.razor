@@ -58,11 +58,22 @@
 						<th class="text-center">OR No</th>
 						<th class="text-center">Due Date</th>
 						<th class="text-center">Term</th>
-						<th class="text-center">Remarks</th>
 					</tr>
 				</thead>
 				<tbody>
-					@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+					<tr>
+						<td class="text-center">Dela Cruz, Juan P</td>
+						<td class="text-center">11-1973-0000000001</td>
+						<td class="text-center">2025-05-27</td>
+						<td class="text-center">2027-05-27</td>
+						<td class="text-center">100000</td>
+						<td class="text-center">1000</td>
+						<td class="text-center">2026-05-27</td>
+						<td class="text-center">11-1111-0000000001</td>
+						<td class="text-center">2 Year/s</td>
+					</tr>
+
+					@* @if (insuredDetailsList != null && insuredDetailsList.Count > 0)
 					{
 						foreach (var detail in insuredDetailsList)
 						{
@@ -89,7 +100,7 @@
 						<tr>
 							<td colspan="8" class="text-center">No insured details available</td>
 						</tr>
-					}
+					} *@
 				</tbody>
 			</table>
 		</div>
