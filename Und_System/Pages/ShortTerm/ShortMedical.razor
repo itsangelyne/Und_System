@@ -24,16 +24,16 @@
 	<h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
 	<div class="card-body">
 		<div class="row justify-content-evenly">
-			<div class="col-md-4 mb-3">
+			<div class="col-md-4 mb-3 d-flex mb-3 align-items-center">
+				<label for="searchbar" class="form-label me-2 fw-bold mb-0">Search:</label>
 				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
-				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
-				<select class="form-control flex-grow-1" id="amountDropdown">
-					<option>Select Amount</option>
-					<option>100K and Below</option>
-					<option>100K and Above</option>
-					<option>300K and Above</option>
+				<label for="typeDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Application Type:</label>
+				<select class="form-control flex-grow-1" id="typeDropdown">
+					<option>Select Type</option>
+					<option>Regular Applications</option>
+					<option>Extended Age Applications</option>
 				</select>
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
@@ -51,9 +51,7 @@
 			<table class="table table-bordered">
 				<thead class="text-white" style="background-color: #5d835c;">
 					<tr>
-						<th class="text-center">Last Name</th>
-						<th class="text-center">First Name</th>
-						<th class="text-center">Middle Name</th>
+						<th class="text-center">Full Name</th>
 						<th class="text-center">Date of Birth</th>
 						<th class="text-center">Age</th>
 						<th class="text-center">Illness</th>
@@ -72,9 +70,7 @@
 							var illness = detail.Illness;
 
 							<tr>
-								<td class="text-center">@insured?.Last_Name</td>
-								<td class="text-center">@insured?.First_Name</td>
-								<td class="text-center">@insured?.Middle_Name</td>
+								<td class="text-center"><b>@insured?.Last_Name</b>, @insured?.First_Name @insured?.Middle_Name</td>
 								<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
 								<td class="text-center">@insured?.Age</td>
 								<td class="text-center">@illness?.Illness_Name</td>
