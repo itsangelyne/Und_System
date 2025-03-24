@@ -28,20 +28,21 @@
 		<div class="row justify-content-evenly">
 			<div class="col-md-4 mb-3 d-flex mb-3 align-items-center">
 				<label for="searchbar" class="form-label me-2 fw-bold mb-0">Search:</label>
-				<input type="text" class="form-control" placeholder="Search" id="searchbar" @bind="searchText" @bind:event="oninput" />
+				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
 				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
-				<select class="form-control flex-grow-1" id="amountDropdown">
-					<option>Select Amount</option>
-					<option>100K and Below</option>
-					<option>100K and Above</option>
-					<option>300K and Above</option>
+				<select class="form-control flex-grow-1" id="amountDropdown" @onchange="OnAmountChanged">
+					<option value="">Select Amount</option>
+					<option value="Below100K">100K and Below</option>
+					<option value="Above100K">100K and Above</option>
+					<option value="Above300K">300K and Above</option>
 				</select>
 			</div>
+
 			<div class="col-md-4 mb-3 d-flex align-items-center">
 				<label for="yearDropdown" class="me-1 fw-bold" style="white-space: nowrap; min-width: 120px;">Filter by Year:</label>
-				<select class="form-control flex-grow-1" id="yearDropdown" @bind="selectedYear" @bind:event="onchange">
+				<select class="form-control flex-grow-1" id="yearDropdown" @onchange="OnYearChanged">
 					<option value="">Select Year</option>
 					@foreach (var year in years)
 					{
@@ -197,7 +198,9 @@
 									<tr>
 										<td colspan="8" style="background-color: #f8f8f8;">
 											<div class="table-responsive mt-2">
-												<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">REGULAR PENDING APPLICATIONS</div>
+												<a href="/shortterm/pendinglist" class="text-decoration-none">
+													<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">REGULAR PENDING APPLICATIONS</div>
+												</a>
 												<div class="card-body bg-light p-2">
 													<table class="table table-bordered">
 														<thead class="text-white" style="background-color: #5d835c;">
@@ -916,6 +919,8 @@
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
 
+	private string? selectedAmountFilter;
+	private List<CGLCoverage> allCoverages = new();
 	private Dictionary<int, int> checkedApplicationsCount = new();
 	private Dictionary<int, int> pendingApplicationsCount = new();
 
@@ -924,6 +929,28 @@
 	{
 		int currentYear = DateTime.Now.Year;
 		years = Enumerable.Range(2000, currentYear - 2000 + 1).ToList();
+		await LoadCreditDebitData();
+	}
+
+	//Year Filter
+	private async Task OnYearChanged(ChangeEventArgs e)
+	{
+		if (int.TryParse(e.Value?.ToString(), out int year))
+		{
+			selectedYear = year;
+		}
+		else
+		{
+			selectedYear = null;
+		}
+
+		await LoadCreditDebitData();
+	}
+
+	//Amount Filter
+	private async Task OnAmountChanged(ChangeEventArgs e)
+	{
+		selectedAmountFilter = e.Value?.ToString();
 		await LoadCreditDebitData();
 	}
 
@@ -939,8 +966,10 @@
 			var allCreditDebits = await CGLCreditDebitServices.GetCredDebitAsync();
 			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
 			var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
+			allCoverages = await CGLCoverageService.GetCoverageAsync();
 
-			releaseList = (
+			// Create a joint list with credit and insured info
+			var joinedList = (
 				from credit in allCreditDebits
 				from insured in allInsuredRecords
 				join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
@@ -949,10 +978,35 @@
 					insured.Type == "Short Term" &&
 					status.Und_Status == "Pending" &&
 					status.ExtendedAge == "Yes"
-				select credit
-				).Distinct().ToList();
+				select new { credit, insured }
+			).Distinct().ToList();
 
-			//Checked Applications (Approved, Compliance, For Refund)
+			// Apply Year Filter
+			if (selectedYear.HasValue)
+			{
+				joinedList = joinedList
+					.Where(x => x.credit.Submitted_Date.Year == selectedYear.Value)
+					.ToList();
+			}
+
+			// Apply Amount Filter based on insured.ID_Insured
+			if (!string.IsNullOrEmpty(selectedAmountFilter))
+			{
+				joinedList = (
+					from j in joinedList
+					join coverage in allCoverages on j.insured.ID_Insured equals coverage.ID_Insured
+					where
+						(selectedAmountFilter == "Below100K" && coverage.Amount_Of_Insured <= 100000) ||
+						(selectedAmountFilter == "Above100K" && coverage.Amount_Of_Insured > 100000) ||
+						(selectedAmountFilter == "Above300K" && coverage.Amount_Of_Insured > 300000)
+					select j
+				).Distinct().ToList();
+			}
+
+			// Extract credit list
+			releaseList = joinedList.Select(x => x.credit).Distinct().ToList();
+
+			// Checked Applications Count
 			checkedApplicationsCount = (
 				from credit in allCreditDebits
 				from insured in allInsuredRecords
@@ -969,7 +1023,7 @@
 				}
 			).ToDictionary(x => x.ID_CB, x => x.CheckedCount);
 
-			//Pending Applications
+			// Pending Applications Count
 			pendingApplicationsCount = (
 				from credit in allCreditDebits
 				from insured in allInsuredRecords
@@ -985,21 +1039,14 @@
 					PendingCount = g.Count()
 				}
 			).ToDictionary(x => x.ID_CB, x => x.PendingCount);
-
-			if (selectedYear.HasValue)
-			{
-				releaseList = releaseList
-					.Where(x => x.Submitted_Date.Year == selectedYear.Value)
-					.ToList();
-			}
 		}
 		else
 		{
 			releaseList = new List<CGLCreditDebit>();
 		}
-
 		StateHasChanged();
 	}
+
 
 	//For View Summary
 	private async Task ToggleRow(int idCB)

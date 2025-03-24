@@ -28,7 +28,7 @@
 		<div class="row justify-content-evenly">
 			<div class="col-md-4 mb-3 d-flex mb-3 align-items-center">
 				<label for="searchbar" class="form-label me-2 fw-bold mb-0">Search:</label>
-				<input type="text" class="form-control" placeholder="Search" id="searchbar" @bind="searchText" @bind:event="oninput" />
+				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
 				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
@@ -199,7 +199,9 @@
 									<tr>
 										<td colspan="8" style="background-color: #f8f8f8;">
 											<div class="table-responsive mt-2">
-												<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">EXTENDED AGE PENDING APPLICATIONS</div>
+												<a href="/extended/longterm/pendinglist" class="text-decoration-none">
+													<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">EXTENDED AGE PENDING APPLICATIONS</div>
+												</a>											
 												<div class="card-body bg-light p-2">
 													<table class="table table-bordered">
 														<thead class="text-white" style="background-color: #5d835c;">
@@ -896,8 +898,6 @@
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
-	private string searchText = string.Empty;
-	private List<CGLCreditDebit> originalReleaseList = new(); // Unfiltered base list
 
 	private bool isImageModalVisible = false;
 	private bool isReceiptlVisible = false;
@@ -920,12 +920,23 @@
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
 
-	private string selectedAmountFilter;
-	private bool isAmountFilterActive = false;
+	private string? selectedAmountFilter;
 	private List<CGLCoverage> allCoverages = new();
 	private Dictionary<int, int> checkedApplicationsCount = new();
 	private Dictionary<int, int> pendingApplicationsCount = new();
-
+	private string _searchText = string.Empty;
+	private string searchText
+	{
+		get => _searchText;
+		set
+		{
+			if (_searchText != value)
+			{
+				_searchText = value;
+				ApplySearchFilter();
+			}
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -1046,10 +1057,31 @@
 		{
 			releaseList = new List<CGLCreditDebit>();
 		}
-
+		ApplySearchFilter();
 		StateHasChanged();
 	}
+	 
+	// Search Filter DI PA NAGANA KALMA
+	private void ApplySearchFilter()
+	{
+		var filteredList = insuredDetailsList;
+		if (!string.IsNullOrWhiteSpace(searchText))
+		{
+			searchText = searchText.ToLower();
+			filteredList = filteredList.Where(item =>
+				(item.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
+				(item.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
+				(item.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false) ||
+				(item.Insured?.Date_Of_Birth.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
+				(item.Coverage?.Amount_Of_Insured.ToString().Contains(searchText) ?? false) ||
+				(item.Coverage?.Effective_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
+				(item.Coverage?.Termination_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
+				(item.UndStatus?.Und_Status?.ToLower().Contains(searchText) ?? false)
+			).ToList();
+		}
 
+		insuredDetailsList = filteredList;
+	}
 
 	//For View Summary
 	private async Task ToggleRow(int idCB)
@@ -1064,7 +1096,7 @@
 			expandedRowId_Applications = null;
 			await LoadInsuredDetailsForRow(idCB);
 		}
-
+		ApplySearchFilter();
 		StateHasChanged();
 	}
 
@@ -1173,7 +1205,7 @@
 					x.UndStatus?.Und_Status == "For Refund")
 				.ToList();
 		}
-
+		ApplySearchFilter();
 		StateHasChanged();
 	}
 
