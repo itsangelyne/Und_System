@@ -22,21 +22,23 @@
 	<h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
 	<div class="card-body">
 		<div class="row justify-content-evenly">
-			<div class="col-md-4 mb-3">
+			<div class="col-md-4 mb-3 d-flex mb-3 align-items-center">
+				<label for="searchbar" class="form-label me-2 fw-bold mb-0">Search:</label>
 				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
 				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
-				<select class="form-control flex-grow-1" id="amountDropdown">
-					<option>Select Amount</option>
-					<option>100K and Below</option>
-					<option>100K and Above</option>
-					<option>300K and Above</option>
+				<select class="form-control flex-grow-1" id="amountDropdown" @onchange="OnAmountChanged">
+					<option value="">Select Amount</option>
+					<option value="Below100K">100K and Below</option>
+					<option value="Above100K">100K and Above</option>
+					<option value="Above300K">300K and Above</option>
 				</select>
 			</div>
+
 			<div class="col-md-4 mb-3 d-flex align-items-center">
 				<label for="yearDropdown" class="me-1 fw-bold" style="white-space: nowrap; min-width: 120px;">Filter by Year:</label>
-				<select class="form-control flex-grow-1" id="yearDropdown" @bind="selectedYear" @bind:event="onchange">
+				<select class="form-control flex-grow-1" id="yearDropdown" @onchange="OnYearChanged">
 					<option value="">Select Year</option>
 					@foreach (var year in years)
 					{
@@ -257,6 +259,7 @@
 	private List<CGL_Beneficiary> beneficiaries = new();
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
 
+	private string? selectedAmountFilter;
 	private bool StatusModal = false;
 	private CGLInsured? selectedInsured;
 	private CGLCoverage? selectedCoverage;
@@ -269,6 +272,29 @@
 		years = Enumerable.Range(2000, currentYear - 2000 + 1).ToList();
 		await LoadCreditDebitData();
 	}
+	//Year Filter
+	private async Task OnYearChanged(ChangeEventArgs e)
+	{
+		if (int.TryParse(e.Value?.ToString(), out int year))
+		{
+			selectedYear = year;
+		}
+		else
+		{
+			selectedYear = null;
+		}
+
+		await LoadCreditDebitData();
+	}
+
+	//Amount Filter
+	private async Task OnAmountChanged(ChangeEventArgs e)
+	{
+		selectedAmountFilter = e.Value?.ToString();
+		await LoadCreditDebitData();
+	}
+
+
 	private async Task LoadCreditDebitData()
 	{
 		int? selectedPolicyHolderIdNullable = StateService.SelectedBankId;
@@ -281,24 +307,37 @@
 			var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
 			var allCoverages = await CGLCoverageService.GetCoverageAsync();
 
-			insuredDetailsList = (from insured in allInsuredRecords
-										join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
-										join coverage in allCoverages on insured.ID_Insured equals coverage.ID_Insured
-										where insured.Type == "Long Term"
-										&& status.Und_Status == "Declined"
-										&& status.ExtendedAge == "Yes"
-										&& insured.ID_Policy_Holder == selectedPolicyHolderId
-										select new InsuredDetailView
-									  {
-										  Insured = insured,
-										  UndStatus = status,
-										  Coverage = coverage
-									  }).ToList();
+			insuredDetailsList = (
+				from insured in allInsuredRecords
+				join status in allUndStatuses on insured.ID_Insured equals status.InsuredID
+				join coverage in allCoverages on insured.ID_Insured equals coverage.ID_Insured
+				where insured.Type == "Long Term"
+					&& status.Und_Status == "Declined"
+					&& status.ExtendedAge == "Yes"
+					&& insured.ID_Policy_Holder == selectedPolicyHolderId
+				select new InsuredDetailView
+					{
+						Insured = insured,
+						UndStatus = status,
+						Coverage = coverage
+					}
+			).ToList();
+
+			if (!string.IsNullOrEmpty(selectedAmountFilter))
+			{
+				insuredDetailsList = insuredDetailsList
+					.Where(x =>
+						(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured <= 100000) ||
+						(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured > 100000) ||
+						(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
+					)
+					.ToList();
+			}
 
 			if (selectedYear.HasValue)
 			{
 				insuredDetailsList = insuredDetailsList
-					.Where(x => x.Coverage.Effective_Date.Year == selectedYear.Value)
+					.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
 					.ToList();
 			}
 		}
@@ -309,6 +348,7 @@
 
 		StateHasChanged();
 	}
+
 
 	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
 	{

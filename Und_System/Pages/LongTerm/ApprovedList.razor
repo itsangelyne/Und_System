@@ -24,7 +24,8 @@
 	<h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
 	<div class="card-body">
 		<div class="row justify-content-evenly">
-			<div class="col-md-4 mb-3">
+			<div class="col-md-4 mb-3 d-flex mb-3 align-items-center">
+				<label for="searchbar" class="form-label me-2 fw-bold mb-0">Search:</label>
 				<input type="text" class="form-control" placeholder="Search..." id="searchbar" @bind="searchText" @bind:event="oninput" />
 			</div>
 			<div class="col-md-4 mb-3 d-flex align-items-center">
@@ -595,8 +596,7 @@
 	private List<CGL_Beneficiary> beneficiaries = new();
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
 
-	private string selectedAmountFilter;
-	private bool isAmountFilterActive = false;
+	private string? selectedAmountFilter;
 	private bool isModalVisible = false;
 	private CGLInsured? selectedInsured;
 	private CGLCoverage? selectedCoverage;
@@ -651,6 +651,7 @@
 				join coverage in allCoverages on insured.ID_Insured equals coverage.ID_Insured
 				where insured.Type == "Long Term"
 					&& status.Und_Status == "Approved"
+					&& status.ExtendedAge == "No"
 					&& insured.ID_Policy_Holder == selectedPolicyHolderId
 				select new InsuredDetailView
 					{
