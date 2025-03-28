@@ -56,11 +56,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
+					@* <tr>
 						<td class="text-center">Soo, Stephen D.</td>
 						<td class="text-center text-danger">2025-02-10</td>
-					</tr>
-					@* @if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+					</tr> *@
+					@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
 					{
 						foreach (var detail in insuredDetailsList)
 						{
@@ -79,7 +79,7 @@
 						<tr>
 							<td colspan="8" class="text-center">No insured details available</td>
 						</tr>
-					} *@
+					}
 				</tbody>
 			</table>
 		</div>
