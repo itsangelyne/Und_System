@@ -586,7 +586,6 @@
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
 	private bool isImageModalVisible = false;
-	private string searchText = string.Empty;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
 	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
@@ -602,6 +601,19 @@
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
+	private string _searchText = string.Empty;
+	private string searchText
+	{
+		get => _searchText;
+		set
+		{
+			if (_searchText != value)
+			{
+				_searchText = value;
+				ApplySearchFilter();
+			}
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -684,6 +696,29 @@
 			insuredDetailsList = new List<InsuredDetailView>();
 		}
 
+		ApplySearchFilter();
+		StateHasChanged();
+	}
+
+	private void ApplySearchFilter()
+	{
+		var filteredList = insuredDetailsList;
+		if (!string.IsNullOrWhiteSpace(searchText))
+		{
+			searchText = searchText.ToLower();
+			filteredList = filteredList.Where(item =>
+				(item.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
+				(item.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
+				(item.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false) ||
+				(item.Insured?.Date_Of_Birth.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
+				(item.Coverage?.Amount_Of_Insured.ToString().Contains(searchText) ?? false) ||
+				(item.Coverage?.Effective_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
+				(item.Coverage?.Termination_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
+				(item.UndStatus?.Und_Status?.ToLower().Contains(searchText) ?? false)
+			).ToList();
+		}
+
+		insuredDetailsList = filteredList;
 		StateHasChanged();
 	}
 
