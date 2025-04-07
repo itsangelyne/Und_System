@@ -644,7 +644,6 @@
 		await LoadCreditDebitData();
 	}
 
-
 	private async Task LoadCreditDebitData()
 	{
 		int? selectedPolicyHolderIdNullable = StateService.SelectedBankId;
@@ -696,30 +695,30 @@
 			insuredDetailsList = new List<InsuredDetailView>();
 		}
 
-		ApplySearchFilter();
 		StateHasChanged();
+		ApplySearchFilter();
 	}
 
+	//Search Filter (still fixing)
 	private void ApplySearchFilter()
 	{
 		var filteredList = insuredDetailsList;
 		if (!string.IsNullOrWhiteSpace(searchText))
 		{
-			searchText = searchText.ToLower();
+			searchText = searchText;
 			filteredList = filteredList.Where(item =>
-				(item.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
-				(item.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
-				(item.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false) ||
+				(item.Insured?.Last_Name + item.Insured?.First_Name + item.Insured?.Middle_Name).Contains(searchText) ||
 				(item.Insured?.Date_Of_Birth.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
 				(item.Coverage?.Amount_Of_Insured.ToString().Contains(searchText) ?? false) ||
 				(item.Coverage?.Effective_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
 				(item.Coverage?.Termination_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.UndStatus?.Und_Status?.ToLower().Contains(searchText) ?? false)
+				(item.UndStatus?.Und_Status?.Contains(searchText) ?? false)
 			).ToList();
 		}
 
 		insuredDetailsList = filteredList;
 		StateHasChanged();
+		LoadCreditDebitData();
 	}
 
 
