@@ -30,9 +30,9 @@
 				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
 				<select class="form-control flex-grow-1" id="amountDropdown" @onchange="OnAmountChanged">
 					<option value="">Select Amount</option>
-					<option value="Below100K">100K and Below</option>
+					<option value="Below100K">Below 100K</option>
 					<option value="Above100K">100K and Above</option>
-					<option value="Above300K">300K and Above</option>
+					<option value="Above300K">Above 300K</option>
 				</select>
 			</div>
 
@@ -651,8 +651,8 @@
 			{
 				insuredDetailsList = insuredDetailsList
 					.Where(x =>
-						(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured <= 100000) ||
-						(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured > 100000) ||
+						(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured < 100000) ||
+						(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured >= 100000) ||
 						(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
 					)
 					.ToList();
