@@ -610,7 +610,7 @@
 			if (_searchText != value)
 			{
 				_searchText = value;
-				ApplySearchFilter();
+				ApplyFilters();
 			}
 		}
 	}
@@ -652,6 +652,7 @@
 		{
 			int selectedPolicyHolderId = selectedPolicyHolderIdNullable.Value;
 
+			// Await each call sequentially
 			var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
 			var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
 			var allCoverages = await CGLCoverageService.GetCoverageAsync();
@@ -672,23 +673,8 @@
 					}
 			).ToList();
 
-			if (!string.IsNullOrEmpty(selectedAmountFilter))
-			{
-				insuredDetailsList = insuredDetailsList
-					.Where(x =>
-						(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured <= 100000) ||
-						(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured > 100000) ||
-						(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
-					)
-					.ToList();
-			}
-
-			if (selectedYear.HasValue)
-			{
-				insuredDetailsList = insuredDetailsList
-					.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
-					.ToList();
-			}
+			// Apply filters
+			ApplyFilters();
 		}
 		else
 		{
@@ -696,29 +682,26 @@
 		}
 
 		StateHasChanged();
-		ApplySearchFilter();
 	}
 
-	//Search Filter (still fixing)
-	private void ApplySearchFilter()
+	private void ApplyFilters()
 	{
-		var filteredList = insuredDetailsList;
-		if (!string.IsNullOrWhiteSpace(searchText))
+		if (!string.IsNullOrEmpty(selectedAmountFilter))
 		{
-			searchText = searchText;
-			filteredList = filteredList.Where(item =>
-				(item.Insured?.Last_Name + item.Insured?.First_Name + item.Insured?.Middle_Name).Contains(searchText) ||
-				(item.Insured?.Date_Of_Birth.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.Coverage?.Amount_Of_Insured.ToString().Contains(searchText) ?? false) ||
-				(item.Coverage?.Effective_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.Coverage?.Termination_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.UndStatus?.Und_Status?.Contains(searchText) ?? false)
-			).ToList();
+			insuredDetailsList = insuredDetailsList
+				.Where(x =>
+					(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured <= 100000) ||
+					(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured > 100000) ||
+					(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
+				).Distinct().ToList();
 		}
 
-		insuredDetailsList = filteredList;
-		StateHasChanged();
-		LoadCreditDebitData();
+		if (selectedYear.HasValue)
+		{
+			insuredDetailsList = insuredDetailsList
+				.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
+				.ToList();
+		}
 	}
 
 
