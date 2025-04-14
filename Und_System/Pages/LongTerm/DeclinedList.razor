@@ -73,7 +73,7 @@
 					else
 					{
 						<tr>
-							<td colspan="4" class="text-center">No insured details available</td>
+							<td colspan="2" class="text-center text-danger">No Declined Applications Found</td>
 						</tr>
 					}
 				</tbody>
@@ -245,7 +245,6 @@
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
-	private string searchText = string.Empty;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
 	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
@@ -261,6 +260,19 @@
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
+	private string _searchText = string.Empty;
+	private string searchText
+	{
+		get => _searchText;
+		set
+		{
+			if (_searchText != value)
+			{
+				_searchText = value;
+				ApplyFilters();
+			}
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -342,6 +354,48 @@
 			insuredDetailsList = new List<InsuredDetailView>();
 		}
 
+		StateHasChanged();
+	}
+
+	private void ApplyFilters()
+	{
+		// // Filter by amount
+		// if (!string.IsNullOrEmpty(selectedAmountFilter))
+		// {
+		// 	insuredDetailsList = insuredDetailsList
+		// 			.Where(x =>
+		// 				(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured < 100000) ||
+		// 				(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured >= 100000) ||
+		// 				(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
+		// 			).Distinct().ToList();
+		// }
+
+		// // Filter by year
+		// if (selectedYear.HasValue)
+		// {
+		// 	insuredDetailsList = insuredDetailsList
+		// 		.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
+		// 		.ToList();
+		// }
+
+		// Filter by search text
+		if (!string.IsNullOrEmpty(searchText))
+		{
+			var searchTerms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+			insuredDetailsList = insuredDetailsList
+				.Where(x =>
+					searchTerms.All(term =>
+						(x.Insured?.First_Name != null && x.Insured.First_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Last_Name != null && x.Insured.Last_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Middle_Name != null && x.Insured.Middle_Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+					)
+				).ToList();
+		}
+		else
+		{
+			insuredDetailsList = new List<InsuredDetailView>();
+		}
 		StateHasChanged();
 	}
 

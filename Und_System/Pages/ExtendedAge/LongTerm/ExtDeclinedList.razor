@@ -30,9 +30,9 @@
 				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
 				<select class="form-control flex-grow-1" id="amountDropdown" @onchange="OnAmountChanged">
 					<option value="">Select Amount</option>
-					<option value="Below100K">100K and Below</option>
+					<option value="Below100K">Below 100K</option>
 					<option value="Above100K">100K and Above</option>
-					<option value="Above300K">300K and Above</option>
+					<option value="Above300K">Above 300K</option>
 				</select>
 			</div>
 
@@ -56,11 +56,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td class="text-center">Lucio, Marco</td>
-						<td class="text-center">Didn't Comply Requirements</td>
-					</tr>
-					@* @if (insuredDetailsList != null && insuredDetailsList.Count > 0)
+					@if (insuredDetailsList != null && insuredDetailsList.Count > 0)
 					{
 						foreach (var detail in insuredDetailsList)
 						{
@@ -77,9 +73,9 @@
 					else
 					{
 						<tr>
-							<td colspan="4" class="text-center">No insured details available</td>
+							<td colspan="2" class="text-center text-danger">No Declined Applications Found</td>
 						</tr>
-					} *@
+					}
 				</tbody>
 			</table>
 		</div>

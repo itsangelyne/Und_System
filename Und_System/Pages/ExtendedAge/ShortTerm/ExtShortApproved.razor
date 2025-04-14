@@ -32,9 +32,9 @@
 				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
 				<select class="form-control flex-grow-1" id="amountDropdown" @onchange="OnAmountChanged">
 					<option value="">Select Amount</option>
-					<option value="Below100K">100K and Below</option>
+					<option value="Below100K">Below 100K</option>
 					<option value="Above100K">100K and Above</option>
-					<option value="Above300K">300K and Above</option>
+					<option value="Above300K">Above 300K</option>
 				</select>
 			</div>
 
@@ -88,7 +88,7 @@
 					else
 					{
 						<tr>
-							<td colspan="8" class="text-center">No insured details available</td>
+							<td colspan="7" class="text-center text-danger">No Approved Applications Found</td>
 						</tr>
 					}
 				</tbody>
@@ -686,21 +686,38 @@
 
 	private void ApplyFilters()
 	{
+		// Filter by amount
 		if (!string.IsNullOrEmpty(selectedAmountFilter))
 		{
 			insuredDetailsList = insuredDetailsList
-				.Where(x =>
-					(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured <= 100000) ||
-					(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured > 100000) ||
-					(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
-				).Distinct().ToList();
+					.Where(x =>
+						(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured < 100000) ||
+						(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured >= 100000) ||
+						(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
+					).Distinct().ToList();
 		}
 
+		// Filter by year
 		if (selectedYear.HasValue)
 		{
 			insuredDetailsList = insuredDetailsList
 				.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
 				.ToList();
+		}
+
+		// Filter by search text
+		if (!string.IsNullOrEmpty(searchText))
+		{
+			var searchTerms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+			insuredDetailsList = insuredDetailsList
+				.Where(x =>
+					searchTerms.All(term =>
+						(x.Insured?.First_Name != null && x.Insured.First_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Last_Name != null && x.Insured.Last_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Middle_Name != null && x.Insured.Middle_Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+					)
+				).ToList();
 		}
 	}
 
