@@ -686,6 +686,7 @@
 
 	private void ApplyFilters()
 	{
+		// Filter by amount
 		if (!string.IsNullOrEmpty(selectedAmountFilter))
 		{
 			insuredDetailsList = insuredDetailsList
@@ -696,14 +697,30 @@
 				).Distinct().ToList();
 		}
 
+		// Filter by year
 		if (selectedYear.HasValue)
 		{
 			insuredDetailsList = insuredDetailsList
 				.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
 				.ToList();
 		}
-	}
 
+		// Filter by search text
+		if (!string.IsNullOrEmpty(searchText))
+		{
+			var searchTerms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+			insuredDetailsList = insuredDetailsList
+				.Where(x =>
+					searchTerms.All(term =>
+						(x.Insured?.First_Name != null && x.Insured.First_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Last_Name != null && x.Insured.Last_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Middle_Name != null && x.Insured.Middle_Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+					)
+				).ToList();
+		}
+		LoadCreditDebitData();
+	}
 
 	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
 	{
