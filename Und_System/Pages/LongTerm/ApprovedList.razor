@@ -689,6 +689,17 @@
 		{
 			insuredDetailsList = new List<InsuredDetailView>(originalInsuredDetailsList);
 		}
+		if (string.IsNullOrEmpty(selectedAmountFilter))
+		{
+			insuredDetailsList = new List<InsuredDetailView>(originalInsuredDetailsList);
+		}
+		// Filter by year
+		if (selectedYear.HasValue)
+		{
+			insuredDetailsList = insuredDetailsList
+				.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
+				.ToList();
+		}
 		else
 		{
 			// Filter by amount
@@ -700,14 +711,6 @@
 						(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured >= 100000) ||
 						(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
 					).Distinct().ToList();
-			}
-
-			// Filter by year
-			if (selectedYear.HasValue)
-			{
-				insuredDetailsList = insuredDetailsList
-					.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
-					.ToList();
 			}
 
 			// Filter by search text

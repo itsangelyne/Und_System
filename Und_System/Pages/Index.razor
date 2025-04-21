@@ -84,12 +84,12 @@
                     <div class="row text-center">
                         <div class="col-6 border-end">
                             <h6 class="fw-bold mb-1">Long Term</h6>
-                           @*  <p class="mb-0" style="font-size:24px;">2</p> *@
+                            @*  <p class="mb-0" style="font-size:24px;">2</p> *@
                             <p class="mb-0" style="font-size:24px;">@refundLongTermCount</p>
                         </div>
                         <div class="col-6">
                             <h6 class="fw-bold mb-1">Short Term</h6>
-                           @*  <p class="mb-0" style="font-size:24px;">1</p> *@
+                            @*  <p class="mb-0" style="font-size:24px;">1</p> *@
                             <p class="mb-0" style="font-size:24px;">@refundShortTermCount</p>
                         </div>
                     </div>
@@ -97,14 +97,14 @@
             </div>
         </div>
         <div class="row g-3 justify-content-center">
-        <!--Terminated-->
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card shadow-sm rounded" style="z-index: -1;">
-                <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
-                    Terminated
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
+            <!--Terminated-->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card shadow-sm rounded" style="z-index: -1;">
+                    <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
+                        Terminated
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
                             <div class="col-6 border-end">
                                 <h6 class="fw-bold mb-1">Long Term</h6>
                                 @* <p class="mb-0" style="font-size:24px;">2</p> *@
@@ -115,18 +115,18 @@
                                 @* <p class="mb-0" style="font-size:24px;">2</p> *@
                                 <p class="mb-0" style="font-size:24px;">@terminatedShortTermCount</p>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!--Declined-->
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card shadow-sm rounded" style="z-index: -1;">
-                <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
-                    Declined
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
+            <!--Declined-->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card shadow-sm rounded" style="z-index: -1;">
+                    <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
+                        Declined
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
                             <div class="col-6 border-end">
                                 <h6 class="fw-bold mb-1">Long Term</h6>
                                 @* <p class="mb-0" style="font-size:24px;">3</p> *@
@@ -137,10 +137,10 @@
                                 @* <p class="mb-0" style="font-size:24px;">2</p> *@
                                 <p class="mb-0" style="font-size:24px;">@declinedShortTermCount</p>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
 
         <!-- Compliance and Others Section -->
@@ -151,7 +151,7 @@
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow-sm rounded" style="z-index: -1;">
                         <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
-                           Compliance
+                            Compliance
                         </div>
                         <div class="card-body">
                             <div class="row text-center">
@@ -173,13 +173,13 @@
                         <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
                             Renewal
                         </div>
-						<div class="card-body">
-							<div class="row text-center">
-									<h6 class="fw-bold mb-1">Long Term</h6>
-                              @*   <p class="mb-0" style="font-size:24px;">2</p> *@
-									<p class="mb-0" style="font-size:24px;">@renewalLongTermCount</p>
-							</div>
-						</div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <h6 class="fw-bold mb-1">Long Term</h6>
+                                @*   <p class="mb-0" style="font-size:24px;">2</p> *@
+                                <p class="mb-0" style="font-size:24px;">@renewalLongTermCount</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div> 
@@ -259,7 +259,7 @@
                 switch (undStatus.Und_Status)
                 {
                     case "Pending":
-                        pendingLongTermCount += app.Type == "Long Term" ? 1 : 0;
+                        pendingLongTermCount += app.Type == "Long Term" ? 1 : 0 + undStatus.ExtendedAge == "No" ? 1 : 0;
                         pendingShortTermCount += app.Type == "Short Term" ? 1 : 0;
                         pendingExtendedCount += undStatus.ExtendedAge == "Yes" ? 1 : 0;
                         break;
