@@ -685,49 +685,43 @@
 
 	private void ApplyFilters()
 	{
-		if (string.IsNullOrEmpty(searchText))
-		{
-			insuredDetailsList = new List<InsuredDetailView>(originalInsuredDetailsList);
-		}
-		if (string.IsNullOrEmpty(selectedAmountFilter))
-		{
-			insuredDetailsList = new List<InsuredDetailView>(originalInsuredDetailsList);
-		}
+		var filteredList = new List<InsuredDetailView>(originalInsuredDetailsList);
+
 		// Filter by year
 		if (selectedYear.HasValue)
 		{
-			insuredDetailsList = insuredDetailsList
+			filteredList = filteredList
 				.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
 				.ToList();
 		}
-		else
+
+		// Filter by amount
+		if (!string.IsNullOrEmpty(selectedAmountFilter))
 		{
-			// Filter by amount
-			if (!string.IsNullOrEmpty(selectedAmountFilter))
-			{
-				insuredDetailsList = insuredDetailsList
-					.Where(x =>
-						(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured < 100000) ||
-						(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured >= 100000) ||
-						(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
-					).Distinct().ToList();
-			}
-
-			// Filter by search text
-			if (!string.IsNullOrEmpty(searchText))
-			{
-				var searchTerms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-				insuredDetailsList = insuredDetailsList
-					.Where(x =>
-						searchTerms.All(term =>
-							(x.Insured?.First_Name != null && x.Insured.First_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-							(x.Insured?.Last_Name != null && x.Insured.Last_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-							(x.Insured?.Middle_Name != null && x.Insured.Middle_Name.Contains(term, StringComparison.OrdinalIgnoreCase))
-						)
-					).ToList();
-			}
+			filteredList = filteredList
+				.Where(x =>
+					(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured < 100000) ||
+					(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured >= 100000) ||
+					(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
+				).ToList();
 		}
+
+		// Filter by search text
+		if (!string.IsNullOrEmpty(searchText))
+		{
+			var searchTerms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+			filteredList = filteredList
+				.Where(x =>
+					searchTerms.All(term =>
+						(x.Insured?.First_Name != null && x.Insured.First_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Last_Name != null && x.Insured.Last_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Middle_Name != null && x.Insured.Middle_Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+					)
+				).ToList();
+		}
+
+		insuredDetailsList = filteredList;
 	}
 
 	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
