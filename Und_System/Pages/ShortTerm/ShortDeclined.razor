@@ -86,44 +86,6 @@
 	</div>
 </div>
 
-@if (StatusModal)
-{
-	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
-		<div class="modal-dialog modal-xl">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title"><b>Update Status</b></h5>
-					<button type="button" class="btn-close" @onclick="CloseModal"></button>
-				</div>
-				<div class="modal-body">
-					<div class="col-md mb-3">
-						<div class="border rounded p-3 mb-3">
-							<div class="col-md mb-3">
-								<div class="row">
-									<div class="col-md mb-3">
-										<label for="status" class="form-label">Underwriting Status</label>
-										<input type="text" class="form-control" id="status" value="@status?.Und_Status" readonly />
-									</div>
-								</div>
-							</div>
-							<div class="col-md mb-3">
-								<div class="col-md mb-3">
-									<label for="remarks" class="form-label">Remarks</label>
-									<textarea class="form-control" rows="4" cols="50" style="resize:none;" id="remarks" @bind="status.Remarks" readonly></textarea>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
-}
-
 @if (showLoanHistoryModal)
 {
 	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
@@ -134,7 +96,6 @@
 					<button type="button" class="btn-close" @onclick="CloseModal"></button>
 				</div>
 				<div class="modal-body">
-					<div>Total Amount Of Loan: </div>
 					<div class="table-responsive">
 						<table class="table table-bordered">
 							<thead class="text-white" style="background-color: #5d835c;">
@@ -201,6 +162,7 @@
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
+	private string searchText = string.Empty;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
 	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
@@ -217,19 +179,6 @@
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
-	private string _searchText = string.Empty;
-	private string searchText
-	{
-		get => _searchText;
-		set
-		{
-			if (_searchText != value)
-			{
-				_searchText = value;
-				ApplyFilters();
-			}
-		}
-	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -287,62 +236,56 @@
 						Coverage = coverage
 					}
 			).ToList();
+
 			originalInsuredDetailsList = new List<InsuredDetailView>(insuredDetailsList);
-
-			if (!string.IsNullOrEmpty(selectedAmountFilter))
-			{
-				insuredDetailsList = insuredDetailsList
-					.Where(x =>
-						(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured < 100000) ||
-						(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured >= 100000) ||
-						(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
-					)
-					.ToList();
-				originalInsuredDetailsList = new List<InsuredDetailView>(insuredDetailsList);
-			}
-
-			if (selectedYear.HasValue)
-			{
-				insuredDetailsList = insuredDetailsList
-					.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
-					.ToList();
-				originalInsuredDetailsList = new List<InsuredDetailView>(insuredDetailsList);
-			}
 		}
 		else
 		{
 			insuredDetailsList = new List<InsuredDetailView>();
 		}
-
+		ApplyFilters();
 		StateHasChanged();
 	}
 
 	private void ApplyFilters()
 	{
+		var filteredList = new List<InsuredDetailView>(originalInsuredDetailsList);
+
+		// Filter by year
+		if (selectedYear.HasValue)
+		{
+			filteredList = filteredList
+				.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
+				.ToList();
+		}
+
+		// Filter by amount
+		if (!string.IsNullOrEmpty(selectedAmountFilter))
+		{
+			filteredList = filteredList
+				.Where(x =>
+					(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured < 100000) ||
+					(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured >= 100000) ||
+					(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
+				).ToList();
+		}
+
 		// Filter by search text
-		if (string.IsNullOrEmpty(searchText))
+		if (!string.IsNullOrEmpty(searchText))
 		{
-			insuredDetailsList = new List<InsuredDetailView>(originalInsuredDetailsList);
+			var searchTerms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+			filteredList = filteredList
+				.Where(x =>
+					searchTerms.All(term =>
+						(x.Insured?.First_Name != null && x.Insured.First_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Last_Name != null && x.Insured.Last_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Middle_Name != null && x.Insured.Middle_Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+					)
+				).ToList();
 		}
 
-		else
-		{
-			// Filter by search text
-			if (!string.IsNullOrEmpty(searchText))
-			{
-				var searchTerms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-				insuredDetailsList = insuredDetailsList
-					.Where(x =>
-						searchTerms.All(term =>
-							(x.Insured?.First_Name != null && x.Insured.First_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-							(x.Insured?.Last_Name != null && x.Insured.Last_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-							(x.Insured?.Middle_Name != null && x.Insured.Middle_Name.Contains(term, StringComparison.OrdinalIgnoreCase))
-						)
-					).ToList();
-			}
-		}
-		StateHasChanged();
+		insuredDetailsList = filteredList;
 	}
 
 
@@ -378,41 +321,6 @@
 				})
 			.ToList();
 		StateHasChanged();
-	}
-
-	private async Task UpdateStatus(CGLInsured insured)
-	{
-		selectedInsured = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
-		var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
-		status = allUndStatuses.FirstOrDefault(u => u.InsuredID == insured.ID_Insured);
-		selectedCoverage = await CGLCoverageService.GetCoverageByInsuredIdAsync(insured.ID_Insured);
-		policyHolder = await CGLPolicyHolderServices.GetPolicyHolderByIdAsync(selectedInsured.ID_Policy_Holder);
-
-		StatusModal = true;
-		StateHasChanged();
-	}
-	private async Task LoadSubstandardRatings()
-	{
-		if (selectedInsured != null)
-		{
-			substandardRatings = await CGLSubstandardRatingService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
-		}
-	}
-	private async Task LoadHealthQuestionsAndAnswers()
-	{
-		if (selectedInsured != null)
-		{
-			healthQuestions = await CGLHealthQuestionsService.GetSubstandardAsync();
-			healthAnswers = await CGLHealthAnswerService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
-		}
-	}
-
-	private async Task LoadBeneficiaries()
-	{
-		if (selectedInsured != null)
-		{
-			beneficiaries = await CGLBeneficiaryService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
-		}
 	}
 
 	private async Task ViewLoanHistory(CGLInsured insured)
