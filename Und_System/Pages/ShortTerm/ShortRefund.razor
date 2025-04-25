@@ -30,9 +30,9 @@
 				<label for="amountDropdown" class="me-2 fw-bold" style="white-space: nowrap; min-width: 140px;">Filter by Amount:</label>
 				<select class="form-control flex-grow-1" id="amountDropdown" @onchange="OnAmountChanged">
 					<option value="">Select Amount</option>
-					<option value="Below100K">100K and Below</option>
+					<option value="Below100K">Below 100K</option>
 					<option value="Above100K">100K and Above</option>
-					<option value="Above300K">300K and Above</option>
+					<option value="Above300K">Above 300K</option>
 				</select>
 			</div>
 
@@ -54,6 +54,7 @@
 						<th class="text-center">Full Name</th>
 						<th class="text-center">Date of Birth</th>
 						<th class="text-center">Amount of Loan</th>
+						<th class="text-center">Remarks</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -69,13 +70,14 @@
 								<td class="text-center"><b>@insured?.Last_Name</b>, @insured?.First_Name @insured?.Middle_Name</td>
 								<td class="text-center">@insured?.Date_Of_Birth.ToString("yyyy-MM-dd")</td>
 								<td class="text-center fw-bold">@coverage?.Amount_Of_Insured</td>
+								<td class="text-center">@undStatus?.Remarks</td>
 							</tr>
 						}
 					}
 					else
 					{
 						<tr>
-							<td colspan="3" class="text-center">No insured details available</td>
+							<td colspan="4" class="text-center text-danger">No Applications are subjected For Refund available</td>
 						</tr>
 					}
 				</tbody>
@@ -84,470 +86,6 @@
 	</div>
 </div>
 
-
-@if (isModalVisible)
-{
-	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
-		<div class="modal-dialog modal-xl">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title"><b>Borrower's Details: </b></h5>
-					<button type="button" class="btn-close" @onclick="CloseModal"></button>
-				</div>
-				<div class="modal-body">
-					<ul class="nav nav-tabs" id="myTab" role="tablist">
-						<li class="nav-item" role="presentation">
-							<a class="nav-link active" id="coverage-tab" data-bs-toggle="tab" href="#coverage" role="tab" aria-controls="coverage" aria-selected="true">Coverage Details</a>
-						</li>
-						<li class="nav-item" role="presentation">
-							<a class="nav-link" id="other-details-tab" data-bs-toggle="tab" href="#other-details" role="tab" aria-controls="other-details" aria-selected="false">Other Details</a>
-						</li>
-					</ul>
-					@* TAB 1 FOR COVERAGE DETAILS *@
-					<div class="tab-content" id="myTabContent">
-						<div class="tab-pane fade show active" id="coverage" role="tabpanel" aria-labelledby="coverage-tab">
-							<form>
-								<div class="border rounded p-3 mb-3">
-									<div class="border rounded p-3 mb-3">
-										<div class="col-md mb-3">
-											<label for="bankName" class="form-label">Name of Bank</label>
-											<input type="text" class="form-control" id="bankName" value="@policyHolder?.Policy_Holder_Name" readonly />
-										</div>
-										<div class="row">
-											<div class="col-md-3 mb-3">
-												<label for="bankBranch" class="form-label">Branch</label>
-												<input type="text" class="form-control" id="bankBranch" value="@policyHolder?.Bank_Level" readonly />
-											</div>
-											<div class="col-md-9 mb-3">
-												<label for="bankAddress" class="form-label">Address</label>
-												<input type="text" class="form-control" id="bankAddress" value="@policyHolder?.Bank_Address" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="dbcr" class="form-label">DB/CR</label>
-												<input type="number" class="form-control" id="dbcr" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="ORDate" class="form-label">OR Date</label>
-												<input type="date" class="form-control" id="ORDate" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="ORNumber" class="form-label">OR Number</label>
-												<input type="number" class="form-control" id="ORNumber" readonly />
-											</div>
-										</div>
-									</div>
-
-									<div class="border rounded p-3 mb-3">
-										<div class="row">
-											<div class="col-md-4 mb-3">
-												<label for="dob" class="form-label">Date of Birth</label>
-												<input type="date" class="form-control" id="dob" @bind="selectedInsured.Date_Of_Birth" readonly />
-											</div>
-											<div class="col-md-1 mb-3">
-												<label for="age" class="form-label">Age</label>
-												<input type="number" class="form-control" id="age" @bind="selectedInsured.Age" readonly />
-											</div>
-											<div class="row">
-												<div class="col-md-4 mb-3">
-													<label for="lastName" class="form-label">Last Name</label>
-													<input type="text" class="form-control" id="lastName" @bind="selectedInsured.Last_Name" readonly />
-												</div>
-												<div class="col-md-4 mb-3">
-													<label for="firstName" class="form-label">First Name</label>
-													<input type="text" class="form-control" id="firstName" @bind="selectedInsured.First_Name" readonly />
-												</div>
-												<div class="col-md-3 mb-3">
-													<label for="middleName" class="form-label">Middle Name</label>
-													<input type="text" class="form-control" id="middleName" @bind="selectedInsured.Middle_Name" readonly />
-												</div>
-												<div class="col-sm-1 mb-3">
-													<label for="suffix" class="form-label">Suffix</label>
-													<input type="text" class="form-control" id="suffix" @bind="selectedInsured.Suffix" readonly />
-												</div>
-											</div>
-										</div>
-									</div>
-
-									<div class="border rounded p-3 mb-3">
-										<div class="row">
-											<div class="col-md-4 mb-3">
-												<label for="loan" class="form-label">Amount of Loan</label>
-												<input type="text" class="form-control" id="loan" value="@selectedCoverage?.Amount_Of_Insured" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="term" class="form-label">Loan Term</label>
-												<input type="text" class="form-control" id="term" @bind="selectedCoverage.Term_Of_Loan" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="effective" class="form-label">Effectivity Date</label>
-												<input type="date" class="form-control" id="effective" @bind="selectedCoverage.Effective_Date" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="dueDate" class="form-label">Due Date</label>
-												<input type="date" class="form-control" id="dueDate" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="termination" class="form-label">Termination Date</label>
-												<input type="date" class="form-control" id="termination" @bind="selectedCoverage.Termination_Date" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="mop" class="form-label">Mode of Payment</label>
-												<input type="text" class="form-control" id="mop" @bind="selectedCoverage.Mode_Of_Payment" readonly />
-											</div>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-md-4 mb-3">
-											<div class="border rounded p-3 mb-3">
-
-												<div class="col-md mb-3">
-													<label for="DCHS" class="form-label">DCHS Number</label>
-													<input type="text" class="form-control" id="DCHS" value="@selectedInsured?.DCHS" readonly />
-												</div>
-												<div class="col-md mb-3">
-													<label for="prem" class="form-label">Premium</label>
-													<input type="number" class="form-control" id="prem" @bind="selectedCoverage.Premium" readonly />
-												</div>
-
-												<div class="col-md mb-3">
-													<label for="Class" class="form-label">Rider</label>
-													<input type="text" class="form-control" id="Class" value="@selectedCoverage.Rider" readonly />
-												</div>
-											</div>
-										</div>
-										<div class="col-md mb-3">
-											<div class="border rounded p-3 mb-3">
-												<div class="col-md mb-3">
-													<div class="row">
-														<div class="col-md mb-3">
-															<label for="status" class="form-label">Underwriting Status</label>
-															<input type="text" class="form-control" id="Class" value="@status?.Und_Status" readonly />
-														</div>
-														<div class="col-md mb-3">
-															<label for="psdstatus" class="form-label">PSD Status</label>
-															<input type="text" class="form-control" id="Class" value="@status?.PSD_Status" readonly />
-														</div>
-													</div>
-												</div>
-												<div class="col-md mb-3">
-													<div class="col-md mb-3">
-														<label for="remarks" class="form-label">Remarks</label>
-														<textarea class="form-control" rows="4" cols="50" style="resize:none;" id="remarks" value="status.Remarks" readonly></textarea>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="border rounded p-3 mb-3">
-										<div class="table-responsive">
-											<table class="table table-bordered mb-0">
-												<thead class="text-white" style="background-color:#5d835c">
-													<tr>
-														<th class="text-center">Illness</th>
-														<th class="text-center">Regular Age</th>
-														<th class="text-center">Overage</th>
-													</tr>
-												</thead>
-												<tbody>
-													@if (substandardRatings != null && substandardRatings.Count > 0)
-													{
-														@foreach (var rating in substandardRatings)
-														{
-															<tr>
-																<td>
-																	<input type="text" class="form-control" value="@rating.Illness_Name" readonly />
-																</td>
-																<td class="text-center" style="width:20%;">
-																	<input type="text" class="form-control text-center" value="@rating.Regular_Age" readonly />
-																</td>
-																<td class="text-center" style="width:20%;">
-																	<input type="text" class="form-control text-center" value="@rating.Overage" readonly />
-																</td>
-															</tr>
-														}
-													}
-													else
-													{
-														<tr>
-															<td colspan="3" class="text-center">No Illness Declared</td>
-														</tr>
-													}
-
-												</tbody>
-											</table>
-										</div>
-									</div>
-
-									<table class="table table-borderless mb-0">
-										<thead class="text-white" style="background-color:#5d835c">
-											<tr>
-												<th class="text-center" style="width: 85px;">No.</th>
-												<th class="text-center" style="width:auto;">Question</th>
-												<th class="text-center" style="width: 150px;">Answer</th>
-											</tr>
-										</thead>
-										<tbody>
-											@for (int i = 0; i < healthQuestions.Count; i++)
-											{
-												var question = healthQuestions[i];
-												if (question.Status == "display")
-												{
-													var answer = healthAnswers.FirstOrDefault(a => a.ID_Health_Question == question.ID);
-
-													if (string.IsNullOrEmpty(question.InputType))
-													{
-														<tr>
-															<td colspan="3">
-																<p class="fw-normal justify-content-center mb-0">@question.Question</p>
-																@if (answer != null && answer.Input_Type == "No")
-																{
-																	<textarea class="form-control" readonly style="height: 100px; resize: none;">@answer.Remarks</textarea>
-																}
-															</td>
-														</tr>
-													}
-													else
-													{
-														<tr>
-															<td>
-																<input type="text" class="form-control" value="@question.NO" readonly style="width: 80px; text-align: center;" />
-															</td>
-															<td style="word-wrap: break-word; white-space: normal;" class="fw-bolder">
-																@if (question.InputType == "text")
-																{
-																	<input type="text" class="form-control" readonly style="height: 100px; resize: none;">
-
-																	@question.Question
-																}
-																else if (question.InputType == "select")
-																{
-																	<select class="form-control" disabled>
-																		<option>@question.Question</option>
-																	</select>
-																}
-																else if (question.InputType == "date")
-																{
-																	<input type="date" class="form-control" value="@question.Question" readonly />
-																}
-																else
-																{
-																	<input type="text" class="form-control" value="@question.Question" readonly />
-																}
-															</td>
-															<td>
-																@if (answer != null)
-																{
-																	if (question.NO.ToString().Contains("."))
-																	{
-																		<input type="text" class="form-control text-center" value="@answer.Answer" readonly style="width: 140px;" />
-																	}
-																	else
-																	{
-																		if (answer.Input_Type == "No")
-																		{
-																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly style="width: 140px;" />
-																		}
-																		else
-																		{
-																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly style="width: 140px;" />
-																		}
-																	}
-																}
-																else
-																{
-																	<input type="text" class="form-control" value="No Answer" readonly />
-																}
-															</td>
-														</tr>
-
-														@if (answer != null && answer.Input_Type == "No")
-														{
-															<tr>
-																<td colspan="3">
-																	<textarea class="form-control" readonly style="height: 100px; resize:none;">@answer.Remarks</textarea>
-																</td>
-															</tr>
-														}
-													}
-												}
-											}
-										</tbody>
-									</table>
-								</div>
-							</form>
-						</div>
-
-						@* TAB 2 FOR OTHER DETAILS (PERSONAL) *@
-						<div class="tab-pane fade" id="other-details" role="tabpanel" aria-labelledby="other-details-tab">
-							<form>
-								<div class="border rounded p-3 mb-3">
-									<div class="border rounded p-3 mb-3">
-										<div class="row">
-											<div class="col-md-8">
-												<label for="address" class="form-label">Address</label>
-												<input type="text" class="form-control" id="address" value="@selectedInsured?.Address" readonly />
-											</div>
-											<div class="col-md-2 mb-2">
-												<label for="civil" class="form-label">Civil Status</label>
-												<input type="text" class="form-control" id="civil" value="@selectedInsured?.Civil_Status" readonly />
-											</div>
-											<div class="col-md-2 mb-2">
-												<label for="gender" class="form-label">Gender</label>
-												<input type="text" class="form-control" id="gender" value="@selectedInsured?.Gender" readonly />
-											</div>
-											<div class="col-sm-1 mb-2">
-												<label for="height" class="form-label">Height</label>
-												<input type="text" class="form-control" id="height" value="@selectedInsured?.Height" readonly />
-											</div>
-											<div class="col-sm-1 mb-2">
-												<label for="weight" class="form-label">Weight</label>
-												<input type="text" class="form-control" id="weight" value="@selectedInsured?.Weight" readonly />
-											</div>
-
-											<div class="col-md-3 mb-3">
-												<label for="contact" class="form-label">Contact Number</label>
-												<input type="number" class="form-control" id="contact" value="@selectedInsured?.Contact_Number" readonly />
-											</div>
-											<div class="col-md-7 mb-3">
-												<label for="email" class="form-label">Email Address</label>
-												<input type="text" class="form-control" id="email" value="@selectedInsured?.Email_Address" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="pob" class="form-label">Place of Birth</label>
-												<input type="text" class="form-control" id="pob" value="@selectedInsured?.Place_Of_Birth" readonly />
-											</div>
-											<div class="col-md-3 mb-3">
-												<label for="nationality" class="form-label">Nationality</label>
-												<input type="text" class="form-control" id="nationality" value="@selectedInsured?.Nationality" readonly />
-											</div>
-											<div class="col-md-5 mb-3">
-												<label for="govno" class="form-label">Gov Number (TIN/SSS/GSIS)</label>
-												<input type="number" class="form-control" id="govno" value="@selectedInsured?.TIN_SSS_GSIS_NO" readonly />
-											</div>
-										</div>
-									</div>
-									<div class="border rounded p-3 mb-3">
-										<div class="row">
-											<div class="col-md-6 mb-3">
-												<label for="source" class="form-label">Source of Funds</label>
-												<input type="text" class="form-control" id="source" value="@selectedInsured?.Source_Of_Funds" readonly />
-											</div>
-											<div class="col-md-6 mb-3">
-												<label for="nature" class="form-label">Nature of Self-Employment</label>
-												<input type="text" class="form-control" id="nature" value="@selectedInsured?.Nature_of_Self_Employment_Business" readonly />
-											</div>
-											<div class="col-md-8 mb-3">
-												<label for="business" class="form-label">Address of Employer</label>
-												<input type="text" class="form-control" id="business" value="@selectedInsured?.Address_Of_Business_or_Employer" readonly />
-											</div>
-											<div class="col-md-4 mb-3">
-												<label for="occupation" class="form-label">Occupation</label>
-												<input type="text" class="form-control" id="occupation" value="@selectedInsured?.Occupation_And_Livelihood" readonly />
-											</div>
-										</div>
-									</div>
-
-									<div class="border rounded p-3 mb-3">
-										<div class="table-responsive" style="overflow-x: auto">
-											<table class="table table-bordered mb-0">
-												<thead class="text-white" style="background-color:#5d835c">
-													<tr>
-														<th class="text-center">Full Name</th>
-														<th class="text-center">Age</th>
-														<th class="text-center">Relation to Insured</th>
-													</tr>
-												</thead>
-												<tbody>
-													@if (beneficiaries != null && beneficiaries.Count > 0)
-													{
-														@foreach (var beneficiary in beneficiaries)
-														{
-															<tr>
-																<td class="text-center">
-																	<input type="text" class="form-control text-center" value="@beneficiary.Full_Name" readonly />
-																</td>
-																<td class="text-center">
-																	<input type="text" class="form-control text-center" value="@beneficiary.Age" readonly />
-																</td>
-																<td class="text-center">
-																	<input type="text" class="form-control text-center" value="@beneficiary.Relation_To_The_Insured" readonly />
-																</td>
-															</tr>
-														}
-													}
-													else
-													{
-														<tr>
-															<td colspan="8" class="text-center">No Beneficiaries Added</td>
-														</tr>
-													}
-
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-
-							</form>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
-}
-@if (showLoanHistoryModal)
-{
-	<div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
-		<div class="modal-dialog modal-xl" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Loan History</h5>
-					<button type="button" class="btn-close" @onclick="CloseModal"></button>
-				</div>
-				<div class="modal-body">
-					<div class="table-responsive">
-						<table class="table table-bordered">
-							<thead class="text-white" style="background-color: #5d835c;">
-								<tr>
-									<th>Full Name</th>
-									<th>Date of Birth</th>
-									<th>Amount of Loan</th>
-									<th>Status</th>
-									<th>Name of Bank</th>
-								</tr>
-							</thead>
-							<tbody>
-								@if (loanHistoryList != null && loanHistoryList.Count > 0)
-								{
-									foreach (var loan in loanHistoryList)
-									{
-										<tr>
-											<td class="text-center"><b>@loan.LastName</b>, @loan.FirstName @loan.MiddleName</td>
-											<td class="text-center">@loan.DateOfBirth.ToString("yyyy-MM-dd")</td>
-											<td class="text-center">@loan.AmountOfLoan</td>
-											<td class="text-center">@loan.Status</td>
-											<td class="text-center">@loan.BankName</td>
-										</tr>
-									}
-								}
-								else
-								{
-									<tr>
-										<td colspan="5" class="text-center">No loan history available</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-}
 @code {
 	public class InsuredDetailView
 	{
@@ -573,7 +111,6 @@
 	private int? expandedRowId = null;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
-	private string searchText = string.Empty;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
 	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
@@ -582,6 +119,7 @@
 	private List<CGL_Health_Answer> healthAnswers = new();
 	private List<CGL_Beneficiary> beneficiaries = new();
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
+	private List<InsuredDetailView> originalInsuredDetailsList = new List<InsuredDetailView>();
 
 	private string? selectedAmountFilter;
 	private bool isModalVisible = false;
@@ -589,6 +127,19 @@
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
+	private string _searchText = string.Empty;
+	private string searchText
+	{
+		get => _searchText;
+		set
+		{
+			if (_searchText != value)
+			{
+				_searchText = value;
+				ApplyFilters();
+			}
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -646,150 +197,55 @@
 					}
 			).ToList();
 
-			if (!string.IsNullOrEmpty(selectedAmountFilter))
-			{
-				insuredDetailsList = insuredDetailsList
-					.Where(x =>
-						(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured <= 100000) ||
-						(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured > 100000) ||
-						(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
-					)
-					.ToList();
-			}
-
-			if (selectedYear.HasValue)
-			{
-				insuredDetailsList = insuredDetailsList
-					.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
-					.ToList();
-			}
+			originalInsuredDetailsList = new List<InsuredDetailView>(insuredDetailsList);
 		}
 		else
 		{
 			insuredDetailsList = new List<InsuredDetailView>();
 		}
-
+		ApplyFilters();
 		StateHasChanged();
 	}
 
-
-	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
+	private void ApplyFilters()
 	{
-		if (expandedRowId == idCB)
+		var filteredList = new List<InsuredDetailView>(originalInsuredDetailsList);
+
+		// Filter by year
+		if (selectedYear.HasValue)
 		{
-			expandedRowId = null;
+			filteredList = filteredList
+				.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
+				.ToList();
 		}
-		else
+
+		// Filter by amount
+		if (!string.IsNullOrEmpty(selectedAmountFilter))
 		{
-			expandedRowId = idCB;
-			await LoadInsuredDetails(dchsFrom, dchsTo);
+			filteredList = filteredList
+				.Where(x =>
+					(selectedAmountFilter == "Below100K" && x.Coverage?.Amount_Of_Insured < 100000) ||
+					(selectedAmountFilter == "Above100K" && x.Coverage?.Amount_Of_Insured >= 100000) ||
+					(selectedAmountFilter == "Above300K" && x.Coverage?.Amount_Of_Insured > 300000)
+				).ToList();
 		}
-		StateHasChanged();
-	}
 
-	private async Task LoadInsuredDetails(string dchsFrom, string dchsTo)
-	{
-		insuredDetailsList.Clear();
-
-		var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
-		var allCoverages = await CGLCoverageService.GetCoverageAsync();
-		var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
-
-		insuredDetailsList = allInsuredRecords
-			.Where(i => i.DCHS == dchsFrom || i.DCHS == dchsTo)
-			.Select(i => new InsuredDetailView
-				{
-					Insured = i,
-					Coverage = allCoverages.FirstOrDefault(c => c.ID_Insured == i.ID_Insured),
-					UndStatus = allUndStatuses.FirstOrDefault(u => u.InsuredID == i.ID_Insured)
-				})
-			.ToList();
-		StateHasChanged();
-	}
-
-	private async Task ViewDetails(CGLInsured insured)
-	{
-		selectedInsured = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
-		var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
-		status = allUndStatuses.FirstOrDefault(u => u.InsuredID == insured.ID_Insured);
-		selectedCoverage = await CGLCoverageService.GetCoverageByInsuredIdAsync(insured.ID_Insured);
-		policyHolder = await CGLPolicyHolderServices.GetPolicyHolderByIdAsync(selectedInsured.ID_Policy_Holder);
-
-		await LoadHealthQuestionsAndAnswers();
-		await LoadSubstandardRatings();
-		await LoadBeneficiaries();
-
-		isModalVisible = true;
-		StateHasChanged();
-	}
-	private async Task LoadSubstandardRatings()
-	{
-		if (selectedInsured != null)
+		// Filter by search text
+		if (!string.IsNullOrEmpty(searchText))
 		{
-			substandardRatings = await CGLSubstandardRatingService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
+			var searchTerms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+			filteredList = filteredList
+				.Where(x =>
+					searchTerms.All(term =>
+						(x.Insured?.First_Name != null && x.Insured.First_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Last_Name != null && x.Insured.Last_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Middle_Name != null && x.Insured.Middle_Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+					)
+				).ToList();
 		}
-	}
-	private async Task LoadHealthQuestionsAndAnswers()
-	{
-		if (selectedInsured != null)
-		{
-			healthQuestions = await CGLHealthQuestionsService.GetSubstandardAsync();
-			healthAnswers = await CGLHealthAnswerService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
-		}
-	}
 
-	private async Task LoadBeneficiaries()
-	{
-		if (selectedInsured != null)
-		{
-			beneficiaries = await CGLBeneficiaryService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
-		}
-	}
-
-	private async Task ViewLoanHistory(CGLInsured insured)
-	{
-		loanHistoryList = await FetchLoanHistory(insured.Last_Name, insured.First_Name, insured.Middle_Name, insured.Date_Of_Birth, insured.ID_Insured);
-		showLoanHistoryModal = true;
-	}
-
-	private async Task<List<LoanHistory>> FetchLoanHistory(string lastName, string firstName, string middleName, DateTime dateOfBirth, int insuredId)
-	{
-		var matchingInsureds = await _context.CGL_INSURED
-			.Where(i => i.Last_Name == lastName && i.First_Name == firstName && i.Middle_Name == middleName && i.Date_Of_Birth == dateOfBirth)
-			.ToListAsync();
-
-		var loanHistories = new List<LoanHistory>();
-
-		foreach (var insured in matchingInsureds)
-		{
-			var coverage = await _context.CGL_Coverage
-				.Where(c => c.ID_Insured == insured.ID_Insured)
-				.ToListAsync();
-
-			foreach (var cov in coverage)
-			{
-
-				var status = await _context.CGL_UndStatus
-					.Where(s => s.InsuredID == insured.ID_Insured)
-					.FirstOrDefaultAsync();
-
-				var policyHolder = await _context.CGL_Policy_Holder
-					.Where(ph => ph.ID_Policy_Holder == insured.ID_Policy_Holder)
-					.FirstOrDefaultAsync();
-
-				loanHistories.Add(new LoanHistory
-					{
-						LastName = insured.Last_Name,
-						FirstName = insured.First_Name,
-						MiddleName = insured?.Middle_Name,
-						DateOfBirth = insured.Date_Of_Birth,
-						AmountOfLoan = cov.Amount_Of_Insured,
-						Status = status.Und_Status,
-						BankName = policyHolder.Policy_Holder_Name
-					});
-			}
-		}
-		return loanHistories;
+		insuredDetailsList = filteredList;
 	}
 
 	private void CloseModal()

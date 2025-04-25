@@ -162,7 +162,6 @@
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
-	private string searchText = string.Empty;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
 	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
@@ -179,6 +178,19 @@
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
+	private string _searchText = string.Empty;
+	private string searchText
+	{
+		get => _searchText;
+		set
+		{
+			if (_searchText != value)
+			{
+				_searchText = value;
+				ApplyFilters();
+			}
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{

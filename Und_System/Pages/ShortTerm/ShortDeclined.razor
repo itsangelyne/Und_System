@@ -162,7 +162,6 @@
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
-	private string searchText = string.Empty;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
 	private List<InsuredDetailView> insuredDetailsList = new List<InsuredDetailView>();
@@ -179,6 +178,19 @@
 	private CGLCoverage? selectedCoverage;
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
+	private string _searchText = string.Empty;
+	private string searchText
+	{
+		get => _searchText;
+		set
+		{
+			if (_searchText != value)
+			{
+				_searchText = value;
+				ApplyFilters();
+			}
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -288,40 +300,6 @@
 		insuredDetailsList = filteredList;
 	}
 
-
-	private async Task ToggleApplications(int idCB, string dchsFrom, string dchsTo)
-	{
-		if (expandedRowId == idCB)
-		{
-			expandedRowId = null;
-		}
-		else
-		{
-			expandedRowId = idCB;
-			await LoadInsuredDetails(dchsFrom, dchsTo);
-		}
-		StateHasChanged();
-	}
-
-	private async Task LoadInsuredDetails(string dchsFrom, string dchsTo)
-	{
-		insuredDetailsList.Clear();
-
-		var allInsuredRecords = await CGLInsuredService.GetInsuredRecordsAsync();
-		var allCoverages = await CGLCoverageService.GetCoverageAsync();
-		var allUndStatuses = await CGLUndStatusService.GetStatusAsync();
-
-		insuredDetailsList = allInsuredRecords
-			.Where(i => i.DCHS == dchsFrom || i.DCHS == dchsTo)
-			.Select(i => new InsuredDetailView
-				{
-					Insured = i,
-					Coverage = allCoverages.FirstOrDefault(c => c.ID_Insured == i.ID_Insured),
-					UndStatus = allUndStatuses.FirstOrDefault(u => u.InsuredID == i.ID_Insured)
-				})
-			.ToList();
-		StateHasChanged();
-	}
 
 	private async Task ViewLoanHistory(CGLInsured insured)
 	{
