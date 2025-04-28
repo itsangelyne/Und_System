@@ -56,8 +56,8 @@
 						<th class="text-center">Termination Date</th>
 						<th class="text-center">Amount</th>
 						<th class="text-center">Premium</th>
-						<th class="text-center">OR No</th>
-						<th class="text-center">Due Date</th>
+						@* <th class="text-center">OR No</th>
+						<th class="text-center">Due Date</th> *@
 						<th class="text-center">Term</th>
 					</tr>
 				</thead>
@@ -78,8 +78,8 @@
 								<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
 								<td class="text-center">@coverage?.Amount_Of_Insured</td>
 								<td class="text-center">@coverage?.Premium</td>
-								<td class="text-center"></td>
-								<td class="text-center"></td>
+								@* <td class="text-center"></td>
+								<td class="text-center"></td> *@
 								<td class="text-center">@coverage?.Term_Of_Loan</td>
 							</tr>
 						}
@@ -87,7 +87,7 @@
 					else
 					{
 						<tr>
-							<td colspan="8" class="text-center">No insured details available</td>
+							<td colspan="7" class="text-center text-danger">No Applications Subject for Renewal Available</td>
 						</tr>
 					}
 				</tbody>
