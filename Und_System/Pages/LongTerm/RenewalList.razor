@@ -572,6 +572,7 @@
 	</div>
 }
 @code {
+
 	public class InsuredDetailView
 	{
 		public CGLInsured? Insured { get; set; }
@@ -591,6 +592,7 @@
 	}
 
 	private int? selectedYear;
+	  private string? typedYear;
 	private string? currentAction;
 	private bool isEditing = false;
 	private int? expandedRowId = null;

@@ -644,7 +644,7 @@
 										from illness in illnessGroup.DefaultIfEmpty()
 										where insured.Type == "Long Term"
 										&& status.Und_Status == "Compliance"
-										&& illness.Illness_Name == "Others"
+										// && illness.Illness_Name == "Others"
 										&& insured.ID_Policy_Holder == selectedPolicyHolderId
 										select new InsuredDetailView
 									  {
