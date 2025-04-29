@@ -293,7 +293,7 @@
 					else
 					{
 						<tr>
-							<td colspan="8" class="text-center text-danger">No Pending Applications Found</td>
+							<td colspan="8" class="text-center text-danger fw-bold">No Pending Applications Found</td>
 						</tr>
 					}
 				</tbody>
@@ -483,7 +483,7 @@
 													else
 													{
 														<tr>
-															<td colspan="3" class="text-center">No Illness Declared</td>
+															<td colspan="3" class="text-center text-danger fw-bold">No Illness Declared</td>
 														</tr>
 													}
 												</tbody>
@@ -683,7 +683,7 @@
 													else
 													{
 														<tr>
-															<td colspan="3" class="text-center">No Beneficiaries Added</td>
+															<td colspan="3" class="text-center text-danger fw-bold">No Beneficiaries Added</td>
 														</tr>
 													}
 												</tbody>
@@ -696,7 +696,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-outline-success" @onclick="ShowSaveRemarksConfirmation">@((isRemarksEditable) ? "Save Changes" : "Update")</button>
+					<button type="button" class="btn btn-outline-success" @onclick="ShowSaveRemarksConfirmation">@((isRemarksEditable) ? "Save Changes" : "Update ")</button>
 					<button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
 				</div>
 			</div>
@@ -766,7 +766,7 @@
 								else
 								{
 									<tr>
-										<td colspan="3" class="text-center">No particulars found.</td>
+										<td colspan="2" class="text-center text-danger fw-bold">No Particulars found.</td>
 									</tr>
 								}
 							</tbody>
@@ -785,11 +785,11 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Receipt: </h5>
+					<h5 class="modal-title">Receipt</h5>
 					<button type="button" class="btn-close" @onclick="CloseModal"></button>
 				</div>
 				<div class="modal-body text-center">
-					<img src="@imageUrl" class="img-fluid" alt="ID Image" />
+					<img src="@imageUrl" class="img-fluid" alt="Receipt Image" />
 				</div>
 			</div>
 		</div>
@@ -803,16 +803,17 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Receipt </h5>
+					<h5 class="modal-title">Valid ID</h5>
 					<button type="button" class="btn-close" @onclick="CloseModal"></button>
 				</div>
 				<div class="modal-body text-center">
-					<img src="@imageUrl" class="img-fluid" alt="Receipt" />
+					<img src="@imageUrl" class="img-fluid" alt="Valid ID Image" />
 				</div>
 			</div>
 		</div>
 	</div>
 }
+
 <!--Loan History Modal-->
 @if (showLoanHistoryModal)
 {
@@ -833,6 +834,7 @@
 									<th>Amount of Loan</th>
 									<th>Status</th>
 									<th>Name of Bank</th>
+									<th>Valid ID</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -840,19 +842,22 @@
 								{
 									foreach (var loan in loanHistoryList)
 									{
-										<tr>
+										<tr class="align-content-center">
 											<td class="text-center"><b>@loan.LastName</b>, @loan.FirstName @loan.MiddleName</td>
 											<td class="text-center">@loan.DateOfBirth.ToString("yyyy-MM-dd")</td>
 											<td class="text-center">@loan.AmountOfLoan</td>
 											<td class="text-center">@loan.Status</td>
 											<td class="text-center">@loan.BankName</td>
+											<td class="text-center">
+												<img src="@loan.ImageUrl" class="img-fluid" alt="Insured ID" style="max-width: 100px; max-height: 100px;" />
+											</td>
 										</tr>
 									}
 								}
 								else
 								{
 									<tr>
-										<td colspan="5" class="text-center">No loan history available</td>
+										<td colspan="6" class="text-center text-danger fw-bold">No Loan History available</td>
 									</tr>
 								}
 							</tbody>
@@ -882,6 +887,7 @@
 		public double AmountOfLoan { get; set; }
 		public required string Status { get; set; }
 		public required string BankName { get; set; }
+		public string? ImageUrl { get; set; }
 	}
 
 	private int? selectedYear;
@@ -911,8 +917,6 @@
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
 	private List<InsuredDetailView> extendedAgeInsuredList = new();
 	private List<InsuredDetailView> checkedInsuredList = new();
-
-
 
 	private CGLInsured? selectedInsured;
 	private CGLCoverage? selectedCoverage;
@@ -1305,7 +1309,6 @@
 
 			foreach (var cov in coverage)
 			{
-
 				var status = await _context.CGL_UndStatus
 					.Where(s => s.InsuredID == insured.ID_Insured)
 					.FirstOrDefaultAsync();
@@ -1322,7 +1325,8 @@
 						DateOfBirth = insured.Date_Of_Birth,
 						AmountOfLoan = cov.Amount_Of_Insured,
 						Status = status.Und_Status,
-						BankName = policyHolder.Policy_Holder_Name
+						BankName = policyHolder.Policy_Holder_Name,
+						ImageUrl = $"{NavigationManager.BaseUri}validid/{insured.Image}"
 					});
 			}
 		}

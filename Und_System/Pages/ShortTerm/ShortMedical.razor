@@ -20,7 +20,7 @@
 <h1><b>SUBJECT FOR MEDICAL </b></h1>
 <hr />
 <div class="container my-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-	<h3 class="text-center fw-bold text-decoration-underline">SHORT TERM</h3>
+	<h3 class="text-center fw-bold text-decoration-underline">LONG TERM</h3>
 	<h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
 	<div class="card-body">
 		<div class="row justify-content-evenly">
@@ -76,6 +76,7 @@
 								<td class="text-center">@illness?.Illness_Name</td>
 								<td class="text-center">@undStatus?.Remarks</td>
 								<td class="text-center">
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">Underwrite</button>
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewIDInModal(insured)">View ID</button>
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
 								</td>
@@ -254,13 +255,13 @@
 														{
 															<tr>
 																<td>
-																	<input type="text" class="form-control" value="@rating.Illness_Name" readonly />
+																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Illness_Name" readonly></textarea>
 																</td>
-																<td class="text-center" style="width:20%;">
-																	<input type="text" class="form-control text-center" value="@rating.Regular_Age" readonly />
+																<td class="text-center" style="width:30%;">
+																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Regular_Age" readonly></textarea>
 																</td>
-																<td class="text-center" style="width:20%;">
-																	<input type="text" class="form-control text-center" value="@rating.Overage" readonly />
+																<td class="text-center" style="width:30%;">
+																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Overage" readonly></textarea>
 																</td>
 															</tr>
 														}
@@ -600,6 +601,7 @@
 	private CGL_UndStatus? status;
 	private CGLPolicyHolder? policyHolder;
 
+
 	protected override async Task OnInitializedAsync()
 	{
 		int currentYear = DateTime.Now.Year;
@@ -656,7 +658,7 @@
 			if (selectedYear.HasValue)
 			{
 				insuredDetailsList = insuredDetailsList
-					.Where(x => x.Coverage.Effective_Date.Year == selectedYear.Value)
+					.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
 					.ToList();
 			}
 		}
