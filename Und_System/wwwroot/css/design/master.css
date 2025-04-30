@@ -20,13 +20,13 @@ hr {
     max-width: 100%;
 }
 
-#loginbtn, #resetbtn, #lostpassbtn, #aspbtn, #cglbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn, .btn-outline-success {
+#loginbtn, #resetbtn, #lostpassbtn, #aspbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn, .btn-outline-success {
     border-color: #326f32;
     color: #326f32;
     transition: all 0.3s ease;
 }
 
-    #loginbtn:hover, #lostpassbtn:hover, #resetbtn:hover, #aspbtn:hover, #cglbtn:hover, #gyrtpbtn:hover, #mrpbtn:hover, #spbtn:hover, #dpbtn:hover, .btn-outline-success:hover{
+    #loginbtn:hover, #lostpassbtn:hover, #resetbtn:hover, #aspbtn:hover, #gyrtpbtn:hover, #mrpbtn:hover, #spbtn:hover, #dpbtn:hover, .btn-outline-success:hover{
         background-color: #326f32;
         border-color: #326f32;
         color: #ffff;
@@ -162,7 +162,7 @@ hr {
         }
 
 /*CSS for the Back to Bank List Button*/
-.btn-back, .btn-login {
+.btn-back, .btn-login, #cglbtn {
     position: relative;
     overflow: hidden;
     transition: all 0.5s ease-in-out !important;
@@ -172,7 +172,7 @@ hr {
     padding-right: 20px !important;
 }
 
-    .btn-back::after, .btn-login::after {
+    .btn-back::after, .btn-login::after, #cglbtn::after {
         content: '\00AB';
         position: absolute;
         opacity: 0;
@@ -185,18 +185,33 @@ hr {
         font-weight: bold;
     }
 
-    .btn-back:hover, .btn-login:hover {
+    .btn-back::after
+    {
+        content: '\00AB';
+        position: absolute;
+        opacity: 0;
+        top: 50%;
+        right: -30px;
+        transform: translateY(-50%);
+        transition: left 0.5s ease, opacity 0.5s ease;
+        font-size: 1.5rem;
+        color: white;
+        font-weight: bold;
+    }
+    .btn-back:hover, .btn-login:hover, #cglbtn:hover {
         padding-right: 40px !important;
         background-color: #326f32 !important;
         color: white !important;
     }
 
-        .btn-back:hover::after, .btn-login:hover::after {
+        .btn-back:hover::after, .btn-login:hover::after, #cglbtn:hover::after {
             opacity: 1;
             right: 10px;
         }
 
     .btn-login::after {
-        content: '\00BB' !important;
+        content: '\2023' !important;
     }
-
+    #cglbtn::after {
+        content: '\22D9' !important;
+    }

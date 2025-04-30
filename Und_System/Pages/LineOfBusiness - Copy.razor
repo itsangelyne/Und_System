@@ -3,8 +3,8 @@
 
 <style>
     .lob-container {
-        position: relative;
-        height: 100vh;
+        /*position: relative; */
+        height: 96vh;
     }
 
     .background-overlay {
@@ -17,21 +17,21 @@
         z-index: 1;
     }
 
-    img {
+/*     img {
         width: 100%; 
-        height: auto;
-    }
+        height: 100%;
+    } */
 </style>
-<h1 class="text-center"><b>LINE OF BUSINESS</b></h1>
 
-<div class="background-overlay"></div>
+@* <div class="background-overlay"></div> *@
 <div class="lob-container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 d-none d-md-block">
-            <img src="~/assets/countrybankers.png" alt="Line of Business" class="img-fluid" />
+    <div class="row">
+        <div class="col-md-6 d-md-block">
+            <img src="/assets/countrybankers.png" alt="Line of Business" class="h-75 w-100" />
         </div>
         <div class="col-md-6">
-            <div class="d-flex flex-column justify-content-center h-100">
+            <div class="d-flex flex-column justify-content-center">
+                <h1 class="text-center"><b>LINE OF BUSINESS</b></h1>
                 <button class="btn btn-outline-secondary mb-2 w-100" id="aspbtn" disabled>Alalay Sa Buhay Plan</button>
                 <button class="btn btn-outline-secondary mb-2 w-100" id="cglbtn" @onclick="NavigateToBankListing">Credit Group Life Plans</button>
                 <button class="btn btn-outline-secondary mb-2 w-100" id="gyrtpbtn" disabled>Group Yearly Renewable Term Plans</button>
