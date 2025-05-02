@@ -161,6 +161,11 @@ hr {
             right: 10px;
         }
 
+    .cardbank:focus, .card button:focus {
+        outline: none!important;
+        outline-offset: 4px;
+    }
+
 /*CSS for the Back to Bank List Button*/
 .btn-back, .btn-login, #cglbtn {
     position: relative;

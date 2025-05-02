@@ -10,6 +10,49 @@
 @inject NavigationManager NavigationManager
 @layout MainLayout
 
+<style>
+    .custom-dropdown {
+        font-size: 36px;
+        font-weight: bold;
+        background: none;
+        border: none;
+        text-align: center;
+        appearance: none;
+        padding-right: 3rem;
+        position: relative;
+        width: auto;
+        margin: auto;
+    }
+
+    .custom-dropdown-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .custom-dropdown::after {
+        content: '';
+    }
+
+    .custom-dropdown-wrapper::after {
+        content: '\25BC';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        font-size: 26px;
+    }
+
+    select.custom-dropdown option {
+        font-size: 1rem;
+    }
+
+    .custom-dropdown:focus {
+        outline: none;
+        outline-offset: 4px;
+    }
+</style>
+
 <div class="d-flex justify-content-between align-items-center">
     <h1><b>DASHBOARD</b></h1>
 </div>
@@ -32,7 +75,17 @@
 }
 
 <div class="container mt-3 mb-3">
-    <h2 class="text-center fw-bold mb-4">APPLICATIONS</h2>
+    <div class="text-center mb-4">
+        <div class="custom-dropdown-wrapper">
+            <select id="headingDropdown" class="custom-dropdown" @onchange="OnFilterChanged">
+                <option value="All" selected>APPLICATIONS</option>
+                <option value="Regular">REGULAR APPLICATIONS</option>
+                <option value="Extended">EXTENDED AGE APPLICATIONS</option>
+            </select>
+        </div>
+    </div>
+</div>
+
     <div class="row g-3">
         <!--Pending-->
         <div class="col-12 col-md-6 col-lg-4">
@@ -185,7 +238,6 @@
             </div> 
         </div>
     </div>
-</div>
 
 @code {
     private int pendingLongTermCount = 0;
@@ -210,6 +262,8 @@
     private int renewalExtendedCount = 0;
 
     private string selectedBank = "";
+    private string selectedFilter = "All";
+
     private List<CGLPolicyHolder> banks = new List<CGLPolicyHolder>();
     private List<CGLInsured> allApplications = new List<CGLInsured>();
     private List<CGL_Insured_Status> insuredStatuses = new List<CGL_Insured_Status>();
@@ -238,11 +292,30 @@
         }
     }
 
+    private void OnFilterChanged(ChangeEventArgs e)
+    {
+        selectedFilter = e.Value.ToString();
+        FilterApplications();
+    }
+
     private void FilterApplications()
     {
         var filteredApplications = allApplications
             .Where(x => x.ID_Policy_Holder == StateService?.SelectedBankId.Value)
             .ToList();
+
+        if (selectedFilter == "Regular")
+        {
+            filteredApplications = filteredApplications
+                .Where(app => undStatuses.FirstOrDefault(u => u.InsuredID == app.ID_Insured)?.ExtendedAge == "No")
+                .ToList();
+        }
+        else if (selectedFilter == "Extended")
+        {
+            filteredApplications = filteredApplications
+                .Where(app => undStatuses.FirstOrDefault(u => u.InsuredID == app.ID_Insured)?.ExtendedAge == "Yes")
+                .ToList();
+        }
 
         SetCounts(filteredApplications);
     }
@@ -259,9 +332,8 @@
                 switch (undStatus.Und_Status)
                 {
                     case "Pending":
-                        pendingLongTermCount += app.Type == "Long Term" ? 1 : 0 + undStatus.ExtendedAge == "No" ? 1 : 0;
+                        pendingLongTermCount += app.Type == "Long Term" ? 1 : 0;
                         pendingShortTermCount += app.Type == "Short Term" ? 1 : 0;
-                        pendingExtendedCount += undStatus.ExtendedAge == "Yes" ? 1 : 0;
                         break;
                     case "Approved":
                         approvedLongTermCount += app.Type == "Long Term" ? 1 : 0;
@@ -281,9 +353,7 @@
                         break;
                     case "Renewal":
                         renewalLongTermCount += app.Type == "Long Term" ? 1 : 0;
-                        renewalExtendedCount += undStatus.ExtendedAge == "Yes" ? 1 : 0;
                         break;
-                    
                     case "Terminated":
                         terminatedLongTermCount += app.Type == "Long Term" ? 1 : 0;
                         terminatedShortTermCount += app.Type == "Short Term" ? 1 : 0;
