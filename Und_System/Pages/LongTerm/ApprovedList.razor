@@ -79,7 +79,8 @@
 								<td class="text-center">@coverage?.Effective_Date.ToString("yyyy-MM-dd")</td>
 								<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
 								<td class="text-center">
-									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewIDInModal(insured)">View ID</button>
+									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewDetails(insured)">Underwrite</button>
+									@* <button class="btn btn-outline-success btn-sm" @onclick="() => ViewIDInModal(insured)">View ID</button> *@
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
 								</td>
 							</tr>
@@ -478,6 +479,7 @@
 											</table>
 										</div>
 									</div>
+									@* Dito yung ID *@
 								</div>
 							</form>
 						</div>
@@ -535,7 +537,7 @@
 							<tbody>
 								@if (loanHistoryList != null && loanHistoryList.Count > 0)
 								{
-									foreach (var loan in loanHistoryList)
+									@foreach (var loan in loanHistoryList)
 									{
 										<tr class="align-content-center">
 											<td class="text-center"><b>@loan.LastName</b>, @loan.FirstName @loan.MiddleName</td>
@@ -543,8 +545,12 @@
 											<td class="text-center">@loan.AmountOfLoan</td>
 											<td class="text-center">@loan.Status</td>
 											<td class="text-center">@loan.BankName</td>
-											<td class="text-center">
-												<img src="@loan.ImageUrl" class="img-fluid" alt="Insured ID" style="max-width: 100px; max-height: 100px;" />
+											<td class="text-center position-relative">
+												<img src="@loan.ImageUrl"
+												class="img-fluid"
+												alt="Insured ID"
+												style="max-width: 100px; max-height: 100px; cursor: zoom-in;"
+												@onclick="@(() => ShowZoomedImage(loan.ImageUrl))" />
 											</td>
 										</tr>
 									}
@@ -563,6 +569,14 @@
 		</div>
 	</div>
 }
+
+@if (showZoomedImage && zoomedImageUrl != null)
+{
+	<div class="zoom-overlay">
+		<img src="@zoomedImageUrl" class="zoomed-img" alt="Zoomed ID" @onclick="CloseModal" style="cursor: zoom-out;" />
+	</div>
+}
+
 
 @code {
 	public class InsuredDetailView
@@ -592,6 +606,9 @@
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
+	private bool showZoomedImage = false;
+	private string zoomedImageUrl;
+
 	private bool isImageModalVisible = false;
 	private List<int> years = new List<int>();
 	private List<CGLCreditDebit> releaseList = new List<CGLCreditDebit>();
@@ -688,6 +705,27 @@
 		}
 		ApplyFilters();
 		StateHasChanged();
+	}
+
+	private void ToggleZoom(string imageUrl)
+	{
+		if (zoomedImageUrl == imageUrl)
+			zoomedImageUrl = null;
+		else
+			zoomedImageUrl = imageUrl;
+	}
+
+	private string GetZoomClass(string imageUrl)
+	{
+		return zoomedImageUrl == imageUrl
+			? "img-fluid border border-dark shadow-lg"
+			: "img-fluid";
+	}
+
+	private void ShowZoomedImage(string imageUrl)
+	{
+		zoomedImageUrl = imageUrl;
+		showZoomedImage = true;
 	}
 
 	private void ApplyFilters()
@@ -868,9 +906,13 @@
 		status = null;
 		selectedInsured = null;
 		selectedCoverage = null;
+		zoomedImageUrl = null;
 
 		isModalVisible = false; //Close View Details Modal
+		isConfirmationVisible = false;  //Close Confirmation Modal
+		isRemarksEditable = false; //Close the Editable Fields for Underwriting Update
 		showLoanHistoryModal = false; //Close Loan History Modal
 		isImageModalVisible = false;
+		showZoomedImage = false;
 	}
 }

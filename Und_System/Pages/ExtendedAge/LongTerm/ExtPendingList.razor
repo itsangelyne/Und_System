@@ -840,7 +840,7 @@
 							<tbody>
 								@if (loanHistoryList != null && loanHistoryList.Count > 0)
 								{
-									foreach (var loan in loanHistoryList)
+									@foreach (var loan in loanHistoryList)
 									{
 										<tr class="align-content-center">
 											<td class="text-center"><b>@loan.LastName</b>, @loan.FirstName @loan.MiddleName</td>
@@ -848,8 +848,12 @@
 											<td class="text-center">@loan.AmountOfLoan</td>
 											<td class="text-center">@loan.Status</td>
 											<td class="text-center">@loan.BankName</td>
-											<td class="text-center">
-												<img src="@loan.ImageUrl" class="img-fluid" alt="Insured ID" style="max-width: 100px; max-height: 100px;" />
+											<td class="text-center position-relative">
+												<img src="@loan.ImageUrl"
+													 class="img-fluid"
+													 alt="Insured ID"
+													 style="max-width: 100px; max-height: 100px; cursor: zoom-in;"
+													 @onclick="@(() => ShowZoomedImage(loan.ImageUrl))" />
 											</td>
 										</tr>
 									}
@@ -857,7 +861,7 @@
 								else
 								{
 									<tr>
-										<td colspan="6" class="text-center">No loan history available</td>
+										<td colspan="6" class="text-center text-danger fw-bold">No Loan History available</td>
 									</tr>
 								}
 							</tbody>
@@ -866,6 +870,13 @@
 				</div>
 			</div>
 		</div>
+	</div>
+}
+
+@if (showZoomedImage && zoomedImageUrl != null)
+{
+	<div class="zoom-overlay">
+		<img src="@zoomedImageUrl" class="zoomed-img" alt="Zoomed ID" @onclick="CloseModal" style="cursor: zoom-out;" />
 	</div>
 }
 
@@ -903,6 +914,9 @@
 	private bool isConfirmationVisible = false;
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
+	private bool showZoomedImage = false;
+	private string zoomedImageUrl;
+
 	private string searchText = string.Empty;
 	private bool isImageModalVisible = false;
 	private bool isReceiptlVisible = false;
@@ -1050,6 +1064,26 @@
 		StateHasChanged();
 	}
 
+	private void ToggleZoom(string imageUrl)
+	{
+		if (zoomedImageUrl == imageUrl)
+			zoomedImageUrl = null; 
+		else
+			zoomedImageUrl = imageUrl; 
+	}
+
+	private string GetZoomClass(string imageUrl)
+	{
+		return zoomedImageUrl == imageUrl
+			? "img-fluid border border-dark shadow-lg"
+			: "img-fluid";
+	}
+
+		private void ShowZoomedImage(string imageUrl)
+	{
+		zoomedImageUrl = imageUrl;
+		showZoomedImage = true;
+	}
 
 	//For View Summary
 	private async Task ToggleRow(int idCB)
@@ -1362,6 +1396,7 @@
 		status = null;
 		selectedInsured = null;
 		selectedCoverage = null;
+		zoomedImageUrl = null;
 
 		isModalVisible = false; //Close View Details Modal
 		isConfirmationVisible = false;  //Close Confirmation Modal
@@ -1370,5 +1405,6 @@
 		isParticularModal = false;
 		isImageModalVisible = false;
 		isReceiptlVisible = false;
+		showZoomedImage = false;
 	}
 }

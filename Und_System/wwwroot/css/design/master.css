@@ -236,8 +236,8 @@ hr {
 }
 
 .zoomed-img {
-    max-width: 90vw;
-    max-height: 90vh;
+    max-width: 80vw;
+    max-height: 80vh;
     box-shadow: 0 0 10px #000;
     border-radius: 5px;
     position: relative;
