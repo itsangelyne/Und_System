@@ -215,7 +215,7 @@
 		if (selectedYear.HasValue)
 		{
 			filteredList = filteredList
-				.Where(x => x.Coverage?.Effective_Date.Year == selectedYear.Value)
+				.Where(x => x.Insured?.Date_Of_Birth.Year == selectedYear.Value)
 				.ToList();
 		}
 

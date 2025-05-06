@@ -1,0 +1,22 @@
+﻿@page "/search"
+@using Microsoft.EntityFrameworkCore;
+@using Und_System.Context;
+@using Und_System.Data;
+@using Und_System.Services;
+@inject ApplicationDbContext _context
+@inject NavigationManager NavigationManager
+@inject CGLInsuredService CGLInsuredService
+@inject CGLParticularsService CGLParticularsService
+@inject CGLPolicyHolderServices CGLPolicyHolderServices
+@inject StateService StateService
+@inject CGLCreditDebitServices CGLCreditDebitServices
+@inject CGLCoverageService CGLCoverageService
+@inject CGLSubstandardRatingService CGLSubstandardRatingService
+@inject CGLUndStatusService CGLUndStatusService
+@inject CGLHealthQuestionsService CGLHealthQuestionsService
+@inject CGLHealthAnswerService CGLHealthAnswerService
+@inject CGLBeneficiaryService CGLBeneficiaryService
+@inject IJSRuntime JS
+
+<h1><b>SEARCH APPLICATIONS</b></h1>
+<hr />

@@ -26,7 +26,7 @@ hr {
     transition: all 0.3s ease;
 }
 
-    #loginbtn:hover, #lostpassbtn:hover, #resetbtn:hover, #aspbtn:hover, #gyrtpbtn:hover, #mrpbtn:hover, #spbtn:hover, #dpbtn:hover, .btn-outline-success:hover{
+    #loginbtn:hover, #lostpassbtn:hover, #resetbtn:hover, #aspbtn:hover, #gyrtpbtn:hover, #mrpbtn:hover, #spbtn:hover, #dpbtn:hover, .btn-outline-success:hover {
         background-color: #326f32;
         border-color: #326f32;
         color: #ffff;
@@ -162,7 +162,7 @@ hr {
         }
 
     .cardbank:focus, .card button:focus {
-        outline: none!important;
+        outline: none !important;
         outline-offset: 4px;
     }
 
@@ -178,31 +178,31 @@ hr {
 }
 
     .btn-back::after, .btn-login::after, #cglbtn::after {
-        content: '\00AB';
         position: absolute;
         opacity: 0;
-        top: 50%;
+        top: 45%;
         right: -30px;
         transform: translateY(-50%);
         transition: right 0.5s ease, opacity 0.5s ease;
-        font-size: 1.5rem;
         color: white;
         font-weight: bold;
     }
 
-    .btn-back::after
-    {
-        content: '\00AB';
-        position: absolute;
-        opacity: 0;
-        top: 50%;
-        right: -30px;
-        transform: translateY(-50%);
-        transition: left 0.5s ease, opacity 0.5s ease;
-        font-size: 1.5rem;
-        color: white;
-        font-weight: bold;
+    .btn-back::after {
+        content: '\00AB' !important;
+        font-size: 40px !important;
     }
+
+    .btn-login::after {
+        content: '\2023' !important;
+        font-size: 42px !important;
+    }
+
+    #cglbtn::after {
+        content: '\22D9' !important;
+        font-size: 24px !important;
+    }
+
     .btn-back:hover, .btn-login:hover, #cglbtn:hover {
         padding-right: 40px !important;
         background-color: #326f32 !important;
@@ -214,12 +214,52 @@ hr {
             right: 10px;
         }
 
-    .btn-login::after {
-        content: '\2023' !important;
-    }
-    #cglbtn::after {
-        content: '\22D9' !important;
-    }
+/* Applications Dashboard Dropdown*/
+.custom-dropdown {
+    font-size: 36px !important;
+    font-weight: bold !important;
+    background: none !important;
+    border: none !important;
+    text-align: center !important;
+    appearance: none !important;
+    padding-right: 48px !important;
+    position: relative !important;
+    width: auto !important;
+    margin: auto !important;
+    cursor: pointer !important;
+}
+
+.custom-dropdown::after:hover{
+    color: aquamarine!important;
+
+}
+.custom-dropdown-wrapper {
+    position: relative !important;
+    display: inline-block !important;
+}
+
+.custom-dropdown::after {
+    content: '' !important;
+}
+
+.custom-dropdown-wrapper::after {
+    content: '\25BC' !important;
+    position: absolute !important;
+    right: 10px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    pointer-events: none !important;
+    font-size: 26px !important;
+}
+
+select.custom-dropdown option {
+    font-size: 18px !important;
+}
+
+.custom-dropdown:focus {
+    outline: none !important;
+    outline-offset: 4px !important;
+}
 
 /*For Zoom Image*/
 .zoom-overlay {

@@ -72,8 +72,8 @@
 							<tr>
 								<td class="text-center align-content-center">
 									<i class="fa @(expandedRowId_Row == item.ID_CB ? "fa-chevron-up" : "fa-chevron-down") cursor-pointer"
-									   style="cursor:pointer;"
-									   @onclick="() => ToggleRow(item.ID_CB)">
+									style="cursor:pointer;"
+									@onclick="() => ToggleRow(item.ID_CB)">
 									</i>
 								</td>
 								<td class="text-center fw-bold align-content-center">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
@@ -849,10 +849,10 @@
 											<td class="text-center">@loan.BankName</td>
 											<td class="text-center position-relative">
 												<img src="@loan.ImageUrl"
-													 class="img-fluid"
-													 alt="Insured ID"
-													 style="max-width: 100px; max-height: 100px; cursor: zoom-in;"
-													 @onclick="@(() => ShowZoomedImage(loan.ImageUrl))" />
+												class="img-fluid"
+												alt="Insured ID"
+												style="max-width: 100px; max-height: 100px; cursor: zoom-in;"
+												@onclick="@(() => ShowZoomedImage(loan.ImageUrl))" />
 											</td>
 										</tr>
 									}
@@ -929,6 +929,7 @@
 	private List<LoanHistory> loanHistoryList = new List<LoanHistory>();
 	private List<InsuredDetailView> extendedAgeInsuredList = new();
 	private List<InsuredDetailView> checkedInsuredList = new();
+	private List<InsuredDetailView> originalInsuredDetailsList = new List<InsuredDetailView>();
 
 	private CGLInsured? selectedInsured;
 	private CGLCoverage? selectedCoverage;
@@ -948,7 +949,7 @@
 			if (_searchText != value)
 			{
 				_searchText = value;
-				ApplySearchFilter();
+				ApplyFilters();
 			}
 		}
 	}
@@ -1071,7 +1072,7 @@
 		{
 			releaseList = new List<CGLCreditDebit>();
 		}
-		ApplySearchFilter();
+		ApplyFilters();
 		StateHasChanged();
 	}
 
@@ -1097,22 +1098,23 @@
 	}
 
 	// Search Filter DI PA NAGANA KALMA
-	private void ApplySearchFilter()
+	private void ApplyFilters()
 	{
-		var filteredList = insuredDetailsList;
-		if (!string.IsNullOrWhiteSpace(searchText))
+		var filteredList = new List<InsuredDetailView>(originalInsuredDetailsList);
+
+		// Filter by search text
+		if (!string.IsNullOrEmpty(searchText))
 		{
-			searchText = searchText.ToLower();
-			filteredList = filteredList.Where(item =>
-				(item.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
-				(item.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
-				(item.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false) ||
-				(item.Insured?.Date_Of_Birth.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.Coverage?.Amount_Of_Insured.ToString().Contains(searchText) ?? false) ||
-				(item.Coverage?.Effective_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.Coverage?.Termination_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.UndStatus?.Und_Status?.ToLower().Contains(searchText) ?? false)
-			).ToList();
+			var searchTerms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+			filteredList = filteredList
+				.Where(x =>
+					searchTerms.All(term =>
+						(x.Insured?.First_Name != null && x.Insured.First_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Last_Name != null && x.Insured.Last_Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+						(x.Insured?.Middle_Name != null && x.Insured.Middle_Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+					)
+				).ToList();
 		}
 
 		insuredDetailsList = filteredList;
@@ -1131,13 +1133,15 @@
 			expandedRowId_Applications = null;
 			await LoadInsuredDetailsForRow(idCB);
 		}
-		ApplySearchFilter();
+		ApplyFilters();
 		StateHasChanged();
 	}
 
 	private async Task LoadInsuredDetailsForRow(int idCB)
 	{
 		insuredDetailsList = await FetchInsuredDetails(idCB);
+
+		ApplyFilters();
 	}
 
 	private async Task<List<InsuredDetailView>> FetchInsuredDetails(int idCB)
@@ -1240,7 +1244,7 @@
 					x.UndStatus?.Und_Status == "For Refund")
 				.ToList();
 		}
-		ApplySearchFilter();
+		ApplyFilters();
 		StateHasChanged();
 	}
 
@@ -1273,6 +1277,7 @@
 				})
 			.ToList();
 		StateHasChanged();
+		ApplyFilters();
 	}
 
 
@@ -1291,6 +1296,7 @@
 
 		isModalVisible = true;
 		StateHasChanged();
+		ApplyFilters();
 	}
 	//Data for Substandard Category
 	private async Task LoadSubstandardRatings()
