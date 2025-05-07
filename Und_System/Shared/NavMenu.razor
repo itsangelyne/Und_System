@@ -30,68 +30,68 @@
                 <!-- Long Term Applications -->
                 <a class="nav-link d-flex justify-content-between" @onclick="ToggleLongTermDropdown">
                     <span>
-                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Long Term
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;margin-left: 10px"></span> Long Term
                     </span>
                     <span class="@GetArrowClass(showLongTermDropdown) ms-2"></span>
                 </a>
-                <div class="nested-menu ps-4 @LongTermDropdownClass">
+                <div class="nested-menu ps-0 @LongTermDropdownClass">
                     <!-- Pending -->
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/pendinglist">
-                        <span class="oi oi-clock" aria-hidden="true"></span> Pending
+                        <span class="oi oi-clock" aria-hidden="true" style="margin-left: 44px"></span> Pending
                     </NavLink>
                     <!-- Approved -->
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/approvedlist">
-                        <span class="oi oi-check" aria-hidden="true"></span> Approved
+                        <span class="oi oi-check" aria-hidden="true" style="margin-left: 44px"></span> Approved
                     </NavLink>
                     <!-- Refund -->
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/refund">
-                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px;"></span> For Refund
+                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px; margin-left: 44px;"></span> For Refund
                     </NavLink>
                     <!-- Terminated -->
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/terminatedlist">
-                        <span class="oi oi-x" aria-hidden="true"></span> Terminated
+                        <span class="oi oi-x" aria-hidden="true" style="margin-left: 44px"></span> Terminated
                     </NavLink>
                     <!-- Declined -->
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/declinedlist">
-                        <span class="oi oi-ban" aria-hidden="true"></span> Declined
+                        <span class="oi oi-ban" aria-hidden="true" style="margin-left: 44px"></span> Declined
                     </NavLink>
                 </div>
 
                 <!-- Short Term Applications -->
                 <a class="nav-link d-flex justify-content-between" @onclick="ToggleShortTermDropdown">
                     <span>
-                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Short Term
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;margin-left: 10px"></span> Short Term
                     </span>
                     <span class="@GetArrowClass(showShortTermDropdown) ms-2"></span>
                 </a>
-                <div class="nested-menu ps-4 @ShortTermDropdownClass">
+                <div class="nested-menu ps-0 @ShortTermDropdownClass">
                     <!-- Pending -->
                     @* <NavLink class="nav-link d-flex justify-content-start" href="shortterm/pendinglist"> *@
                     <NavLink class="nav-link d-flex justify-content-start" href="longterm/pendinglist2">
-                        <span class="oi oi-clock" aria-hidden="true"></span> Pending
+                        <span class="oi oi-clock" aria-hidden="true" style="margin-left: 44px"></span> Pending
                     </NavLink>
                     <!-- Approved -->
-                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/approvedlist">
-                        <span class="oi oi-check" aria-hidden="true"></span> Approved
+                    <NavLink class="nav-link d-flex justify-content-start" href="shortterm/approvedlist2">
+                        <span class="oi oi-check" aria-hidden="true" style="margin-left: 44px"></span> Approved
                     </NavLink>
                     <!-- Refund -->
                     <NavLink class="nav-link d-flex justify-content-start" href="shortterm/refund">
-                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px;"></span> For Refund
+                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px;margin-left: 44px;"></span> For Refund
                     </NavLink>
                     <!-- Terminated -->
                     <NavLink class="nav-link d-flex justify-content-start" href="shortterm/terminatedlist">
-                        <span class="oi oi-x" aria-hidden="true"></span> Terminated
+                        <span class="oi oi-x" aria-hidden="true" style="margin-left: 44px"></span> Terminated
                     </NavLink>
                     <!-- Declined -->
                     <NavLink class="nav-link d-flex justify-content-start" href="shortterm/declinedlist">
-                        <span class="oi oi-ban" aria-hidden="true"></span> Declined
+                        <span class="oi oi-ban" aria-hidden="true" style="margin-left: 44px"></span> Declined
                     </NavLink>
                 </div>
                 <!-- Renewal -->
-                <div class="nav-item px-0">
+                <div class="nested-menu">
                     <a class="nav-link d-flex justify-content-between" href="renewedlist">
                         <span>
-                            <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Renewal
+                            <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px; margin-left: 10px"></span> Renewal
                         </span>
                     </a>
                 </div>
@@ -104,17 +104,17 @@
                 </span>
                 <span class="@GetArrowClass(showComplianceDropdown) ms-2"></span>
             </a>
-            <div class="nested-menu ps-4 @ComplianceDropdownClass">
+            <div class="nested-menu ps-0 @ComplianceDropdownClass">
                 <!-- Long Term Compliance -->
                 <a class="nav-link d-flex justify-content-between" href="longterm/medicallist">
                     <span>
-                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Long Term
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px; margin-left: 10px;"></span> Long Term
                     </span>
                 </a>
                 <!-- Short Term Compliance -->
                 <a class="nav-link d-flex justify-content-between" href="shortterm/medicallist">
                     <span>
-                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Short Term
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px; margin-left: 10px"></span> Short Term
                     </span>
                 </a>
             </div>
@@ -131,67 +131,67 @@
                 <!-- Long Term Extended Age -->
                 <a class="nav-link d-flex justify-content-between" @onclick="ToggleLongTermExtendedAgeDropdown">
                     <span>
-                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Long Term
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px; margin-left: 10px"></span> Long Term
                     </span>
                     <span class="@GetArrowClass(showLongTermExtendedAgeDropdown) ms-2"></span>
                 </a>
-                <div class="nested-menu ps-4 @LongTermExtendedAgeDropdownClass">
+                <div class="nested-menu ps-0 @LongTermExtendedAgeDropdownClass">
                     <!-- Pending -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/pendinglist">
-                        <span class="oi oi-clock" aria-hidden="true"></span> Pending
+                        <span class="oi oi-clock" aria-hidden="true" style="margin-left: 44px"></span> Pending
                     </NavLink>
                     <!-- Approved -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/approvedlist">
-                        <span class="oi oi-check" aria-hidden="true"></span> Approved
+                        <span class="oi oi-check" aria-hidden="true" style="margin-left: 44px"></span> Approved
                     </NavLink>
                     <!-- Refund -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/refundlist">
-                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px;"></span> For Refund
+                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px; margin-left: 44px"></span> For Refund
                     </NavLink>
                     <!-- Terminated -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/terminatedlist">
-                        <span class="oi oi-x" aria-hidden="true"></span> Terminated
+                        <span class="oi oi-x" aria-hidden="true" style="margin-left: 44px"></span> Terminated
                     </NavLink>
                     <!-- Declined -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/longterm/declinedlist">
-                        <span class="oi oi-ban" aria-hidden="true"></span> Declined
+                        <span class="oi oi-ban" aria-hidden="true" style="margin-left: 44px"></span> Declined
                     </NavLink>
                 </div>
 
                 <!-- Short Term Extended Age -->
                 <a class="nav-link d-flex justify-content-between" @onclick="ToggleShortTermExtendedAgeDropdown">
                     <span>
-                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Short Term
+                        <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px; margin-left: 10px"></span> Short Term
                     </span>
                     <span class="@GetArrowClass(showShortTermExtendedAgeDropdown) ms-2"></span>
                 </a>
-                <div class="nested-menu ps-4 @ShortTermExtendedAgeDropdownClass">
+                <div class="nested-menu ps-0 @ShortTermExtendedAgeDropdownClass">
                     <!-- Pending -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/pendinglist">
-                        <span class="oi oi-clock" aria-hidden="true"></span> Pending
+                        <span class="oi oi-clock" aria-hidden="true" style="margin-left: 44px"></span> Pending
                     </NavLink>
                     <!-- Approved -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/approvedlist">
-                        <span class="oi oi-check" aria-hidden="true"></span> Approved
+                        <span class="oi oi-check" aria-hidden="true" style="margin-left: 44px"></span> Approved
                     </NavLink>
                     <!-- Refund -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/refundlist">
-                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px;"></span> For Refund
+                        <span class="fas fa-coins" aria-hidden="true" style="margin-right: 20px; margin-left: 44px;"></span> For Refund
                     </NavLink>
                     <!-- Terminated -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/terminatedlist">
-                        <span class="oi oi-x" aria-hidden="true"></span> Terminated
+                        <span class="oi oi-x" aria-hidden="true" style="margin-left: 44px"></span> Terminated
                     </NavLink>
                     <!-- Declined -->
                     <NavLink class="nav-link d-flex justify-content-start" href="extended/shortterm/declinedlist">
-                        <span class="oi oi-ban" aria-hidden="true"></span> Declined
+                        <span class="oi oi-ban" aria-hidden="true" style="margin-left: 44px"></span> Declined
                     </NavLink>
                 </div>
                 <!-- Renewal -->
-                <div class="nav-item px-0">
+                <div class="nested-menu">
                     <a class="nav-link d-flex justify-content-between" href="extended/renewal">
                         <span>
-                            <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px;"></span> Renewal
+                            <span class="bi bi-arrow-return-right" aria-hidden="true" style="margin-right: 19px; margin-left: 10px"></span> Renewal
                         </span>
                     </a>
                 </div>

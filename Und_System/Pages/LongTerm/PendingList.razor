@@ -183,7 +183,7 @@
 														else
 														{
 															<tr>
-																<td colspan="8" class="text-center text-danger">No Insured Details Found.</td>
+																<td colspan="7" class="text-center text-danger fw-bold">No Insured Details Available.</td>
 															</tr>
 														}
 													</tbody>
@@ -229,6 +229,12 @@
 																	<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
 																	<td class="text-center">@undStatus?.Und_Status</td>
 																</tr>
+															}
+															else
+															{
+															<tr>
+																<td colspan="7" class="text-center text-danger fw-bold">No Insured Details Available.</td>
+															</tr>
 															}
 														</tbody>
 													</table>
@@ -279,6 +285,12 @@
 																	</td>
 																</tr>
 															}
+															else
+															{
+															<tr>
+																<td colspan="8" class="text-center text-danger fw-bold">No Insured Details Available.</td>
+															</tr>
+															}
 														</tbody>
 													</table>
 												</div>
@@ -292,7 +304,7 @@
 					else
 					{
 						<tr>
-							<td colspan="8" class="text-center text-danger fw-bold">No Pending Applications Found</td>
+							<td colspan="8" class="text-center text-danger fw-bold">No Pending Applications Available</td>
 						</tr>
 					}
 				</tbody>

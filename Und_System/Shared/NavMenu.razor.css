@@ -3,7 +3,7 @@
 }
 
 .top-row {
-    height: 3.0rem;
+    height: 3.5rem;
     background-color: rgba(0,0,0,0.4);
 }
 
@@ -20,7 +20,7 @@
 
 .nav-item {
     font-size: 0.9rem;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.2rem;
 }
 
     .nav-item:first-of-type {
@@ -28,16 +28,16 @@
     }
 
     .nav-item:last-of-type {
-        padding-bottom: 1rem;
+        padding-bottom: 1.5rem;
     }
 
     .nav-item ::deep a {
         color: #d7d7d7;
         border-radius: 2px;
-        height: 2.5rem;
+        height: 2rem;
         display: flex;
         align-items: center;
-        line-height: 2.0rem;
+        line-height: 1.5rem;
     }
 
         .nav-item ::deep a.active {

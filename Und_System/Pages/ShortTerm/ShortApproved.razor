@@ -241,7 +241,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="border rounded p-3 mb-3">
+									<div class="rounded mb-3">
 										<div class="table-responsive">
 											<table class="table table-bordered mb-0">
 												<thead class="text-white" style="background-color:#5d835c">
@@ -441,7 +441,7 @@
 										</div>
 									</div>
 
-									<div class="border rounded p-3 mb-3">
+									<div class="rounded mb-3">
 										<div class="table-responsive" style="overflow-x: auto">
 											<table class="table table-bordered mb-0">
 												<thead class="text-white" style="background-color:#5d835c">
@@ -479,7 +479,9 @@
 											</table>
 										</div>
 									</div>
-									@* Dito yung ID *@
+									<div class="border rounded d-flex justify-content-center align-items-center" style="min-height: 300px;">
+										<img src="@($"{NavigationManager.BaseUri}validid/{selectedInsured?.Image}")" class="img-fluid" alt="Insured ID" style="max-width: 250px; max-height: 250px;" />
+									</div>
 								</div>
 							</form>
 						</div>
