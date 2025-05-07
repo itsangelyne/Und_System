@@ -1,71 +1,62 @@
-﻿@* @page "/test"
+﻿@* private void ApplySearchFilter()
+{
+    // Filter for the main releaseList
+    var filteredReleaseList = releaseList;
 
-.custom-dropdown {
-    font-size: 2.25rem; /* 36px */
-    font-weight: bold !important;
-    background: none !important;
-    border: none !important;
-    text-align: center !important;
-    appearance: none !important;
-    padding-right: 3rem; /* 48px */
-    position: relative !important;
-    width: auto !important;
-    margin: auto !important;
-    cursor: pointer !important;
-}
-
-.custom-dropdown::after:hover {
-    color: aquamarine !important;
-}
-
-.custom-dropdown-wrapper {
-    position: relative !important;
-    display: inline-block !important;
-}
-
-.custom-dropdown::after {
-    content: '' !important;
-}
-
-.custom-dropdown-wrapper::after {
-    content: '\25BC' !important;
-    position: absolute !important;
-    right: 10px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    pointer-events: none !important;
-    font-size: 1.625rem; /* 26px */
-}
-
-select.custom-dropdown option {
-    font-size: 1.125rem; /* 18px */
-}
-
-.custom-dropdown:focus {
-    outline: none !important;
-    outline-offset: 0.25rem; /* 4px */
-}
-
-/* Media Queries for Responsiveness */
-@media (max-width: 768px) {
-    .custom-dropdown {
-        font-size: 1.5rem; /* Adjust font size for smaller screens */
-        padding-right: 2rem; /* Adjust padding */
+    if (!string.IsNullOrWhiteSpace(searchText))
+    {
+        searchText = searchText.ToLower();
+        filteredReleaseList = filteredReleaseList.Where(item =>
+            item.Submitted_Date.ToString("yyyy-MM-dd").Contains(searchText) ||
+            pendingApplicationsCount.GetValueOrDefault(item.ID_CB, 0).ToString().Contains(searchText) ||
+            checkedApplicationsCount.GetValueOrDefault(item.ID_CB, 0).ToString().Contains(searchText) ||
+            item.Total_Application.ToString().Contains(searchText)
+        ).ToList();
     }
 
-    .custom-dropdown-wrapper::after {
-        font-size: 1.25rem; /* Adjust arrow size */
-    }
-}
+    // Update the releaseList to the filtered one
+    releaseList = filteredReleaseList;
 
-@media (max-width: 480px) {
-    .custom-dropdown {
-        font-size: 1.25rem; /* Further adjust font size */
-        padding-right: 1.5rem; /* Further adjust padding */
+    // Now filter the nested lists
+    if (!string.IsNullOrWhiteSpace(searchText))
+    {
+        foreach (var item in releaseList)
+        {
+            // Filter insuredDetailsList
+            var filteredInsuredDetails = insuredDetailsList.Where(detail =>
+                (detail.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
+                (detail.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
+                (detail.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false)).ToList();
+
+            // Update the insuredDetailsList for the current item
+            if (expandedRowId_Row == item.ID_CB)
+            {
+                insuredDetailsList = filteredInsuredDetails;
+            }
+
+            // Similarly, filter extendedAgeInsuredList and checkedInsuredList if needed
+            var filteredExtendedAgeInsured = extendedAgeInsuredList.Where(detail =>
+                (detail.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
+                (detail.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
+                (detail.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false)).ToList();
+
+            var filteredCheckedInsured = checkedInsuredList.Where(detail =>
+                (detail.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
+                (detail.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
+                (detail.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false)).ToList();
+
+            extendedAgeInsuredList = filteredExtendedAgeInsured;
+            checkedInsuredList = filteredCheckedInsured;
+        }
+    }
+    else
+    {
+        // Reset the nested lists if search text is empty
+        insuredDetailsList = new List<InsuredDetailView>();
+        extendedAgeInsuredList = new List<InsuredDetailView>();
+        checkedInsuredList = new List<InsuredDetailView>();
     }
 
-    .custom-dropdown-wrapper::after {
-        font-size: 1rem; /* Further adjust arrow size */
-    }
+    StateHasChanged();
 }
  *@

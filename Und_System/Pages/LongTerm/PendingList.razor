@@ -72,8 +72,8 @@
 							<tr>
 								<td class="text-center align-content-center">
 									<i class="fa @(expandedRowId_Row == item.ID_CB ? "fa-chevron-up" : "fa-chevron-down") cursor-pointer"
-									style="cursor:pointer;"
-									@onclick="() => ToggleRow(item.ID_CB)">
+									   style="cursor:pointer;"
+									   @onclick="() => ToggleRow(item.ID_CB)">
 									</i>
 								</td>
 								<td class="text-center fw-bold align-content-center">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
@@ -199,7 +199,7 @@
 											<div class="table-responsive mt-2">
 												<a href="/extended/longterm/pendinglist" class="text-decoration-none">
 													<div class="card-header text-white fw-bold p-3 text-start" style="background-color: #5d835c;">EXTENDED AGE PENDING APPLICATIONS</div>
-												</a>											
+												</a>
 												<div class="card-body bg-light p-2">
 													<table class="table table-bordered">
 														<thead class="text-white" style="background-color: #5d835c;">
@@ -229,12 +229,6 @@
 																	<td class="text-center">@coverage?.Termination_Date.ToString("yyyy-MM-dd")</td>
 																	<td class="text-center">@undStatus?.Und_Status</td>
 																</tr>
-															}
-															else
-															{
-															<tr>
-																<td colspan="7" class="text-center text-danger fw-bold">No Insured Details Available.</td>
-															</tr>
 															}
 														</tbody>
 													</table>
@@ -284,12 +278,6 @@
 																		<button class="btn btn-outline-success btn-sm" @onclick="() => ViewLoanHistory(insured)">History</button>
 																	</td>
 																</tr>
-															}
-															else
-															{
-															<tr>
-																<td colspan="8" class="text-center text-danger fw-bold">No Insured Details Available.</td>
-															</tr>
 															}
 														</tbody>
 													</table>
@@ -1086,13 +1074,13 @@
 		ApplySearchFilter();
 		StateHasChanged();
 	}
-	 
+
 	private void ToggleZoom(string imageUrl)
 	{
 		if (zoomedImageUrl == imageUrl)
-			zoomedImageUrl = null; 
+			zoomedImageUrl = null;
 		else
-			zoomedImageUrl = imageUrl; 
+			zoomedImageUrl = imageUrl;
 	}
 
 	private string GetZoomClass(string imageUrl)
@@ -1102,7 +1090,7 @@
 			: "img-fluid";
 	}
 
-		private void ShowZoomedImage(string imageUrl)
+	private void ShowZoomedImage(string imageUrl)
 	{
 		zoomedImageUrl = imageUrl;
 		showZoomedImage = true;
