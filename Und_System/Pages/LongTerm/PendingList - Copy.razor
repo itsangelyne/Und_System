@@ -180,12 +180,6 @@
 																</tr>
 															}
 														}
-														else
-														{
-															<tr>
-																<td colspan="7" class="text-center text-danger fw-bold">No Insured Details Available.</td>
-															</tr>
-														}
 													</tbody>
 												</table>
 											</div>
@@ -237,7 +231,6 @@
 										</td>
 									</tr>
 								}
-
 								@if (checkedInsuredList != null && checkedInsuredList.Count > 0)
 								{
 									<tr>
@@ -288,12 +281,6 @@
 								}
 							}
 						}
-					}
-					else
-					{
-						<tr>
-							<td colspan="8" class="text-center text-danger fw-bold">No Pending Applications Available</td>
-						</tr>
 					}
 				</tbody>
 			</table>
@@ -914,7 +901,7 @@
 	private bool isRemarksEditable = false;
 	private bool showLoanHistoryModal = false;
 	private bool showZoomedImage = false;
-	private string zoomedImageUrl;
+	private string? zoomedImageUrl;
 
 	private bool isImageModalVisible = false;
 	private bool isReceiptlVisible = false;
@@ -1008,7 +995,7 @@
 				select new { credit, insured }
 			).Distinct().ToList();
 
-			// Apply Year Filter
+			// Year Filter
 			if (selectedYear.HasValue)
 			{
 				joinedList = joinedList
@@ -1016,7 +1003,7 @@
 					.ToList();
 			}
 
-			// Apply Amount Filter based on insured.ID_Insured
+			// Amount Filter
 			if (!string.IsNullOrEmpty(selectedAmountFilter))
 			{
 				joinedList = (
@@ -1030,7 +1017,6 @@
 				).Distinct().ToList();
 			}
 
-			// Extract credit list
 			releaseList = joinedList.Select(x => x.credit).Distinct().ToList();
 
 			// Checked Applications Count
@@ -1106,13 +1092,7 @@
 			filteredList = filteredList.Where(item =>
 				(item.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
 				(item.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
-				(item.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false) ||
-				(item.Insured?.Date_Of_Birth.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.Coverage?.Amount_Of_Insured.ToString().Contains(searchText) ?? false) ||
-				(item.Coverage?.Effective_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.Coverage?.Termination_Date.ToString("yyyy-MM-dd").Contains(searchText) ?? false) ||
-				(item.UndStatus?.Und_Status?.ToLower().Contains(searchText) ?? false)
-			).ToList();
+				(item.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false)).ToList();
 		}
 
 		insuredDetailsList = filteredList;
