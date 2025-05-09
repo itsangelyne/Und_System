@@ -10,49 +10,6 @@
 @inject NavigationManager NavigationManager
 @layout MainLayout
 
-@* <style>
-    .custom-dropdown {
-        font-size: 36px;
-        font-weight: bold;
-        background: none;
-        border: none;
-        text-align: center;
-        appearance: none;
-        padding-right: 3rem;
-        position: relative;
-        width: auto;
-        margin: auto;
-    }
-
-    .custom-dropdown-wrapper {
-        position: relative;
-        display: inline-block;
-    }
-
-    .custom-dropdown::after {
-        content: '';
-    }
-
-    .custom-dropdown-wrapper::after {
-        content: '\25BC';
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        pointer-events: none;
-        font-size: 26px;
-    }
-
-    select.custom-dropdown option {
-        font-size: 1rem;
-    }
-
-    .custom-dropdown:focus {
-        outline: none;
-        outline-offset: 4px;
-    }
-</style> *@
-
 <div class="d-flex justify-content-between align-items-center">
     <h1><b>DASHBOARD</b></h1>
 </div>
@@ -137,12 +94,10 @@
                     <div class="row text-center">
                         <div class="col-6 border-end">
                             <h6 class="fw-bold mb-1">Long Term</h6>
-                            @*  <p class="mb-0" style="font-size:24px;">2</p> *@
                             <p class="mb-0" style="font-size:24px;">@refundLongTermCount</p>
                         </div>
                         <div class="col-6">
                             <h6 class="fw-bold mb-1">Short Term</h6>
-                            @*  <p class="mb-0" style="font-size:24px;">1</p> *@
                             <p class="mb-0" style="font-size:24px;">@refundShortTermCount</p>
                         </div>
                     </div>
@@ -160,12 +115,10 @@
                         <div class="row text-center">
                             <div class="col-6 border-end">
                                 <h6 class="fw-bold mb-1">Long Term</h6>
-                                @* <p class="mb-0" style="font-size:24px;">2</p> *@
                                 <p class="mb-0" style="font-size:24px;">@terminatedLongTermCount</p>
                             </div>
                             <div class="col-6">
                                 <h6 class="fw-bold mb-1">Short Term</h6>
-                                @* <p class="mb-0" style="font-size:24px;">2</p> *@
                                 <p class="mb-0" style="font-size:24px;">@terminatedShortTermCount</p>
                             </div>
                         </div>
@@ -182,12 +135,10 @@
                         <div class="row text-center">
                             <div class="col-6 border-end">
                                 <h6 class="fw-bold mb-1">Long Term</h6>
-                                @* <p class="mb-0" style="font-size:24px;">3</p> *@
                                 <p class="mb-0" style="font-size:24px;">@declinedLongTermCount</p>
                             </div>
                             <div class="col-6">
                                 <h6 class="fw-bold mb-1">Short Term</h6>
-                                @* <p class="mb-0" style="font-size:24px;">2</p> *@
                                 <p class="mb-0" style="font-size:24px;">@declinedShortTermCount</p>
                             </div>
                         </div>
@@ -229,7 +180,6 @@
                         <div class="card-body">
                             <div class="row text-center">
                                 <h6 class="fw-bold mb-1">Long Term</h6>
-                                @*   <p class="mb-0" style="font-size:24px;">2</p> *@
                                 <p class="mb-0" style="font-size:24px;">@renewalLongTermCount</p>
                             </div>
                         </div>
@@ -300,16 +250,19 @@
 
     private void FilterApplications()
     {
+        //default selection for displaying total application counts
         var filteredApplications = allApplications
             .Where(x => x.ID_Policy_Holder == StateService?.SelectedBankId.Value)
             .ToList();
 
+        //regular selection for displaying total application counts
         if (selectedFilter == "Regular")
         {
             filteredApplications = filteredApplications
                 .Where(app => undStatuses.FirstOrDefault(u => u.InsuredID == app.ID_Insured)?.ExtendedAge == "No")
                 .ToList();
         }
+        //extended age selection for displaying total application counts
         else if (selectedFilter == "Extended")
         {
             filteredApplications = filteredApplications
