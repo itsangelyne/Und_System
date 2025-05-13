@@ -39,7 +39,7 @@
 				</select>
 			</div>
 
-			<div class="col-md-4 mb-3 d-flex align-items-center">
+			@* <div class="col-md-4 mb-3 d-flex align-items-center">
 				<label for="yearDropdown" class="me-1 fw-bold" style="white-space: nowrap; min-width: 120px;">Filter by Year:</label>
 				<select class="form-control flex-grow-1" id="yearDropdown" @onchange="OnYearChanged">
 					<option value="">Select Year</option>
@@ -48,6 +48,10 @@
 						<option value="@year">@year</option>
 					}
 				</select>
+			</div> *@
+			<div class="col-md-4 mb-3 d-flex align-items-center">
+				<label for="yearDropdown" class="me-1 fw-bold" style="white-space: nowrap; min-width: 120px;">Filter by Year:</label>
+				<input type="date" class="form-control"/>
 			</div>
 		</div>
 		<div class="table-responsive">
@@ -89,7 +93,6 @@
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ViewParticulars(item.ID_CB)">
 										View
 									</button>
-
 								</td>
 								<td class="text-center align-content-center">
 									<button class="btn btn-outline-success btn-sm" @onclick="() => ToggleApplications(item.ID_CB, item.DCHS_From, item.DCHS_To)">

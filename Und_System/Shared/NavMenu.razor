@@ -201,7 +201,7 @@
         <div class="nav-item px-0 mt-auto">
             <a class="nav-link d-flex justify-content-between" href="search">
                 <span>
-                    <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Search
+                    <span class="oi oi-magnifying-glass" aria-hidden="true" style="margin-top: 5px;"></span> Search
                 </span>
             </a>
         </div>
@@ -209,11 +209,11 @@
         <div class="nav-item px-0">
             <a class="nav-link d-flex justify-content-between" @onclick="ToggleUsersDropdown">
                 <span>
-                    <span class="oi oi-wrench" aria-hidden="true"></span> Admin Control
+                    <span class="oi oi-wrench" aria-hidden="true" style="margin-top: 5px;"></span> Admin Control
                 </span>
                 <span class="@GetArrowClass(showUsersDropdown) ms-2"></span>
             </a>
-            <div class="nested-menu ps-4 @UsersDropdownClass">
+            <div class="nested-menu ps-0 @UsersDropdownClass">
                 <NavLink class="nav-link" href="emplisting">
                     <span class="oi oi-people" aria-hidden="true"></span> Employees
                 </NavLink>
