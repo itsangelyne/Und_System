@@ -1,62 +1,30 @@
-﻿@* private void ApplySearchFilter()
-{
-    // Filter for the main releaseList
-    var filteredReleaseList = releaseList;
+﻿@page "/testingpage"
+@using Microsoft.EntityFrameworkCore;
+@using Und_System.Context;
+@using Und_System.Data;
+@using Und_System.Services;
+@inject ApplicationDbContext _context
+@inject NavigationManager NavigationManager
+@inject CGLInsuredService CGLInsuredService
+@inject CGLParticularsService CGLParticularsService
+@inject CGLPolicyHolderServices CGLPolicyHolderServices
+@inject StateService StateService
+@inject CGLCreditDebitServices CGLCreditDebitServices
+@inject CGLCoverageService CGLCoverageService
+@inject CGLSubstandardRatingService CGLSubstandardRatingService
+@inject CGLUndStatusService CGLUndStatusService
+@inject CGLHealthQuestionsService CGLHealthQuestionsService
+@inject CGLHealthAnswerService CGLHealthAnswerService
+@inject CGLBeneficiaryService CGLBeneficiaryService
+@inject IJSRuntime JS
 
-    if (!string.IsNullOrWhiteSpace(searchText))
-    {
-        searchText = searchText.ToLower();
-        filteredReleaseList = filteredReleaseList.Where(item =>
-            item.Submitted_Date.ToString("yyyy-MM-dd").Contains(searchText) ||
-            pendingApplicationsCount.GetValueOrDefault(item.ID_CB, 0).ToString().Contains(searchText) ||
-            checkedApplicationsCount.GetValueOrDefault(item.ID_CB, 0).ToString().Contains(searchText) ||
-            item.Total_Application.ToString().Contains(searchText)
-        ).ToList();
-    }
+<h1><b>SEARCH APPLICATIONS</b></h1>
+<hr />
+<diiv>
+	<div class="container my-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+		<h4 class="text-center fw-bold mb-0">Bank: @StateService.SelectedBankName</h4>
+		<div class="card-body">
 
-    // Update the releaseList to the filtered one
-    releaseList = filteredReleaseList;
-
-    // Now filter the nested lists
-    if (!string.IsNullOrWhiteSpace(searchText))
-    {
-        foreach (var item in releaseList)
-        {
-            // Filter insuredDetailsList
-            var filteredInsuredDetails = insuredDetailsList.Where(detail =>
-                (detail.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
-                (detail.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
-                (detail.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false)).ToList();
-
-            // Update the insuredDetailsList for the current item
-            if (expandedRowId_Row == item.ID_CB)
-            {
-                insuredDetailsList = filteredInsuredDetails;
-            }
-
-            // Similarly, filter extendedAgeInsuredList and checkedInsuredList if needed
-            var filteredExtendedAgeInsured = extendedAgeInsuredList.Where(detail =>
-                (detail.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
-                (detail.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
-                (detail.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false)).ToList();
-
-            var filteredCheckedInsured = checkedInsuredList.Where(detail =>
-                (detail.Insured?.Last_Name?.ToLower().Contains(searchText) ?? false) ||
-                (detail.Insured?.First_Name?.ToLower().Contains(searchText) ?? false) ||
-                (detail.Insured?.Middle_Name?.ToLower().Contains(searchText) ?? false)).ToList();
-
-            extendedAgeInsuredList = filteredExtendedAgeInsured;
-            checkedInsuredList = filteredCheckedInsured;
-        }
-    }
-    else
-    {
-        // Reset the nested lists if search text is empty
-        insuredDetailsList = new List<InsuredDetailView>();
-        extendedAgeInsuredList = new List<InsuredDetailView>();
-        checkedInsuredList = new List<InsuredDetailView>();
-    }
-
-    StateHasChanged();
-}
- *@
+		</div>
+	</div>
+</diiv>
