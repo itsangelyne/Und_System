@@ -2099,7 +2099,8 @@ progress {
     font-weight: 400;
     line-height: 1.5;
     color: #212529;
-    background-color: #fff;
+    /* background-color: #fff;*/
+    background-color: #f7f7f7 !important;
     background-clip: padding-box;
     border: 1px solid #ced4da;
     -webkit-appearance: none;
@@ -2146,7 +2147,8 @@ progress {
 }
 
 .form-control:disabled, .form-control[readonly] {
-    background-color: #e9ecef;
+    /* background-color: #e9ecef;*/
+    background-color: #f7f7f7 !important;
     opacity: 1
 }
 
@@ -2156,7 +2158,8 @@ progress {
     -webkit-margin-end: .75rem;
     margin-inline-end: .75rem;
     color: #212529;
-    background-color: #e9ecef;
+    /* background-color: #e9ecef;*/
+    background-color: #f7f7f7 !important;
     pointer-events: none;
     border-color: inherit;
     border-style: solid;
@@ -2182,7 +2185,8 @@ progress {
     -webkit-margin-end: .75rem;
     margin-inline-end: .75rem;
     color: #212529;
-    background-color: #e9ecef;
+    /* background-color: #e9ecef;*/
+    background-color: #f7f7f7 !important;
     pointer-events: none;
     border-color: inherit;
     border-style: solid;
@@ -2304,7 +2308,8 @@ textarea.form-control-lg {
     font-weight: 400;
     line-height: 1.5;
     color: #212529;
-    background-color: #fff;
+   /* background-color: #e9ecef;*/
+    background-color: #f7f7f7 !important;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right .75rem center;

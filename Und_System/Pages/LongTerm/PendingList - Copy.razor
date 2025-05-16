@@ -474,7 +474,7 @@
 													else
 													{
 														<tr>
-															<td colspan="3" class="text-center text-danger fw-bold">No Illness Declared</td>
+															<td colspan="3" class="text-center text-muted fst-italic">No Illness Declared</td>
 														</tr>
 													}
 												</tbody>
@@ -485,7 +485,7 @@
 									<table class="table table-borderless mb-0">
 										<thead class="text-white" style="background-color:#5d835c">
 											<tr>
-												<th class="text-center" style="width: 85px;">No.</th>
+												<th class="text-center" style="width: 65px;">No.</th>
 												<th class="text-center" style="width:auto;">Question</th>
 												<th class="text-center" style="width: 150px;">Answer</th>
 											</tr>
@@ -513,24 +513,24 @@
 													else
 													{
 														<tr>
-															<td>
-																<input type="text" class="form-control" value="@question.NO" readonly style="width: 80px; text-align: center;" />
+															<td style="vertical-align: middle;">
+																<input type="text" class="form-control" value="@question.NO" readonly style="width: 60px; text-align: center;" />
 															</td>
 															<td>
 																@if (question.InputType == "textarea")
 																{
 																	<textarea style="word-wrap: break-word; white-space: normal;" class="fw-bolder" readonly>@question.Question</textarea>
 																}
-																else if (question.InputType == "date")
+																else if (question.InputType == "date" )
 																{
-																	<textarea style="word-wrap: break-word; white-space: normal;" class="form-control fw-bold" value="@question.Question" readonly />
+																	<input type="date" class="form-control fw-bold w-50 align-content-end" value="@question.Question" readonly />
 																}
 																else
 																{
-																	<input type="text" class="form-control" value="@question.Question" readonly />
+																	<textarea style="word-wrap: break-word; resize: none;height:85px;white-space: pre-wrap;overflow:hidden; " class="form-control" value="@question.Question" readonly />
 																}
 															</td>
-															<td>
+															<td style="vertical-align: middle; display">
 																@if (answer != null)
 																{
 																	if (question.NO.ToString().Contains("."))
@@ -560,7 +560,7 @@
 														{
 															<tr>
 																<td colspan="3">
-																	<textarea class="form-control" readonly style="height: 100px; resize:none;">@answer.Remarks</textarea>
+																	<textarea class="form-control" readonly style="height: 100px; margin-left: 70px; width:990px; resize:none;">@answer.Remarks</textarea>
 																</td>
 															</tr>
 														}
@@ -674,7 +674,7 @@
 													else
 													{
 														<tr>
-															<td colspan="3" class="text-center text-danger fw-bold">No Beneficiaries Added</td>
+															<td colspan="3" class="text-center text-muted fst-italic">No Beneficiaries Added</td>
 														</tr>
 													}
 												</tbody>
