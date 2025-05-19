@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using Und_System.Data
+@using Und_System.Services
 @inject NavigationManager NavigationManager
+@inject CGLUnderwritingUserService CGLUnderwritingUserService
 
 <div class="d-flex justify-content-center align-items-center" style="height: 95vh;">
     <div class="row justify-content-center w-100">
@@ -9,26 +11,34 @@
                 <img src="assets/cbliclogo.png" alt="Logo" style="height: 50px;" />
                 <EditForm Model="@loginModel">
                     <div class="mb-3 row">
-                        <label for="username" class="col-sm-3 col-form-label text-nowrap">Username</label>
+                        <label for="username" class="col-sm-3 col-form-label text-nowrap" id="usernamelabel">Username</label>
                         <div>
-                            <InputText id="username" class="form-control" @bind-Value="loginModel.Username" required />
+                            <InputText id="username" class="@($"form-control {(showUsernameError || showLoginError ? "is-invalid" : "")}")" @bind-Value="loginModel.Username" required />
+                            <div class="invalid-feedback" style="display: @(showUsernameError ? "block" : "none");">Username is required.</div>
                         </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="password" class="col-sm-3 col-form-label">Password</label>
+                    </div><div class="mb-3 row">
+                        <label for="password" class="col-sm-3 col-form-label" id="passlabel">Password</label>
                         <div class="col-sm-12 position-relative">
                             <div class="input-group">
-                                <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" required />
+                                <InputText id="password" type="@(!showPassword ? "password" : "text")"
+                                class="@($"form-control {(showPasswordError || showLoginError ? "is-invalid" : "")}")"
+                                @bind-Value="loginModel.Password" required />
+                                <span class="input-group-text password-toggle-icon" @onclick="TogglePasswordVisibility" style="cursor: pointer;">
+                                    <i class="@(!showPassword ? "bi bi-eye-slash" : "bi bi-eye")"></i>
+                                </span>
                             </div>
+                            <div class="invalid-feedback" style="display: @(showPasswordError ? "block" : "none");">Password is required.</div>
                         </div>
+                        <div class="text-danger mt-2" style="font-size: 0.9em;" hidden="@(!showLoginError)">
+                            Username and password mismatch.
+                        </div>
+                        <p class="fst-italic text-end m-1" @onclick="LostPassModal" style="font-size:14px!important; padding-right:10px!important;" id="forgotpass">Forget Password?</p>
                     </div>
+
                 </EditForm>
-                <div class="d-flex flex-column flex-md-row flex-sm-row justify-content-end mt-3">
-                    <button class="btn btn-outline-primary mb-2 mb-sm-0 me-sm-2" id="lostpassbtn">
-                        <i class="fas fa-key"></i> Lost Password
-                    </button>
-                    <button class="btn btn-login"  @onclick="HandleLogin">
-                        <i class="oi oi-account-login"></i> Login 
+                <div class="d-flex flex-column flex-sm-row justify-content-end mt-3">
+                    <button class="btn btn-login" @onclick="HandleLogin">
+                        <i class="oi oi-account-login"></i> Login
                     </button>
                 </div>
             </div>
@@ -36,16 +46,76 @@
     </div>
 </div>
 
-@code {
-    private LoginModel loginModel = new LoginModel();
+@if (isLostPassword)
+{
+    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="text-center fw-bold " style="color: #5d835c">RESET PASSWORD</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="emailadd" class="form-label">Email Address</label>
+                    <input type="email" class="form-control form-control-sm" id="emailadd">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-primary" id="resetbtn">Reset</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
+@code {
     public class LoginModel
     {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
-    private void HandleLogin()
+
+    private LoginModel loginModel = new LoginModel();
+    private bool showUsernameError = false;
+    private bool showPasswordError = false;
+    private bool showLoginError = false;
+    private bool showPassword = false;
+    private bool isLostPassword = false;
+
+    private async Task HandleLogin()
     {
-        NavigationManager.NavigateTo("/lineofbusiness", true);
+        showUsernameError = string.IsNullOrWhiteSpace(loginModel.Username);
+        showPasswordError = string.IsNullOrWhiteSpace(loginModel.Password);
+        showLoginError = false;
+
+        if (showUsernameError || showPasswordError)
+        {
+            return;
+        }
+
+        var user = await CGLUnderwritingUserService.ValidateUserAsync(loginModel.Username, loginModel.Password);
+
+        if (user == null || user.Password != loginModel.Password)
+        {
+            showLoginError = true;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/lineofbusiness", true);
+        }
+    }
+    private void TogglePasswordVisibility()
+    {
+        showPassword = !showPassword;
+    }
+
+    private void LostPassModal()
+    {
+        isLostPassword = true;
+    }
+   
+    private void CloseModal()
+    {
+        isLostPassword = false;
     }
 }

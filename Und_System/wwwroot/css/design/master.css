@@ -44,6 +44,15 @@ input::placeholder{
     font-weight: 600;
 }
 
+#forgotpass{
+    color:#00248e;
+    font-weight:300;
+}
+#forgotpass:hover{
+    color:#3d6296;
+    text-decoration:underline;
+    transition:0.1s ease-in;
+}
 .login-container {
     background: #fff;
     border: 1px solid #ddd;
@@ -102,17 +111,7 @@ input::placeholder{
     word-wrap: break-word;
 }
 
-@media (max-width: 768px) {
-    .table {
-        font-size: 12px;
-    }
-
-        .table th, .table td {
-            padding: 8px;
-        }
-}
-
-.status-dropdown {
+.status-dropdown { 
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -286,6 +285,7 @@ select.custom-dropdown option {
 
 .custom-dropdown::after {
     content: '' !important;
+    z-index:99;
 }
 
 .custom-dropdown-wrapper::after {
@@ -305,29 +305,6 @@ select.custom-dropdown option {
 .custom-dropdown:focus {
     outline: none !important;
     outline-offset: 4px;
-}
-
-/* Media Queries for Responsiveness */
-@media (max-width: 768px) {
-    .custom-dropdown {
-        font-size: 24px;
-        padding-right: 36px;
-    }
-
-    .custom-dropdown-wrapper::after {
-        font-size: 24px;
-    }
-}
-
-@media (max-width: 430px) {
-    .custom-dropdown {
-        font-size: 18px;
-        padding-right: 32px;
-    }
-
-    .custom-dropdown-wrapper::after {
-        font-size: 18px;
-    }
 }
 
 /*For Zoom Image*/
@@ -353,4 +330,36 @@ select.custom-dropdown option {
     z-index: 2001;
     transition: transform 0.2s ease;
     cursor: zoom-out;
+}
+
+/* Responsiveness CSS */
+@media (max-width: 768px) {
+    .table {
+        font-size: 12px;
+    }
+        .table th, .table td {
+            padding: 8px;
+        }
+}
+
+@media (max-width: 768px) {
+    .custom-dropdown {
+        font-size: 24px;
+        padding-right: 36px;
+    }
+
+    .custom-dropdown-wrapper::after {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 430px) {
+    .custom-dropdown {
+        font-size: 18px;
+        padding-right: 32px;
+    }
+
+    .custom-dropdown-wrapper::after {
+        font-size: 18px;
+    }
 }
