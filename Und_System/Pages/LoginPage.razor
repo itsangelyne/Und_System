@@ -6,8 +6,8 @@
 
 <div class="d-flex justify-content-center align-items-center" style="height: 95vh;">
     <div class="row justify-content-center w-100">
-        <div class="col-lg-3 col-md-4 col-sm-6">
-            <div class="login-container p-4">
+        <div class="col-lg-4 col-md-4 col-sm-6">
+            <div class="login-container p-3">
                 <img src="assets/cbliclogo.png" alt="Logo" style="height: 50px;" />
                 <EditForm Model="@loginModel">
                     <div class="mb-3 row">
@@ -32,15 +32,17 @@
                         <div class="text-danger mt-2" style="font-size: 0.9em;" hidden="@(!showLoginError)">
                             Username and password mismatch.
                         </div>
-                        <p class="fst-italic text-end m-1" @onclick="LostPassModal" style="font-size:14px!important; padding-right:10px!important;" id="forgotpass">Forget Password?</p>
-                    </div>
+                        </div>
 
                 </EditForm>
-                <div class="d-flex flex-column flex-sm-row justify-content-end mt-3">
+                <div class="d-flex flex-column flex-sm-row justify-content-start mt-3">
                     <button class="btn btn-login" @onclick="HandleLogin">
                         <i class="oi oi-account-login"></i> Login
                     </button>
                 </div>
+                <hr style="height:1px!important;z-index: 100;color: #326e32;" />
+                <p class="fst-italic text-center m-1" @onclick="LostPassModal" style="font-size:14px!important; padding-right:10px!important;" id="forgotpass">Forget Password?</p>
+
             </div>
         </div>
     </div>

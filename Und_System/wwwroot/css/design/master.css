@@ -170,6 +170,7 @@ input::placeholder{
     }
 
 /*CSS for the Back to Bank List Button*/
+
 .btn-back, .btn-login, #cglbtn {
     position: relative;
     overflow: hidden;
@@ -179,6 +180,8 @@ input::placeholder{
     background-color: transparent !important;
     padding-right: 20px !important;
 }
+
+
 
     .btn-back::after, .btn-login::after, #cglbtn::after {
         position: absolute;
