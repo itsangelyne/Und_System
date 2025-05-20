@@ -236,15 +236,15 @@
 <!-- Logout Modal -->
 @if (showLogoutPopup)
 {
-    <div class="modal show d-block" style="background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index:999;">
+    <div class="modal show" style="background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center;">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content" style="width:30rem; left: 10px;">
                 <div class="modal-header">
                     <h5 class="modal-title">Confirm Logout</h5>
                     <button type="button" class="btn-close" @onclick="CancelLogout"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to log out?</p>
+                    <p class="text-center m-2" style="font-size:16px; font-weight:500;vertical-align:middle;">Are you sure you want to log out?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="CancelLogout">Cancel</button>
@@ -254,6 +254,7 @@
         </div>
     </div>
 }
+
 
 @code {
     private bool collapseNavMenu = true;

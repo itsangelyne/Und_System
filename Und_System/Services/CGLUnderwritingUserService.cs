@@ -35,5 +35,11 @@ namespace Und_System.Services
         {
             return await _context.CGL_UnderwritingUser.FirstOrDefaultAsync(u => u.Username == Username && u.Password == Password);
         }
+
+        public async Task<CGL_UnderwritingUser?> GetUserByUsernameAsync(string username)
+        {
+            return await _context.CGL_UnderwritingUser.FirstOrDefaultAsync(u => u.Username == username);
+        }
+
     }
 }

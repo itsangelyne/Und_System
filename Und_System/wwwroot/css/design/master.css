@@ -54,10 +54,11 @@ input::placeholder{
     transition:0.1s ease-in;
 }
 .login-container {
-    background: #fff;
+  /*  background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
+  width: 80rem;
     text-align: center;
 }
 
@@ -278,7 +279,7 @@ select.custom-dropdown option {
     position: relative !important;
     width: auto !important;
     margin:0!important;
-    cursor: pointer !important;
+/*    cursor: pointer !important;*/
 }
 
 .custom-dropdown-wrapper {
