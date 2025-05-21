@@ -31,7 +31,7 @@ namespace Und_System.Services
             }
         }
         // To Validate User Login
-        public async Task<CGL_UnderwritingUser> ValidateUserAsync(string Username, string Password)
+        public async Task<CGL_UnderwritingUser?> ValidateUserAsync(string Username, string Password)
         {
             return await _context.CGL_UnderwritingUser.FirstOrDefaultAsync(u => u.Username == Username && u.Password == Password);
         }

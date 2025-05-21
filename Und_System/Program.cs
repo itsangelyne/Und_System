@@ -1,7 +1,7 @@
+using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
-
 using Und_System.Context;
 using Und_System.Services;
 
@@ -27,6 +27,8 @@ builder.Services.AddScoped<CGLBeneficiaryService>();
 builder.Services.AddScoped<CGLUnderwritingUserService>();
 builder.Services.AddScoped<CGLParticularsService>();
 builder.Services.AddScoped<StateService>();
+builder.Services.AddSweetAlert2();
+//builder.Services.AddSyncfusionBlazor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

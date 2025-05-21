@@ -1,119 +1,349 @@
 ﻿@page "/testingpage"
-@using Und_System.Data
-@using Und_System.Services
+@using Und_System.Context;
+@using Und_System.Data;
+@using Und_System.Services;
+@inject CGLInsuredService CGLInsuredService
+@inject CGLPolicyHolderServices CGLPolicyHolderServices
+@inject StateService StateService
+@inject SweetAlertService sweetAlertService
+@inject CGLInsuredStatusService CGLInsuredStatusService
+@inject CGLUndStatusService CGLUndStatusService
 @inject NavigationManager NavigationManager
-@inject CGLUnderwritingUserService CGLUnderwritingUserService
+@layout MainLayout
 
-<div class="d-flex justify-content-center align-items-center" style="height: 95vh;">
-    <div class="row justify-content-center w-100">
-        <div class="col-lg-3 col-md-4 col-sm-6">
-            <div class="login-container p-4">
-                <img src="assets/cbliclogo.png" alt="Logo" style="height: 50px;" />
-                <EditForm Model="@loginModel">
-                    <div class="mb-3 row">
-                        <label for="username" class="col-sm-3 col-form-label text-nowrap" id="usernamelabel">Username</label>
-                        <div>
-                            <InputText id="username" class="@($"form-control {(showUsernameError || showLoginError ? "is-invalid" : "")}")" @bind-Value="loginModel.Username" required />
-                            <div class="invalid-feedback" style="display: @(showUsernameError ? "block" : "none");">Username is required.</div>
-                        </div>
-                    </div><div class="mb-3 row">
-                        <label for="password" class="col-sm-3 col-form-label" id="passlabel">Password</label>
-                        <div class="col-sm-12 position-relative">
-                            <div class="input-group">
-                                <InputText id="password" type="@(!showPassword ? "password" : "text")"
-                                           class="@($"form-control {(showPasswordError || showLoginError ? "is-invalid" : "")}")"
-                                           @bind-Value="loginModel.Password" required />
-                                <span class="input-group-text password-toggle-icon" @onclick="TogglePasswordVisibility" style="cursor: pointer;">
-                                    <i class="@(!showPassword ? "bi bi-eye-slash" : "bi bi-eye")"></i>
-                                </span>
-                            </div>
-                            <div class="invalid-feedback" style="display: @(showPasswordError ? "block" : "none");">Password is required.</div>
-                        </div>
-                            <p class="fst-italic text-end m-1" @onclick="LostPassModal" style="font-size:14px!important; padding-right:10px!important;" id="forgotpass">Forget Password?</p>
-                    </div>
+<h1><b>DASHBOARD</b></h1>
+<hr />
 
-                </EditForm>
-                <div class="text-danger" style="font-size: 0.9em;" hidden="@(!showLoginError)">
-                    Username and password mismatch.
-                </div>
-                <div class="d-flex flex-column flex-sm-row justify-content-end mt-3">
-                    <button class="btn btn-login" @onclick="HandleLogin">
-                        <i class="oi oi-account-login"></i> Login
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-@if (isLostPassword)
+@if (StateService.SelectedBankId.HasValue)
 {
-    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="text-center fw-bold " style="color: #5d835c">RESET PASSWORD</h5>
-                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
-                </div>
-                <div class="modal-body">
-                    <label for="emailadd" class="form-label">Email Address</label>
-                    <input type="email" class="form-control form-control-sm" id="emailadd">
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-outline-primary" id="resetbtn">Reset</button>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="d-flex justify-content-between align-items-center" style="z-index:1050;">
+		<div class="d-flex align-items-center">
+			<h4 class="mb-0">
+				Bank: <strong>@StateService.SelectedBankName</strong>
+			</h4>
+		</div>
+		<div class="d-flex align-items-center">
+
+			<div class="ms-0">
+				<button class="btn btn-outline-success" @onclick="GoBackToBankList"><i class="bi bi-bank" m-3></i> Bank List</button>
+			</div>
+		</div>
+	</div>
 }
 
+<div class="container mt-3 mb-3 text-center">
+	@* <div class="text-center mb-4">
+        <div class="custom-dropdown-wrapper">
+            <select id="headingDropdown" class="custom-dropdown" @onchange="OnFilterChanged">
+                <option value="All" selected>APPLICATIONS</option>
+                <option value="Regular">REGULAR APPLICATIONS</option>
+                <option value="Extended">EXTENDED AGE APPLICATIONS</option>
+            </select>
+        </div>
+    </div> *@
+	<h2 class="text-center fw-bold mb-4">APPLICATIONS</h2>
+</div>
+
+<div class="row g-3">
+	<!--Pending-->
+	<div class="col-12 col-md-6 col-lg-4">
+		<div class="card shadow-sm rounded" style="z-index: -1;">
+			<div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
+				Pending
+			</div>
+			<div class="card-body">
+				<div class="row text-center">
+					<div class="col-6 border-end">
+						<h6 class="fw-bold mb-1">Long Term</h6>
+						<p class="mb-0" style="font-size:24px;">@pendingLongTermCount</p>
+					</div>
+					<div class="col-6">
+						<h6 class="fw-bold mb-1">Short Term</h6>
+						<p class="mb-0" style="font-size:24px;">@pendingShortTermCount</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--Approved-->
+	<div class="col-12 col-md-6 col-lg-4">
+		<div class="card shadow-sm rounded" style="z-index: -1;">
+			<div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
+				Approved
+			</div>
+			<div class="card-body">
+				<div class="row text-center">
+					<div class="col-6 border-end">
+						<h6 class="fw-bold mb-1">Long Term</h6>
+						<p class="mb-0" style="font-size:24px;">@approvedLongTermCount</p>
+					</div>
+					<div class="col-6">
+						<h6 class="fw-bold mb-1">Short Term</h6>
+						<p class="mb-0" style="font-size:24px;">@approvedShortTermCount</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--Refund-->
+	<div class="col-12 col-md-6 col-lg-4">
+		<div class="card shadow-sm rounded" style="z-index: -1;">
+			<div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
+				Refund
+			</div>
+			<div class="card-body">
+				<div class="row text-center">
+					<div class="col-6 border-end">
+						<h6 class="fw-bold mb-1">Long Term</h6>
+						<p class="mb-0" style="font-size:24px;">@refundLongTermCount</p>
+					</div>
+					<div class="col-6">
+						<h6 class="fw-bold mb-1">Short Term</h6>
+						<p class="mb-0" style="font-size:24px;">@refundShortTermCount</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row g-3 justify-content-center">
+		<!--Terminated-->
+		<div class="col-12 col-md-6 col-lg-4">
+			<div class="card shadow-sm rounded" style="z-index: -1;">
+				<div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
+					Terminated
+				</div>
+				<div class="card-body">
+					<div class="row text-center">
+						<div class="col-6 border-end">
+							<h6 class="fw-bold mb-1">Long Term</h6>
+							<p class="mb-0" style="font-size:24px;">@terminatedLongTermCount</p>
+						</div>
+						<div class="col-6">
+							<h6 class="fw-bold mb-1">Short Term</h6>
+							<p class="mb-0" style="font-size:24px;">@terminatedShortTermCount</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--Declined-->
+		<div class="col-12 col-md-6 col-lg-4">
+			<div class="card shadow-sm rounded" style="z-index: -1;">
+				<div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
+					Declined
+				</div>
+				<div class="card-body">
+					<div class="row text-center">
+						<div class="col-6 border-end">
+							<h6 class="fw-bold mb-1">Long Term</h6>
+							<p class="mb-0" style="font-size:24px;">@declinedLongTermCount</p>
+						</div>
+						<div class="col-6">
+							<h6 class="fw-bold mb-1">Short Term</h6>
+							<p class="mb-0" style="font-size:24px;">@declinedShortTermCount</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Compliance and Others Section -->
+	<div class="container mt-3">
+		<h2 class="text-center fw-bold mb-4">COMPLIANCE AND RENEWAL</h2>
+		<div class="row g-3 justify-content-center">
+			<!-- Compliance Section -->
+			<div class="col-12 col-md-6 col-lg-4">
+				<div class="card shadow-sm rounded" style="z-index: -1;">
+					<div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
+						Compliance
+					</div>
+					<div class="card-body">
+						<div class="row text-center">
+							<div class="col-6 border-end">
+								<h6 class="fw-bold mb-1">Long Term</h6>
+								<p class="mb-0" style="font-size:24px;">@medicalLongTermCount</p>
+							</div>
+							<div class="col-6">
+								<h6 class="fw-bold mb-1">Short Term</h6>
+								<p class="mb-0" style="font-size:24px;">@medicalShortTermCount</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--Renewal-->
+			<div class="col-12 col-md-6 col-lg-4">
+				<div class="card shadow-sm rounded" style="z-index: -1;">
+					<div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
+						Renewal
+					</div>
+					<div class="card-body">
+						<div class="row text-center">
+							<h6 class="fw-bold mb-1">Long Term</h6>
+							<p class="mb-0" style="font-size:24px;">@renewalLongTermCount</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 @code {
-    private LoginModel loginModel = new LoginModel();
-    private bool showUsernameError = false;
-    private bool showPasswordError = false;
-    private bool showLoginError = false;
-    private bool showPassword = false;
-    private bool isLostPassword = false;
+	private int pendingLongTermCount = 0;
+	private int pendingShortTermCount = 0;
+	private int pendingExtendedCount = 0;
+	private int approvedLongTermCount = 0;
+	private int approvedShortTermCount = 0;
+	private int approvedExtendedCount = 0;
+	private int terminatedLongTermCount = 0;
+	private int terminatedShortTermCount = 0;
+	private int terminatedExtendedCount = 0;
+	private int declinedLongTermCount = 0;
+	private int declinedShortTermCount = 0;
+	private int declinedExtendedCount = 0;
+	private int medicalLongTermCount = 0;
+	private int medicalShortTermCount = 0;
+	private int medicalExtendedCount = 0;
+	private int refundLongTermCount = 0;
+	private int refundShortTermCount = 0;
+	private int refundExtendedCount = 0;
+	private int renewalLongTermCount = 0;
+	private int renewalExtendedCount = 0;
 
-    private async Task HandleLogin()
-    {
-        showUsernameError = string.IsNullOrWhiteSpace(loginModel.Username);
-        showPasswordError = string.IsNullOrWhiteSpace(loginModel.Password);
-        showLoginError = false;
+	private string selectedBank = "";
+	private string selectedFilter = "All";
 
-        if (showUsernameError || showPasswordError)
-        {
-            return;
-        }
+	private List<CGLPolicyHolder> banks = new List<CGLPolicyHolder>();
+	private List<CGLInsured> allApplications = new List<CGLInsured>();
+	private List<CGL_Insured_Status> insuredStatuses = new List<CGL_Insured_Status>();
+	private List<CGL_UndStatus> undStatuses = new List<CGL_UndStatus>();
 
-        var user = await CGLUnderwritingUserService.ValidateUserAsync(loginModel.Username, loginModel.Password);
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await StateService.LoadStateAsync();
+			allApplications = await CGLInsuredService.GetInsuredAsync();
+			banks = await CGLPolicyHolderServices.GetBanksAsync();
+			insuredStatuses = await CGLInsuredStatusService.GetStatusAsync();
+			undStatuses = await CGLUndStatusService.GetStatusAsync();
 
-        if (user == null || user.Password != loginModel.Password)
-        {
-            showLoginError = true;
-        }
-        else
-        {
-            NavigationManager.NavigateTo("/lineofbusiness", true);
-        }
-    }
-    private void TogglePasswordVisibility()
-    {
-        showPassword = !showPassword;
-    }
+			if (StateService.SelectedBankId.HasValue)
+			{
+				selectedBank = StateService.SelectedBankId.ToString();
+				FilterApplications();
+			}
+			else
+			{
+				SetCounts(allApplications);
+			}
+			StateHasChanged();
+		}
+	}
 
-    private void LostPassModal()
-    {
-        isLostPassword = true;
-    }
-    public class LoginModel
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
-    private void CloseModal()
-    {
-        isLostPassword = false;
-    }
+	private void OnFilterChanged(ChangeEventArgs e)
+	{
+		selectedFilter = e.Value.ToString();
+		FilterApplications();
+	}
+
+	private void FilterApplications()
+	{
+		//default selection for displaying total application counts
+		var filteredApplications = allApplications
+			.Where(x => x.ID_Policy_Holder == StateService?.SelectedBankId.Value)
+			.ToList();
+
+		//regular selection for displaying total application counts
+		if (selectedFilter == "Regular")
+		{
+			filteredApplications = filteredApplications
+				.Where(app => undStatuses.FirstOrDefault(u => u.InsuredID == app.ID_Insured)?.ExtendedAge == "No")
+				.ToList();
+		}
+		//extended age selection for displaying total application counts
+		else if (selectedFilter == "Extended")
+		{
+			filteredApplications = filteredApplications
+				.Where(app => undStatuses.FirstOrDefault(u => u.InsuredID == app.ID_Insured)?.ExtendedAge == "Yes")
+				.ToList();
+		}
+
+		SetCounts(filteredApplications);
+	}
+
+	private void SetCounts(List<CGLInsured> applications)
+	{
+		ResetCounts();
+
+		foreach (var app in applications)
+		{
+			var undStatus = undStatuses.FirstOrDefault(u => u.InsuredID == app.ID_Insured);
+			if (undStatus != null)
+			{
+				switch (undStatus.Und_Status)
+				{
+					case "Pending":
+						pendingLongTermCount += app.Type == "Long Term" ? 1 : 0;
+						pendingShortTermCount += app.Type == "Short Term" ? 1 : 0;
+						break;
+					case "Approved":
+						approvedLongTermCount += app.Type == "Long Term" ? 1 : 0;
+						approvedShortTermCount += app.Type == "Short Term" ? 1 : 0;
+						break;
+					case "Declined":
+						declinedLongTermCount += app.Type == "Long Term" ? 1 : 0;
+						declinedShortTermCount += app.Type == "Short Term" ? 1 : 0;
+						break;
+					case "Compliance":
+						medicalLongTermCount += app.Type == "Long Term" ? 1 : 0;
+						medicalShortTermCount += app.Type == "Short Term" ? 1 : 0;
+						break;
+					case "For Refund":
+						refundLongTermCount += app.Type == "Long Term" ? 1 : 0;
+						refundShortTermCount += app.Type == "Short Term" ? 1 : 0;
+						break;
+					case "Renewal":
+						renewalLongTermCount += app.Type == "Long Term" ? 1 : 0;
+						break;
+					case "Terminated":
+						terminatedLongTermCount += app.Type == "Long Term" ? 1 : 0;
+						terminatedShortTermCount += app.Type == "Short Term" ? 1 : 0;
+						break;
+				}
+			}
+		}
+	}
+
+	private void ResetCounts()
+	{
+		pendingLongTermCount = 0;
+		pendingShortTermCount = 0;
+		pendingExtendedCount = 0;
+		approvedLongTermCount = 0;
+		approvedShortTermCount = 0;
+		approvedExtendedCount = 0;
+		terminatedLongTermCount = 0;
+		terminatedShortTermCount = 0;
+		terminatedExtendedCount = 0;
+		declinedLongTermCount = 0;
+		declinedShortTermCount = 0;
+		declinedExtendedCount = 0;
+		medicalLongTermCount = 0;
+		medicalShortTermCount = 0;
+		medicalExtendedCount = 0;
+		refundLongTermCount = 0;
+		refundShortTermCount = 0;
+		refundExtendedCount = 0;
+		renewalLongTermCount = 0;
+		renewalExtendedCount = 0;
+	}
+
+	private async Task GoBackToBankList()
+	{
+		await StateService.SetSelectedBank(null, null);
+		NavigationManager.NavigateTo("/banklisting");
+	}
 }

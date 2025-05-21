@@ -172,7 +172,7 @@ input::placeholder{
 
 /*CSS for the Back to Bank List Button*/
 
-.btn-back, .btn-login, #cglbtn {
+.btn-login, #cglbtn {
     position: relative;
     overflow: hidden;
     transition: all 0.5s ease-in-out !important;
@@ -184,7 +184,7 @@ input::placeholder{
 
 
 
-    .btn-back::after, .btn-login::after, #cglbtn::after {
+    .btn-login::after, #cglbtn::after {
         position: absolute;
         opacity: 0;
         top: 45%;
@@ -193,11 +193,6 @@ input::placeholder{
         transition: right 0.5s ease, opacity 0.5s ease;
         color: white;
         font-weight: bold;
-    }
-
-    .btn-back::after {
-        content: '\00AB' !important;
-        font-size: 40px !important;
     }
 
     .btn-login::after {
@@ -210,13 +205,13 @@ input::placeholder{
         font-size: 24px !important;
     }
 
-    .btn-back:hover, .btn-login:hover, #cglbtn:hover {
+    .btn-login:hover, #cglbtn:hover {
         padding-right: 40px !important;
         background-color: #326f32 !important;
         color: white !important;
     }
 
-        .btn-back:hover::after, .btn-login:hover::after, #cglbtn:hover::after {
+        .btn-login:hover::after, #cglbtn:hover::after {
             opacity: 1;
             right: 10px;
         }

@@ -17,22 +17,23 @@
 
 @if (StateService.SelectedBankId.HasValue)
 {
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center" style="z-index:1050;">
         <div class="d-flex align-items-center">
             <h4 class="mb-0">
                 Bank: <strong>@StateService.SelectedBankName</strong>
             </h4>
         </div>
         <div class="d-flex align-items-center">
+
             <div class="ms-0">
-                <button class="btn btn-back" @onclick="GoBackToBankList">Back to Bank List</button>
+                <button class="btn btn-outline-success" @onclick="GoBackToBankList"><i class="bi bi-bank" m-3></i> Bank List</button>
             </div>
         </div>
     </div>
 }
 
-<div class="container mt-3 mb-3">
-    <div class="text-center mb-4">
+<div class="container mt-3 mb-3 text-center">
+    @* <div class="text-center mb-4">
         <div class="custom-dropdown-wrapper">
             <select id="headingDropdown" class="custom-dropdown" @onchange="OnFilterChanged">
                 <option value="All" selected>APPLICATIONS</option>
@@ -40,8 +41,10 @@
                 <option value="Extended">EXTENDED AGE APPLICATIONS</option>
             </select>
         </div>
-    </div>
+    </div> *@
+    <h2 class="text-center fw-bold mb-4">APPLICATIONS</h2>
 </div>
+
 
     <div class="row g-3">
         <!--Pending-->
