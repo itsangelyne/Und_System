@@ -19,7 +19,7 @@
 @inject SweetAlertService sweetAlertService
 @inject IJSRuntime JS
 
-<h1><b>PENDING APPLICATIONS</b></h1>
+<h1><b>PENDING APPLICATIONS (TEST)</b></h1>
 <hr />
 <div class="container my-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
 	<h3 class="text-center fw-bold text-decoration-underline">LONG TERM</h3>
@@ -79,8 +79,8 @@
 							<tr>
 								<td class="text-center align-content-center">
 									<i class="fa @(expandedRowId_Row == item.ID_CB ? "fa-chevron-up" : "fa-chevron-down") cursor-pointer"
-									   style="cursor:pointer;"
-									   @onclick="() => ToggleRow(item.ID_CB)">
+									style="cursor:pointer;"
+									@onclick="() => ToggleRow(item.ID_CB)">
 									</i>
 								</td>
 								<td class="text-center fw-bold align-content-center">@item.Submitted_Date.ToString("yyyy-MM-dd")</td>
@@ -445,45 +445,57 @@
 										</div>
 									</div>
 									@* <div class="border rounded p-3 mb-3"> *@
-										<div class="table-responsive">
-											<table class="table table-bordered" style="margin-bottom:25px;">
-												<thead class="text-white" style="background-color:#5d835c">
-													<tr>
-														<th class="text-center">Illness</th>
-														<th class="text-center">Regular Age</th>
-														<th class="text-center">Overage</th>
-													</tr>
-												</thead>
-												<tbody>
-													@if (substandardRatings != null && substandardRatings.Count > 0)
-													{
-														@foreach (var rating in substandardRatings)
-														{
-															<tr>
-																<td>
-																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Illness_Name" readonly></textarea>
-																</td>
-																<td class="text-center" style="width:30%;">
-																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Regular_Age" readonly></textarea>
-																</td>
-																<td class="text-center" style="width:30%;">
-																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Overage" readonly></textarea>
-																</td>
-															</tr>
-														}
-													}
-													else
+									<div class="table-responsive">
+										<table class="table table-bordered" style="margin-bottom:25px;">
+											<thead class="text-white" style="background-color:#5d835c">
+												<tr>
+													<th class="text-center">Illness</th>
+													<th class="text-center">Regular Age</th>
+													<th class="text-center">Overage</th>
+												</tr>
+											</thead>
+											<tbody>
+												@if (substandardRatings != null && substandardRatings.Count > 0)
+												{
+													@foreach (var rating in substandardRatings)
 													{
 														<tr>
-															<td colspan="3" class="text-center text-muted fst-italic">No Illness Declared</td>
+															<td>
+																<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Illness_Name" readonly></textarea>
+															</td>
+															<td class="text-center" style="width:30%;">
+																<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Regular_Age" readonly></textarea>
+															</td>
+															<td class="text-center" style="width:30%;">
+																<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Overage" readonly></textarea>
+															</td>
 														</tr>
 													}
-												</tbody>
-											</table>
-										</div>
+												}
+												else
+												{
+													<tr>
+														<td colspan="3" class="text-center text-muted fst-italic">No Illness Declared</td>
+													</tr>
+												}
+												<tr>
+													<div class="row mt-2">
+														<div class="col-md-6 mb-3">
+															<label for="loan" class="form-label">Pregnant</label>
+															<input type="text" class="form-control" id="loan" value="@selectedInsured?.Pregnant" readonly />
+														</div>
+														<div class="col-md-6 mb-3">
+															<label for="term" class="form-label">How Many Months</label>
+															<input type="text" class="form-control" id="term" value="@selectedInsured?.How_Many_Months" readonly />
+														</div>
+													</div>
+												</tr>
+											</tbody>
+										</table>
+									</div>
 									@* </div> *@
 
-									<table class="table table-borderless mb-0">
+									<table class="table table-bordered mb-0">
 										<thead class="text-white" style="background-color:#5d835c">
 											<tr>
 												<th class="text-center" style="width: 65px;">No.</th>
@@ -503,7 +515,7 @@
 													{
 														<tr>
 															<td colspan="3">
-																<p class="fw-normal justify-content-center mb-0">@question.Question</p>
+																<p style="word-wrap: break-word; resize: none;" class="fw-bold" readonly>@question.Question</p>
 																@if (answer != null && answer.Input_Type == "No")
 																{
 																	<textarea class="form-control" readonly style="height: 100px; resize: none;">@answer.Remarks</textarea>
@@ -514,47 +526,65 @@
 													else
 													{
 														<tr>
-															<td style="vertical-align: middle;">
-																<input type="text" class="form-control" value="@question.NO" readonly style="width: 60px; text-align: center;" />
-															</td>
-															<td>
-																@if (question.InputType == "textarea")
+															@if (question.NO % 1 != 0)
+															{
 																{
-																	<textarea style="word-wrap: break-word; white-space: normal;" class="fw-bolder" readonly>@question.Question</textarea>
+																	<td colspan="2" style="margin-right:50px;">
+																		<div style="resize:none;overflow:hidden;" class="form-control text-end w-50" readonly> @question.Question</div>
+																	</td>
 																}
-																else if (question.InputType == "date" )
+															}
+															else{
+																<td style="vertical-align: middle;">
+																	<input type="text" class="form-control" value="@question.NO" readonly style="width: 60px; text-align: center;" />
+																</td>
+																<td>
+																@* @if (question.NO % 1 != 0)
 																{
-																	<input type="date" class="form-control fw-bold w-50 align-content-end" value="@question.Question" readonly />
+																	<div style="resize:none;overflow:hidden;" class="form-control text-end w-50" readonly> @question.Question</div>
+																} *@
+
+																@if (question.InputType == "Text")
+																{
+																	<div style="word-wrap: break-word;white-space: pre-wrap;resize:none;overflow:hidden;" class="form-control" readonly> @question.Question</div>
+																	@* <textarea style="resize:none;overflow:hidden;" class="form-control" value="@question.Question" readonly /> *@
+																}
+																else if (question.InputType == "Date")
+																{
+																	<div style="resize:none;overflow:hidden;" class="form-control text-end" readonly> @question.Question</div>
 																}
 																else
 																{
 																	<textarea style="word-wrap: break-word; resize: none;height:85px;white-space: pre-wrap;overflow:hidden; " class="form-control" value="@question.Question" readonly />
 																}
 															</td>
-															<td style="vertical-align: middle; display">
+															}
+															@if (question.NO % 1 != 0 && answer != null)
+															{
+																<td colspan="2">
+																	<div style="resize:none;overflow:hidden;" class="form-control" readonly>@answer.Answer</div>
+																</td>
+															}
+															else{
+															<td style="vertical-align: middle;">
 																@if (answer != null)
 																{
-																	if (question.NO.ToString().Contains("."))
-																	{
-																		<input type="text" class="form-control text-center" value="@answer.Answer" readonly style="width: 140px;" />
-																	}
-																	else
-																	{
 																		if (answer.Input_Type == "No")
 																		{
-																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly style="width: 140px;" />
+																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly />
 																		}
 																		else
 																		{
-																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly style="width: 140px;" />
+																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly />
 																		}
 																	}
-																}
-																else
+																
+															@* 	else
 																{
 																	<input type="text" class="form-control" value="No Answer" readonly />
-																}
+																} *@
 															</td>
+															}
 														</tr>
 
 														@if (answer != null && answer.Input_Type == "No")
@@ -1286,7 +1316,7 @@
 			substandardRatings = await CGLSubstandardRatingService.GetByInsuredIdAsync(selectedInsured.ID_Insured);
 		}
 	}
-	//Data for Questions and Answer Category
+	//Loading Data for Questions and Answer Category
 	private async Task LoadHealthQuestionsAndAnswers()
 	{
 		if (selectedInsured != null)
