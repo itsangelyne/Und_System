@@ -14,6 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddBootstrapBlazor();
+
 builder.Services.AddScoped<CGLInsuredService>();
 builder.Services.AddScoped<CGLCreditDebitServices>();
 builder.Services.AddScoped<CGLPolicyHolderServices>();
@@ -28,7 +29,7 @@ builder.Services.AddScoped<CGLUnderwritingUserService>();
 builder.Services.AddScoped<CGLParticularsService>();
 builder.Services.AddScoped<StateService>();
 builder.Services.AddSweetAlert2();
-//builder.Services.AddSyncfusionBlazor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
