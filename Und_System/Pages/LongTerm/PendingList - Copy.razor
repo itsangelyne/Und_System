@@ -579,10 +579,10 @@
 																		}
 																	}
 																
-															@* 	else
+																else
 																{
-																	<input type="text" class="form-control" value="No Answer" readonly />
-																} *@
+																	<input type="text" class="form-control text-center fst-italic" value="No Answer" readonly />
+																}
 															</td>
 															}
 														</tr>
@@ -1394,7 +1394,7 @@
 	}
 
 	// For Valid ID Displaying
-	private async Task ViewIDInModal(CGLInsured insured)
+@* 	private async Task ViewIDInModal(CGLInsured insured)
 	{
 		var insuredRecord = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
 		if (insuredRecord != null && !string.IsNullOrEmpty(insuredRecord.Image))
@@ -1402,31 +1402,32 @@
 			imageUrl = $"{NavigationManager.BaseUri}validid/{insuredRecord.Image}";
 			isImageModalVisible = true;
 		}
-	}
+	} *@
 	
-@* 	 private async Task ViewIDInModal(CGLInsured insured)
-	 {
-	 	await sweetAlertService.FireAsync(new SweetAlertOptions
-	 		{
-	 			Title = "Loading...",
-	 			Text = "Please wait while we fetch the ID.",
-	 			AllowOutsideClick = true,
-	 			ShowConfirmButton = false,
-	 		});
-	 	var insuredRecord = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
-
-	 	await sweetAlertService.CloseAsync();
-
-	 	if (insuredRecord != null && !string.IsNullOrEmpty(insuredRecord.Image))
-	 	{
-	 		imageUrl = $"{NavigationManager.BaseUri}validid/{insuredRecord.Image}";
-	 		isImageModalVisible = true;
-	 	}
-	 	else
-	 	{
-	 		await sweetAlertService.FireAsync("Error", "No image found for this insured record.", SweetAlertIcon.Error);
-	 	}
-	 } *@
+	private async Task ViewIDInModal(CGLInsured insured)
+	{
+		await sweetAlertService.FireAsync(new SweetAlertOptions
+			{
+				Title = "Loading...",
+				Text = "Please wait while we fetch the ID.",
+				Icon = SweetAlertIcon.Info,
+				AllowOutsideClick = true,
+				ShowConfirmButton = false,
+			});
+		@* await Task.Delay(2000); *@
+		await sweetAlertService.CloseAsync();
+		var insuredRecord = await CGLInsuredService.GetInsuredByIdAsync(insured.ID_Insured);
+	
+		if (insuredRecord != null && !string.IsNullOrEmpty(insuredRecord.Image))
+		{
+			imageUrl = $"{NavigationManager.BaseUri}validid/{insuredRecord.Image}";
+			isImageModalVisible = true;
+		}
+		else
+		{
+			await sweetAlertService.FireAsync("Error", "No image found for this insured record.", SweetAlertIcon.Error);
+		}
+	}
 
 	//For Underwriting Updates
 	private void ToggleRemarksEditable()
