@@ -509,13 +509,13 @@
 												var question = healthQuestions[i];
 												if (question.Status == "display")
 												{
-													var answer = healthAnswers.FirstOrDefault(a => a.ID_Health_Question == question.ID);
+													var answer = healthAnswers.FirstOrDefault(a => a.ID_Health_Question == question.ID);											
 
 													if (string.IsNullOrEmpty(question.InputType))
 													{
 														<tr>
 															<td colspan="3">
-																<p style="word-wrap: break-word; resize: none;" class="fw-bold" readonly>@question.Question</p>
+																<p style="word-wrap: break-word; resize: none; vertical-align: middle;" class="fw-bold" readonly>@question.Question</p>
 																@if (answer != null && answer.Input_Type == "No")
 																{
 																	<textarea class="form-control" readonly style="height: 100px; resize: none;">@answer.Remarks</textarea>
@@ -525,76 +525,54 @@
 													}
 													else
 													{
-														<tr>
-															@if (question.NO % 1 != 0)
-															{
-																{
-																	<td colspan="2" style="margin-right:50px;">
-																		<div style="resize:none;overflow:hidden;" class="form-control text-end w-50" readonly> @question.Question</div>
-																	</td>
-																}
-															}
-															else{
-																<td style="vertical-align: middle;">
-																	<input type="text" class="form-control" value="@question.NO" readonly style="width: 60px; text-align: center;" />
-																</td>
-																<td>
-																@* @if (question.NO % 1 != 0)
-																{
-																	<div style="resize:none;overflow:hidden;" class="form-control text-end w-50" readonly> @question.Question</div>
-																} *@
-
-																@if (question.InputType == "Text")
-																{
-																	<div style="word-wrap: break-word;white-space: pre-wrap;resize:none;overflow:hidden;" class="form-control" readonly> @question.Question</div>
-																	@* <textarea style="resize:none;overflow:hidden;" class="form-control" value="@question.Question" readonly /> *@
-																}
-																else if (question.InputType == "Date")
-																{
-																	<div style="resize:none;overflow:hidden;" class="form-control text-end" readonly> @question.Question</div>
-																}
-																else
-																{
-																	<textarea style="word-wrap: break-word; resize: none;height:85px;white-space: pre-wrap;overflow:hidden; " class="form-control" value="@question.Question" readonly />
-																}
-															</td>
-															}
-															@if (question.NO % 1 != 0 && answer != null)
-															{
-																<td colspan="2">
-																	<div style="resize:none;overflow:hidden;" class="form-control" readonly>@answer.Answer</div>
-																</td>
-															}
-															else{
-															<td style="vertical-align: middle;">
-																@if (answer != null)
-																{
-																		if (answer.Input_Type == "No")
-																		{
-																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly />
-																		}
-																		else
-																		{
-																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly />
-																		}
-																	}
-																
-																else
-																{
-																	<input type="text" class="form-control text-center fst-italic" value="No Answer" readonly />
-																}
-															</td>
-															}
-														</tr>
-
-														@if (answer != null && answer.Input_Type == "No")
+														if (question.NO % 1 != 0)
 														{
 															<tr>
-																<td colspan="3">
-																	<textarea class="form-control" readonly style="height: 100px; margin-left: 70px; width:990px; resize:none;">@answer.Remarks</textarea>
+																<td colspan="2" style="vertical-align: middle; width: 50%;">
+																	<div style="resize: none; overflow: hidden; vertical-align: middle;" class="text-end w-100" readonly>@question.Question</div>
+																</td>
+																<td style="vertical-align: middle; width: 50%;">
+																	@if (answer != null)
+																	{
+																		<div class="form-control" readonly>@answer.Answer</div>
+																	}
+																	else
+																	{
+																		<input type="text" class="form-control text-center fst-italic" value="No Answer" readonly />
+																	}
 																</td>
 															</tr>
 														}
+														else
+														{
+															<tr>
+																<td style="vertical-align: middle; text-align:center; width: 65px;">
+																	<div type="text" value="@question.NO" readonly style="text-align: center;" class="text-center">@question.NO</div>
+																</td>
+																<td style="vertical-align: middle; width: 50%;">
+																	<div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; vertical-align: middle;" readonly>@question.Question</div>
+																</td>
+																<td style="vertical-align: middle; width: 50%;">
+																	@if (answer != null)
+																	{
+																		<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly />
+																	}
+																	else
+																	{
+																		<input type="text" class="form-control text-center fst-italic" value="No Answer" readonly />
+																	}
+																</td>
+															</tr>
+														}
+													}
+
+													if (answer != null && answer.Input_Type == "No")
+													{
+														<tr>
+															<td colspan="3">
+																<textarea class="form-control" readonly style="height: 100px; margin-left: 70px; width: 990px; resize: none;">@answer.Remarks</textarea>
+															</td>
+														</tr>
 													}
 												}
 											}
