@@ -518,7 +518,7 @@
 																<p style="word-wrap: break-word; resize: none;" class="fw-bold mb-0 text-center" readonly>@question.Question</p>
 																@if (answer != null && answer.Input_Type == "No")
 																{
-																	<textarea class="form-control" readonly style="height: 100px; resize: none;">@answer.Remarks</textarea>
+																	<textarea class="form-control" readonly style="height: 100px; resize: none;text-align:justify; text-justify:inter-word;">@answer.Remarks</textarea>
 																}
 															</td>
 														</tr>
@@ -532,9 +532,13 @@
 																	<div style="resize: none; overflow: hidden; vertical-align: middle;" class="text-end w-100" readonly>@question.Question</div>
 																</td>
 																<td style="vertical-align: middle; width: 50%;">
-																	@if (answer != null)
+																	@if (answer != null && question.ID != 16)
 																	{
-																		<div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; vertical-align: middle;" class="form-control" readonly>@answer.Answer</div>
+																		<div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; vertical-align: middle;text-align:justify; text-justify:inter-word;" class="form-control text-center" readonly>@answer.Answer</div>
+																	}
+																	@if (question.ID == 16 && answer == null)
+																	{
+																		<div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; vertical-align: middle;text-align:justify; text-justify:inter-word;" class="form-control text-center" readonly>@answer?.Remarks</div>
 																	}
 																	else
 																	{
