@@ -1,4 +1,4 @@
-﻿@page "/testingpage"
+@page "/testingpage"
 @using Und_System.Context;
 @using Und_System.Data;
 @using Und_System.Services;
@@ -347,3 +347,80 @@
 		NavigationManager.NavigateTo("/banklisting");
 	}
 }
+<tbody>
+@for (int i = 0; i < healthQuestions.Count; i++)
+{
+    var question = healthQuestions[i];
+
+    if (question.Status == "display")
+    {
+        var answer = healthAnswers.FirstOrDefault(a => a.ID_Health_Question == question.ID);
+
+        if (string.IsNullOrEmpty(question.InputType))
+        {
+            <tr>
+                <td colspan="3">
+                    <p class="fw-bold mb-0 text-center" style="word-wrap: break-word; resize: none;" readonly>@question.Question</p>
+                    @if (!string.IsNullOrEmpty(answer?.Input_Type) && answer.Input_Type == "No")
+                    {
+                        <textarea class="form-control" readonly style="height: 100px; resize: none; text-align: justify; text-justify: inter-word;">@(!string.IsNullOrWhiteSpace(answer.Remarks) ? answer.Remarks : "NONE")</textarea>
+                    }
+                </td>
+            </tr>
+        }
+        else
+        {
+            if (question.NO % 1 != 0)
+            {
+                <tr>
+                    <td colspan="2" class="text-end" style="vertical-align: middle; width: 50%;">
+                        <div class="w-100" style="resize: none; overflow: hidden;" readonly>@question.Question</div>
+                    </td>
+                    <td style="vertical-align: middle; width: 50%;">
+                        @{
+                            string valueToShow = "NONE";
+
+                            if (question.ID == 16)
+                            {
+                                valueToShow = !string.IsNullOrWhiteSpace(answer?.Remarks) ? answer.Remarks : "NONE";
+                            }
+                            else
+                            {
+                                valueToShow = !string.IsNullOrWhiteSpace(answer?.Answer) ? answer.Answer : "NONE";
+                            }
+                        }
+                        <div class="form-control text-center" readonly style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; text-align: justify; text-justify: inter-word;">@valueToShow</div>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td style="vertical-align: middle; text-align: center; width: 65px;">
+                        <div class="text-center">@question.NO</div>
+                    </td>
+                    <td style="vertical-align: middle; width: 75%;">
+                        <div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; text-align: justify; text-justify: inter-word;" readonly>@question.Question</div>
+                    </td>
+                    <td style="vertical-align: middle; width: 50%;">
+                        @{
+                            string inputType = !string.IsNullOrWhiteSpace(answer?.Input_Type) ? answer.Input_Type : "NONE";
+                        }
+                        <input type="text" class="form-control text-center @(inputType == "NONE" ? "fst-italic text-muted" : "")" value="@inputType" readonly />
+                    </td>
+                </tr>
+            }
+        }
+
+        if (!string.IsNullOrEmpty(answer?.Input_Type) && answer.Input_Type == "No")
+        {
+            <tr>
+                <td colspan="3">
+                    <textarea class="form-control" readonly style="height: 100px; margin-left: 50px; width: 1000px; resize: none;">@(!string.IsNullOrWhiteSpace(answer.Remarks) ? answer.Remarks : "NONE")</textarea>
+                </td>
+            </tr>
+        }
+    }
+}
+</tbody>
+
