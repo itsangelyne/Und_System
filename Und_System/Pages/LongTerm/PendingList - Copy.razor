@@ -507,18 +507,19 @@
 											@for (int i = 0; i < healthQuestions.Count; i++)
 											{
 												var question = healthQuestions[i];
+
 												if (question.Status == "display")
 												{
-													var answer = healthAnswers.FirstOrDefault(a => a.ID_Health_Question == question.ID);											
+													var answer = healthAnswers.FirstOrDefault(a => a.ID_Health_Question == question.ID);
 
 													if (string.IsNullOrEmpty(question.InputType))
 													{
 														<tr>
 															<td colspan="3">
-																<p style="word-wrap: break-word; resize: none;" class="fw-bold mb-0 text-center" readonly>@question.Question</p>
-																@if (answer != null && answer.Input_Type == "No")
+																<p class="fw-bold mb-0 text-center" style="word-wrap: break-word; resize: none;" readonly>@question.Question</p>
+																@if (!string.IsNullOrEmpty(answer?.Input_Type) && answer.Input_Type == "No")
 																{
-																	<textarea class="form-control" readonly style="height: 100px; resize: none;text-align:justify; text-justify:inter-word;">@answer.Remarks</textarea>
+																	<textarea class="form-control" readonly style="height: 100px; resize: none; text-align: justify; text-justify: inter-word;">@(!string.IsNullOrWhiteSpace(answer.Remarks) ? answer.Remarks : "none")</textarea>
 																}
 															</td>
 														</tr>
@@ -528,49 +529,46 @@
 														if (question.NO % 1 != 0)
 														{
 															<tr>
-																<td colspan="2" style="vertical-align: middle; width: 50%;">
-																	<div style="resize: none; overflow: hidden; vertical-align: middle;" class="text-end w-100" readonly>@question.Question</div>
+																<td colspan="2" class="text-end" style="vertical-align: middle; width: 50%;">
+																	<div class="w-100" style="resize: none; overflow: hidden;" readonly>@question.Question</div>
 																</td>
 																<td style="vertical-align: middle; width: 50%;">
-																	@if (answer != null && question.ID != 16)
-																	{
-																		<div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; vertical-align: middle;text-align:justify; text-justify:inter-word;" class="form-control text-center" readonly>@answer.Answer</div>
+																	@{
+																		string valueToShow = "none";
+
+																		if (question.ID == 16)
+																		{
+																			valueToShow = !string.IsNullOrWhiteSpace(answer?.Remarks) ? answer.Remarks : "none";
+																		}
+																		else
+																		{
+																			valueToShow = !string.IsNullOrWhiteSpace(answer?.Answer) ? answer.Answer : "none";
+																		}
 																	}
-																	@if (question.ID == 16 && answer == null)
-																	{
-																		<div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; vertical-align: middle;text-align:justify; text-justify:inter-word;" class="form-control text-center" readonly>@answer?.Remarks</div>
-																	}
-																	else
-																	{
-																		<input type="text" class="form-control text-center fst-italic" value="No Answer" readonly />
-																	}
+																	<div class="form-control text-center @(valueToShow == "none" ? "fst-italic text-muted" : "")" readonly style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; text-align: justify; text-justify: inter-word;">@valueToShow</div>
 																</td>
 															</tr>
 														}
 														else
 														{
 															<tr>
-																<td style="vertical-align: middle; text-align:center; width: 65px;">
-																	<div type="text" value="@question.NO" readonly style="text-align: center;" class="text-center">@question.NO</div>
+																<td style="vertical-align: middle; text-align: center; width: 65px;">
+																	<div class="text-center">@question.NO</div>
 																</td>
 																<td style="vertical-align: middle; width: 75%;">
-																	<div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; vertical-align: middle;text-align:justify; text-justify:inter-word" readonly>@question.Question</div>
+																	<div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; text-align: justify; text-justify: inter-word;" readonly>@question.Question</div>
 																</td>
 																<td style="vertical-align: middle; width: 50%;">
-																	@if (answer != null)
-																	{
-																		<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly />
+																	@{
+																		string inputType = !string.IsNullOrWhiteSpace(answer?.Input_Type) ? answer.Input_Type : "-";
 																	}
-																	else
-																	{
-																		<input type="text" class="form-control text-center text-muted fst-italic" value="No Answer" readonly />
-																	}
+																	<input type="text" class="form-control text-center @(inputType == "-" ? "fst-italic text-muted" : "")" value="@inputType" readonly />
 																</td>
 															</tr>
 														}
 													}
 
-													if (answer != null && answer.Input_Type == "No")
+													if (!string.IsNullOrEmpty(answer?.Input_Type) && answer.Input_Type == "No")
 													{
 														<tr>
 															<td colspan="3">
@@ -770,7 +768,7 @@
 								else
 								{
 									<tr>
-										<td colspan="2" class="text-center text-danger fw-bold">No Particulars found.</td>
+										<td colspan="2" class="text-center text-muted fst-italic">No Particulars found.</td>
 									</tr>
 								}
 							</tbody>
@@ -865,7 +863,7 @@
 								else
 								{
 									<tr>
-										<td colspan="6" class="text-center text-danger fw-bold">No Loan History available</td>
+										<td colspan="6" class="text-center text-danger fst-italic">No Loan History available</td>
 									</tr>
 								}
 							</tbody>

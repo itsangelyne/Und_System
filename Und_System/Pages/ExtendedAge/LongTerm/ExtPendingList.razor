@@ -491,7 +491,7 @@
 										</div>
 									</div>
 
-									<table class="table table-borderless mb-0">
+									<table class="table table-responsive table-borderless mb-0">
 										<thead class="text-white" style="background-color:#5d835c">
 											<tr>
 												<th class="text-center" style="width: 65px;">No.</th>
@@ -503,6 +503,7 @@
 											@for (int i = 0; i < healthQuestions.Count; i++)
 											{
 												var question = healthQuestions[i];
+
 												if (question.Status == "display")
 												{
 													var answer = healthAnswers.FirstOrDefault(a => a.ID_Health_Question == question.ID);
@@ -511,68 +512,65 @@
 													{
 														<tr>
 															<td colspan="3">
-																<p class="fw-normal justify-content-center mb-0">@question.Question</p>
-																@if (answer != null && answer.Input_Type == "No")
+																<p class="fw-bold mb-0 text-center" style="word-wrap: break-word; resize: none;" readonly>@question.Question</p>
+																@if (!string.IsNullOrEmpty(answer?.Input_Type) && answer.Input_Type == "No")
 																{
-																	<textarea class="form-control" readonly style="height: 100px; resize: none;">@answer.Remarks</textarea>
+																	<textarea class="form-control" readonly style="height: 100px; resize: none; text-align: justify; text-justify: inter-word;">@(!string.IsNullOrWhiteSpace(answer.Remarks) ? answer.Remarks : "none")</textarea>
 																}
 															</td>
 														</tr>
 													}
 													else
 													{
-														<tr>
-															<td style="vertical-align: middle;">
-																<input type="text" class="form-control" value="@question.NO" readonly style="width: 60px; text-align: center;" />
-															</td>
-															<td>
-																@if (question.InputType == "textarea")
-																{
-																	<textarea style="word-wrap: break-word; white-space: normal;" class="fw-bolder" readonly>@question.Question</textarea>
-																}
-																else if (question.InputType == "date")
-																{
-																	<input type="date" class="form-control fw-bold w-50 align-content-end" value="@question.Question" readonly />
-																}
-																else
-																{
-																	<textarea style="word-wrap: break-word; resize: none;height:85px;white-space: pre-wrap;overflow:hidden; " class="form-control" value="@question.Question" readonly />
-																}
-															</td>
-															<td style="vertical-align: middle; display">
-																@if (answer != null)
-																{
-																	if (question.NO.ToString().Contains("."))
-																	{
-																		<input type="text" class="form-control text-center" value="@answer.Answer" readonly style="width: 140px;" />
-																	}
-																	else
-																	{
-																		if (answer.Input_Type == "No")
+														if (question.NO % 1 != 0)
+														{
+															<tr>
+																<td colspan="2" class="text-end" style="vertical-align: middle; width: 50%;">
+																	<div class="w-100" style="resize: none; overflow: hidden;" readonly>@question.Question</div>
+																</td>
+																<td style="vertical-align: middle; width: 50%;">
+																	@{
+																		string valueToShow = "none";
+
+																		if (question.ID == 16)
 																		{
-																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly style="width: 140px;" />
+																			valueToShow = !string.IsNullOrWhiteSpace(answer?.Remarks) ? answer.Remarks : "none";
 																		}
 																		else
 																		{
-																			<input type="text" class="form-control text-center" value="@answer.Input_Type" readonly style="width: 140px;" />
+																			valueToShow = !string.IsNullOrWhiteSpace(answer?.Answer) ? answer.Answer : "none";
 																		}
 																	}
-																}
-																else
-																{
-																	<input type="text" class="form-control" value="No Answer" readonly />
-																}
-															</td>
-														</tr>
-
-														@if (answer != null && answer.Input_Type == "No")
-														{
-															<tr>
-																<td colspan="3">
-																	<textarea class="form-control" readonly style="height: 100px; margin-left: 70px; width:990px; resize:none;">@answer.Remarks</textarea>
+																	<div class="form-control text-center @(valueToShow == "none" ? "fst-italic text-muted" : "")" readonly style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; text-align: justify; text-justify: inter-word;">@valueToShow</div>
 																</td>
 															</tr>
 														}
+														else
+														{
+															<tr>
+																<td style="vertical-align: middle; text-align: center; width: 65px;">
+																	<div class="text-center">@question.NO</div>
+																</td>
+																<td style="vertical-align: middle; width: 75%;">
+																	<div style="word-wrap: break-word; white-space: pre-wrap; resize: none; overflow: hidden; text-align: justify; text-justify: inter-word;" readonly>@question.Question</div>
+																</td>
+																<td style="vertical-align: middle; width: 50%;">
+																	@{
+																		string inputType = !string.IsNullOrWhiteSpace(answer?.Input_Type) ? answer.Input_Type : "-";
+																	}
+																	<input type="text" class="form-control text-center @(inputType == "-" ? "fst-italic text-muted" : "")" value="@inputType" readonly />
+																</td>
+															</tr>
+														}
+													}
+
+													if (!string.IsNullOrEmpty(answer?.Input_Type) && answer.Input_Type == "No")
+													{
+														<tr>
+															<td colspan="3">
+																<textarea class="form-control" readonly style="height: 100px; margin-left: 50px; width: 1000px; resize: none;">@answer.Remarks</textarea>
+															</td>
+														</tr>
 													}
 												}
 											}
@@ -766,7 +764,7 @@
 								else
 								{
 									<tr>
-										<td colspan="3" class="text-center">No particulars found.</td>
+										<td colspan="3" class="text-center text-muted fst-italic">No particulars found.</td>
 									</tr>
 								}
 							</tbody>
@@ -861,7 +859,7 @@
 								else
 								{
 									<tr>
-										<td colspan="6" class="text-center text-danger fw-bold">No Loan History available</td>
+										<td colspan="6" class="text-center text-muted fst-italic">No Loan History available</td>
 									</tr>
 								}
 							</tbody>
