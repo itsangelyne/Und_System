@@ -89,7 +89,7 @@
 					else
 					{
 						<tr>
-							<td colspan="7" class="text-center text-danger fw-bold">No Approved Applications Found</td>
+							<td colspan="7" class="text-center text-muted fst-italic">No Approved Applications Found</td>
 						</tr>
 					}
 				</tbody>
@@ -241,9 +241,20 @@
 											</div>
 										</div>
 									</div>
-									<div class="rounded mb-3">
+									<div class="border rounded p-3 mb-3">
+										<div class="row mt-2">
+											<div class="col-md-6 mb-3">
+												<label for="loan" class="form-label">Pregnant</label>
+												<input type="text" class="form-control" id="loan" value="@selectedInsured?.Pregnant" readonly />
+											</div>
+											<div class="col-md-6 mb-3">
+												<label for="term" class="form-label">How Many Months</label>
+												<input type="text" class="form-control" id="term" value="@selectedInsured?.How_Many_Months" readonly />
+											</div>
+										</div>
+
 										<div class="table-responsive">
-											<table class="table table-bordered mb-0">
+											<table class="table table-bordered" style="margin-bottom:25px;">
 												<thead class="text-white" style="background-color:#5d835c">
 													<tr>
 														<th class="text-center">Illness</th>
@@ -258,13 +269,13 @@
 														{
 															<tr>
 																<td>
-																	<input type="text" class="form-control" value="@rating.Illness_Name" readonly />
+																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Illness_Name" readonly></textarea>
 																</td>
-																<td class="text-center" style="width:20%;">
-																	<input type="text" class="form-control text-center" value="@rating.Regular_Age" readonly />
+																<td class="text-center" style="width:30%;">
+																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Regular_Age" readonly></textarea>
 																</td>
-																<td class="text-center" style="width:20%;">
-																	<input type="text" class="form-control text-center" value="@rating.Overage" readonly />
+																<td class="text-center" style="width:30%;">
+																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Overage" readonly></textarea>
 																</td>
 															</tr>
 														}
@@ -272,9 +283,10 @@
 													else
 													{
 														<tr>
-															<td colspan="3" class="text-center text-danger">No Illness Declared</td>
+															<td colspan="3" class="text-center text-muted fst-italic">No Illness Declared</td>
 														</tr>
 													}
+
 												</tbody>
 											</table>
 										</div>

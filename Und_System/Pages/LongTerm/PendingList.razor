@@ -288,6 +288,12 @@
 							}
 						}
 					}
+					else
+					{
+						<tr>
+							<td colspan="8" class="text-center text-muted fst-italic">No Pending Applications Found</td>
+						</tr>
+					}
 				</tbody>
 			</table>
 		</div>
@@ -444,56 +450,57 @@
 											</div>
 										</div>
 									</div>
-									@* <div class="border rounded p-3 mb-3"> *@
-									<div class="table-responsive">
-										<table class="table table-bordered" style="margin-bottom:25px;">
-											<thead class="text-white" style="background-color:#5d835c">
-												<tr>
-													<th class="text-center">Illness</th>
-													<th class="text-center">Regular Age</th>
-													<th class="text-center">Overage</th>
-												</tr>
-											</thead>
-											<tbody>
-												@if (substandardRatings != null && substandardRatings.Count > 0)
-												{
-													@foreach (var rating in substandardRatings)
+
+									<div class="border rounded p-3 mb-3">
+										<div class="row mt-2">
+											<div class="col-md-6 mb-3">
+												<label for="loan" class="form-label">Pregnant</label>
+												<input type="text" class="form-control" id="loan" value="@selectedInsured?.Pregnant" readonly />
+											</div>
+											<div class="col-md-6 mb-3">
+												<label for="term" class="form-label">How Many Months</label>
+												<input type="text" class="form-control" id="term" value="@selectedInsured?.How_Many_Months" readonly />
+											</div>
+										</div>
+
+										<div class="table-responsive">
+											<table class="table table-bordered" style="margin-bottom:25px;">
+												<thead class="text-white" style="background-color:#5d835c">
+													<tr>
+														<th class="text-center">Illness</th>
+														<th class="text-center">Regular Age</th>
+														<th class="text-center">Overage</th>
+													</tr>
+												</thead>
+												<tbody>
+													@if (substandardRatings != null && substandardRatings.Count > 0)
+													{
+														@foreach (var rating in substandardRatings)
+														{
+															<tr>
+																<td>
+																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Illness_Name" readonly></textarea>
+																</td>
+																<td class="text-center" style="width:30%;">
+																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Regular_Age" readonly></textarea>
+																</td>
+																<td class="text-center" style="width:30%;">
+																	<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Overage" readonly></textarea>
+																</td>
+															</tr>
+														}
+													}
+													else
 													{
 														<tr>
-															<td>
-																<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Illness_Name" readonly></textarea>
-															</td>
-															<td class="text-center" style="width:30%;">
-																<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Regular_Age" readonly></textarea>
-															</td>
-															<td class="text-center" style="width:30%;">
-																<textarea class="form-control text-center text-break" style="resize:none; align-content:center;" value="@rating.Overage" readonly></textarea>
-															</td>
+															<td colspan="3" class="text-center text-muted fst-italic">No Illness Declared</td>
 														</tr>
 													}
-												}
-												else
-												{
-													<tr>
-														<td colspan="3" class="text-center text-muted fst-italic">No Illness Declared</td>
-													</tr>
-												}
-												<tr>
-													<div class="row mt-2">
-														<div class="col-md-6 mb-3">
-															<label for="loan" class="form-label">Pregnant</label>
-															<input type="text" class="form-control" id="loan" value="@selectedInsured?.Pregnant" readonly />
-														</div>
-														<div class="col-md-6 mb-3">
-															<label for="term" class="form-label">How Many Months</label>
-															<input type="text" class="form-control" id="term" value="@selectedInsured?.How_Many_Months" readonly />
-														</div>
-													</div>
-												</tr>
-											</tbody>
-										</table>
+
+												</tbody>
+											</table>
+										</div>
 									</div>
-									@* </div> *@
 
 									<table class="table table-responsive table-borderless mb-0">
 										<thead class="text-white" style="background-color:#5d835c">
