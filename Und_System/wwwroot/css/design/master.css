@@ -28,14 +28,18 @@ input::placeholder{
     border-color: #326f32;
     color: #326f32;
     transition: all 0.3s ease;
-    font-size:24px;
 }
+
 
     #loginbtn:hover, #lostpassbtn:hover, #resetbtn:hover, #aspbtn:hover, #gyrtpbtn:hover, #mrpbtn:hover, #spbtn:hover, #dpbtn:hover, .btn-outline-success:hover {
         background-color: #326f32;
         border-color: #326f32;
         color: #ffff;
     }
+
+#cglbtn, #aspbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn {
+    font-size: 24px;
+}
 
 #password, #username {
     border-color: #326f32;
