@@ -2,27 +2,96 @@
 @inject NavigationManager NavigationManager
 
 <style>
-    .lob-container {
-        height: 75vh;
-    }
+	.lob-container {
+		height: 75vh;
+	}
 
-    .background-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1;
-    }
+	.background-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 1;
+	}
 
-    #aspbtn, #cglbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn{
-        font-size:24px;
-    }
+	#aspbtn, #cglbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn {
+		font-size: 24px;
+	}
+
+	.card-title{
+		font-size:16px;
+		font-weight:700;
+	}
 </style>
 
-<div class="lob-container">
-    <div class="row">
+<div class="container" style="align-content:center;">
+<div class="row justify-content-center">
+	<div class="col-md-3">
+		<div class="card mb-4" Style="width:18rem;">
+			<img class="rounded-top" src="/assets/cblicc.jpg" alt="placeholder" />
+			<div class="card-body">
+					<div class="card-title">Alalay Sa Buhay Plan</div>
+					<div class="card-subtitle text-muted">ASB</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="card mb-4" Style="width:18rem;">
+			<img class="rounded-top" src="/assets/cblicc.jpg" alt="placeholder" />
+			<div class="card-body">
+					<div class="card-title">Credit Group Life Plans</div>
+					<div class="card-subtitle text-muted">CGL</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="card mb-4" Style="width:18rem;">
+			<img class="rounded-top" src="/assets/cblicc.jpg" alt="placeholder" />
+			<div class="card-body">
+					<div class="card-title">Group Yearly Renewable Term Plans</div>
+					<div class="card-subtitle text-muted">GYRT</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<div class="row justify-content-center">
+	<div class="col-md-3">
+		<div class="card mb-4" Style="width:18rem;">
+			<img class="rounded-top" src="/assets/cblicc.jpg" alt="placeholder" />
+			<div class="card-body">
+					<div class="card-title">Mortgage Redemption Insurance Plans</div>
+					<div class="card-subtitle text-muted">MRI</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="card mb-4" Style="width:18rem;">
+			<img class="rounded-top" src="/assets/cblicc.jpg" alt="placeholder" />
+			<div class="card-body">
+					<div class="card-title">Standard Plans</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="card mb-4" Style="width:18rem;">
+			<img class="rounded-top" src="/assets/cblicc.jpg" alt="placeholder" />
+			<div class="card-body">
+					<div class="card-title">DECS Plans</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+
+@* <div class="lob-container">
+	<div class="row">
         <div class="col-md-6 d-md-block">
             <img src="/assets/countrybankers.png" alt="Line of Business" class="w-100" style="height:33rem;"/>
         </div>
@@ -38,11 +107,11 @@
             </div>
         </div>
     </div>
-</div>
+ </div> *@
 
 @code {
-    private void NavigateToBankListing()
-    {
-        NavigationManager.NavigateTo("/banklisting");
-    }
+	private void NavigateToBankListing()
+	{
+		NavigationManager.NavigateTo("/banklisting");
+	}
 }
