@@ -6,92 +6,90 @@
 		height: 75vh;
 	}
 
-	.background-overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: rgba(0, 0, 0, 0.5);
-		z-index: 1;
-	}
-
 	#aspbtn, #cglbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn {
 		font-size: 24px;
 	}
 
-	.card-title{
-		font-size:16px;
-		font-weight:700;
+	.card-title {
+		font-size: 14px;
+		font-weight: 700;
 	}
 </style>
+<h1 class="text-center">
+	<b>LINE OF BUSINESS</b>
+	<span class="text-info ms-1" title="Line of Business are the products CBLIC currently offers." style="cursor: pointer;">
+		<i class="fas fa-info-circle"></i>
+	</span>
+</h1>
+<div class="background-overlay"></div>
+		<div class=" col-lg-12 d-lg-block">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-3">
+					<div class="card h-100">
+						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
+						<div class="card-body">
+							<h5 class="card-title">Alalay Sa Buhay Plan</h5>
+							<h6 class="card-subtitle text-muted">ASB</h6>
+						</div>
+					</div>
+				</div>
 
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-3">
-      <div class="card h-100">
-        <img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-        <div class="card-body">
-          <h5 class="card-title">Alalay Sa Buhay Plan</h5>
-          <h6 class="card-subtitle text-muted">ASB</h6>
-        </div>
-      </div>
-    </div>
+				<div class="col-md-3">
+					<div class="card h-100" @onclick="NavigateToBankListing">
+						<img class="card-img-top" src="/assets/cblicc.jpg" @onclick="NavigateToBankListing" alt="placeholder">
+						<div class="card-body">
+							<h5 class="card-title">Credit Group Life Plans</h5>
+							<h6 class="card-subtitle text-muted">CGL</h6>
+						</div>
+					</div>
+				</div>
 
-    <div class="col-md-3">
-      <div class="card h-100">
-        <img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-        <div class="card-body">
-          <h5 class="card-title">Credit Group Life Plans</h5>
-          <h6 class="card-subtitle text-muted">CGL</h6>
-        </div>
-      </div>
-    </div>
+				<div class="col-md-3">
+					<div class="card h-100">
+						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
+						<div class="card-body">
+							<h5 class="card-title">Group Yearly Renewable Term Plans</h5>
+							<h6 class="card-subtitle text-muted">GYRT</h6>
+						</div>
+					</div>
+				</div>
+			</div>
 
-    <div class="col-md-3">
-      <div class="card h-100">
-        <img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-        <div class="card-body">
-          <h5 class="card-title">Group Yearly Renewable Term Plans</h5>
-          <h6 class="card-subtitle text-muted">GYRT</h6>
-        </div>
-      </div>
-    </div>
-  </div>
+			<div class="row justify-content-center mt-4 mb-4">
+				<div class="col-md-3">
+					<div class="card h-100">
+						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
+						<div class="card-body">
+							<h5 class="card-title">Mortgage Redemption Insurance Plans</h5>
+							<h6 class="card-subtitle text-muted">MRI</h6>
+						</div>
+					</div>
+				</div>
 
-  <div class="row justify-content-center">
-    <div class="col-md-3">
-      <div class="card h-100">
-        <img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-        <div class="card-body">
-          <h5 class="card-title">Mortgage Redemption Insurance Plans</h5>
-          <h6 class="card-subtitle text-muted">MRI</h6>
-        </div>
-      </div>
-    </div>
+				<div class="col-md-3">
+					<div class="card h-100">
+						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
+						<div class="card-body">
+							<h5 class="card-title">Standard Plans</h5>
+						</div>
+					</div>
+				</div>
 
-    <div class="col-md-3">
-      <div class="card h-100">
-        <img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-        <div class="card-body">
-          <h5 class="card-title">Standard Plans</h5>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="card h-100">
-        <img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-        <div class="card-body">
-          <h5 class="card-title">DECS Plans</h5>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+				<div class="col-md-3">
+					<div class="card h-100">
+						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
+						<div class="card-body">
+							<h5 class="card-title">DECS Plans</h5>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
-<div class="container" style="align-content:center;">
+@* <div class="container" style="align-content:center;">
 <div class="row justify-content-center">
 	<div class="col-md-3">
 		<div class="card mb-4" Style="width:18rem;">
@@ -153,7 +151,7 @@
 		</div>
 	</div>
 </div>
-</div>
+</div> *@
 
 @* <div class="lob-container">
 	<div class="row">
