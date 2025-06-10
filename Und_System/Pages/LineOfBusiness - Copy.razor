@@ -3,7 +3,7 @@
 
 <style>
 	.lob-container {
-		height: 75vh;
+		max-width:95%!important;
 	}
 
 	#aspbtn, #cglbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn {
@@ -16,33 +16,65 @@
 	}
 
 	.card {
-		border: 0px transparent;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		border: 0px transparent !important;
 	}
+	#cardcgl {
+		border: 0px transparent !important;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+	}
+
+	#cgl2btn {
+		position: relative;
+		overflow: hidden;
+		transition: all 0.5s ease-in-out !important;
+		color: #326f32 !important;
+		padding-right: 20px !important;
+	}
+
+		#cgl2btn::after {
+			content: '\22D9';
+			position: absolute;
+			opacity: 0;
+			top: 45%;
+			right: -30px;
+			transform: translateY(-50%);
+			transition: right 0.5s ease, opacity 0.5s ease;
+			color: white;
+			font-weight: bold;
+		}
+
+		#cgl2btn:hover{
+			padding-right: 40px !important;
+			background-color: #326f32 !important;
+			color: white !important;
+		}
+
+			#cgl2btn:hover::after {
+				opacity: 1;
+				right: 10px;
+			}
+
 </style>
-<h1 class="text-center">
-	<b>LINE OF BUSINESS</b>
-	<span class="text-info ms-1" title="Line of Business are the products CBLIC currently offers." style="cursor: pointer;">
-		<i class="fas fa-info-circle"></i>
-	</span>
-</h1>
+<h1><b>LINE OF BUSINESS</b></h1>
+<hr />
 <div class="background-overlay"></div>
-<div class="container">
-	<div class="row justify-content-center">
+<div class="lob-container">
+@* <div class="container m-3 p-3 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);"> *@
+	<div class="row justify-content-around">
 		<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
 			<div class="card h-100">
-				<img class="card-img-top" src="/assets/asb.png" alt="placeholder">
+				<img class="card-img-top" style="filter:grayscale(100%);" src="/assets/asb.png" alt="asb">
 				<div class="card-body">
-					<h5 class="card-title">Alalay Sa Buhay Plan</h5>
+					<h5 class="card-title text-muted">Alalay Sa Buhay Plan</h5>
 					<h6 class="card-subtitle text-muted">ASB</h6>
 				</div>
 			</div>
 		</div>
 
 		<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-			<div class="card h-100" @onclick="NavigateToBankListing">
-				<img class="card-img-top" src="/assets/cgl.png" @onclick="NavigateToBankListing" alt="placeholder">
-				<div class="card-body">
+			<div class="card h-100" id="cardcgl" @onclick="NavigateToBankListing">
+				<img class="card-img-top" src="/assets/cgl.png" @onclick="NavigateToBankListing" alt="cgl">
+				<div class="card-body" id="cgl2btn">
 					<h5 class="card-title">Credit Group Life Plans</h5>
 					<h6 class="card-subtitle text-muted">CGL</h6>
 				</div>
@@ -51,39 +83,39 @@
 
 		<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
 			<div class="card h-100">
-				<img class="card-img-top" src="/assets/gyrt.png" alt="placeholder">
+				<img class="card-img-top" style="filter:grayscale(100%)" src="/assets/gyrt.png" alt="gyrtplans">
 				<div class="card-body">
-					<h5 class="card-title">Group Yearly Renewable Term Plans</h5>
+					<h5 class="card-title text-muted">Group Yearly Renewable Term Plans</h5>
 					<h6 class="card-subtitle text-muted">GYRT</h6>
 				</div>
 			</div>
 		</div>
 
-		<div class="row justify-content-center">
-		<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-			<div class="card h-100">
-				<img class="card-img-top" src="/assets/mri.png" alt="placeholder">
-				<div class="card-body">
-					<h5 class="card-title">Mortgage Redemption Insurance Plans</h5>
-					<h6 class="card-subtitle text-muted">MRI</h6>
-				</div>
-			</div>
-		</div>
-
+		<div class="row justify-content-around">
 			<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
 				<div class="card h-100">
-					<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
+					<img class="card-img-top" style="filter:grayscale(100%);" src="/assets/mri.png" alt="mriplans">
 					<div class="card-body">
-						<h5 class="card-title">Standard Plans</h5>
+						<h5 class="card-title text-muted">Mortgage Redemption Insurance Plans</h5>
+						<h6 class="card-subtitle text-muted">MRI</h6>
 					</div>
 				</div>
 			</div>
 
 			<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
 				<div class="card h-100">
-					<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
+					<img class="card-img-top" style="filter:grayscale(100%);" src="/assets/cblicc.png" alt="standardplans">
 					<div class="card-body">
-						<h5 class="card-title">DECS Plans</h5>
+						<h5 class="card-title text-muted">Standard Plans</h5>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" style="filter:grayscale(100%);" src="/assets/countrybankers2.png" alt="decsplan">
+					<div class="card-body">
+						<h5 class="card-title text-muted">DECS Plans</h5>
 					</div>
 				</div>
 			</div>
