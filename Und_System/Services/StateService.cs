@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace Und_System.Services
 {
@@ -37,6 +37,45 @@ namespace Und_System.Services
 
             NotifyStateChanged();
         }
+
+        private void NotifyStateChanged() => OnChange?.Invoke();
+    }
+}
+
+using System.Threading.Tasks;
+
+namespace Und_System.Services
+{
+    public class StateService
+    {
+        private string _firstName;
+        private int _selectedBankId;
+        private string _selectedBankName;
+
+        public event Action OnChange;
+
+        public async Task SetFirstName(string firstName)
+        {
+            _firstName = firstName;
+            NotifyStateChanged();
+            await Task.CompletedTask;
+        }
+
+        public async Task<string> GetFirstName()
+        {
+            return await Task.FromResult(_firstName);
+        }
+
+        public async Task SetSelectedBank(int bankId, string bankName)
+        {
+            _selectedBankId = bankId;
+            _selectedBankName = bankName;
+            NotifyStateChanged();
+            await Task.CompletedTask;
+        }
+
+        public int GetSelectedBankId() => _selectedBankId;
+        public string GetSelectedBankName() => _selectedBankName;
 
         private void NotifyStateChanged() => OnChange?.Invoke();
     }
