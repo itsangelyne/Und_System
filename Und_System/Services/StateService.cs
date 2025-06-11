@@ -2,20 +2,30 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace Und_System.Services
 {
-    public class StateService(ProtectedSessionStorage sessionStorage)
+    public class StateService
     {
-        private readonly ProtectedSessionStorage _sessionStorage = sessionStorage;
+        private readonly ProtectedSessionStorage _sessionStorage;
+
+        public StateService(ProtectedSessionStorage sessionStorage)
+        {
+            _sessionStorage = sessionStorage;
+        }
+
         public int? SelectedBankId { get; private set; }
         public string? SelectedBankName { get; private set; }
+        public string? FirstName { get; private set; } // Add this line
+
         public event Action? OnChange;
 
         public async Task LoadStateAsync()
         {
             var bankIdResult = await _sessionStorage.GetAsync<int?>("SelectedBankId");
             var bankNameResult = await _sessionStorage.GetAsync<string>("SelectedBankName");
+            var firstNameResult = await _sessionStorage.GetAsync<string>("FirstName"); // Add this line
 
             SelectedBankId = bankIdResult.Success ? bankIdResult.Value : null;
             SelectedBankName = bankNameResult.Success ? bankNameResult.Value : null;
+            FirstName = firstNameResult.Success ? firstNameResult.Value : null; // Add this line
 
             NotifyStateChanged();
         }
@@ -29,53 +39,42 @@ namespace Und_System.Services
             {
                 await _sessionStorage.SetAsync("SelectedBankId", bankId.Value);
             }
+            else
+            {
+                await _sessionStorage.DeleteAsync("SelectedBankId"); // Clear if null
+            }
 
             if (!string.IsNullOrEmpty(bankName))
             {
                 await _sessionStorage.SetAsync("SelectedBankName", bankName);
             }
+            else
+            {
+                await _sessionStorage.DeleteAsync("SelectedBankName"); // Clear if empty
+            }
 
             NotifyStateChanged();
         }
-
-        private void NotifyStateChanged() => OnChange?.Invoke();
-    }
-}
-
-using System.Threading.Tasks;
-
-namespace Und_System.Services
-{
-    public class StateService
-    {
-        private string _firstName;
-        private int _selectedBankId;
-        private string _selectedBankName;
-
-        public event Action OnChange;
 
         public async Task SetFirstName(string firstName)
         {
-            _firstName = firstName;
+            FirstName = firstName;
+            if (!string.IsNullOrEmpty(firstName))
+            {
+                await _sessionStorage.SetAsync("FirstName", firstName);
+            }
+            else
+            {
+                await _sessionStorage.DeleteAsync("FirstName"); // Clear if empty
+            }
             NotifyStateChanged();
-            await Task.CompletedTask;
         }
 
-        public async Task<string> GetFirstName()
+        public async Task<string?> GetFirstName()
         {
-            return await Task.FromResult(_firstName);
+            var firstNameResult = await _sessionStorage.GetAsync<string>("FirstName");
+            return firstNameResult.Success ? firstNameResult.Value : null;
         }
-
-        public async Task SetSelectedBank(int bankId, string bankName)
-        {
-            _selectedBankId = bankId;
-            _selectedBankName = bankName;
-            NotifyStateChanged();
-            await Task.CompletedTask;
-        }
-
-        public int GetSelectedBankId() => _selectedBankId;
-        public string GetSelectedBankName() => _selectedBankName;
 
         private void NotifyStateChanged() => OnChange?.Invoke();
     }
