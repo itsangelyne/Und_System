@@ -13,7 +13,11 @@ namespace Und_System.Services
 
         public int? SelectedBankId { get; private set; }
         public string? SelectedBankName { get; private set; }
-        public string? FirstName { get; private set; } // Add this line
+        public string? FirstName { get; private set; }
+
+        public string? LastName { get; private set; }
+
+        public string? Dept { get; private set; }
 
         public event Action? OnChange;
 
@@ -21,11 +25,15 @@ namespace Und_System.Services
         {
             var bankIdResult = await _sessionStorage.GetAsync<int?>("SelectedBankId");
             var bankNameResult = await _sessionStorage.GetAsync<string>("SelectedBankName");
-            var firstNameResult = await _sessionStorage.GetAsync<string>("FirstName"); // Add this line
+            var firstNameResult = await _sessionStorage.GetAsync<string>("FirstName");
+            var lastNameResult = await _sessionStorage.GetAsync<string>("LastName");
+            var deptResult = await _sessionStorage.GetAsync<string>("Dept");
 
             SelectedBankId = bankIdResult.Success ? bankIdResult.Value : null;
             SelectedBankName = bankNameResult.Success ? bankNameResult.Value : null;
-            FirstName = firstNameResult.Success ? firstNameResult.Value : null; // Add this line
+            FirstName = firstNameResult.Success ? firstNameResult.Value : null;
+            LastName = lastNameResult.Success ? lastNameResult.Value : null;
+            Dept = deptResult.Success ? deptResult.Value : null;
 
             NotifyStateChanged();
         }
@@ -41,7 +49,7 @@ namespace Und_System.Services
             }
             else
             {
-                await _sessionStorage.DeleteAsync("SelectedBankId"); // Clear if null
+                await _sessionStorage.DeleteAsync("SelectedBankId");
             }
 
             if (!string.IsNullOrEmpty(bankName))
@@ -50,7 +58,7 @@ namespace Und_System.Services
             }
             else
             {
-                await _sessionStorage.DeleteAsync("SelectedBankName"); // Clear if empty
+                await _sessionStorage.DeleteAsync("SelectedBankName");
             }
 
             NotifyStateChanged();
@@ -65,7 +73,34 @@ namespace Und_System.Services
             }
             else
             {
-                await _sessionStorage.DeleteAsync("FirstName"); // Clear if empty
+                await _sessionStorage.DeleteAsync("FirstName");
+            }
+            NotifyStateChanged();
+        }
+
+        public async Task SetLastName(string lastName)
+        {
+            LastName = lastName;
+            if (!string.IsNullOrEmpty(lastName))
+            {
+                await _sessionStorage.SetAsync("LastName", lastName);
+            }
+            else
+            {
+                await _sessionStorage.DeleteAsync("LastName");
+            }
+            NotifyStateChanged();
+        }
+        public async Task SetDept(string department)
+        {
+            Dept = department;
+            if (!string.IsNullOrEmpty(department))
+            {
+                await _sessionStorage.SetAsync("Dept", department);
+            }
+            else
+            {
+                await _sessionStorage.DeleteAsync("Dept");
             }
             NotifyStateChanged();
         }
@@ -76,6 +111,16 @@ namespace Und_System.Services
             return firstNameResult.Success ? firstNameResult.Value : null;
         }
 
+        public async Task<string?> GetLastName()
+        {
+            var lastNameResult = await _sessionStorage.GetAsync<string>("LastName");
+            return lastNameResult.Success ? lastNameResult.Value : null;
+        }
+        public async Task<string?> GetDepartment()
+        {
+            var deptResult = await _sessionStorage.GetAsync<string>("Dept");
+            return deptResult.Success ? deptResult.Value : null;
+        }
         private void NotifyStateChanged() => OnChange?.Invoke();
     }
 }

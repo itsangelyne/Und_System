@@ -15,14 +15,9 @@
 <h1><b>Bank List</b></h1>
 <hr />
 
-@if (!string.IsNullOrEmpty(FirstName))
-{
-    <p>Welcome, @FirstName!</p>
-}
-
 <div class="background-overlay"></div>
 <div class="container mt-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-    <h5 class="text-muted bankinst mb-0" id="banklistinstructions">Please select a bank from the list of assigned banks to your account below to proceed:</h5>
+    <h5 class="text-muted bankinst mb-0" id="banklistinstructions">Hello <i>@FirstName</i>, Please select a bank from the list of assigned banks to your account below to proceed:</h5>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table">
@@ -63,7 +58,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await StateService.LoadStateAsync(); // Load state first
+        await StateService.LoadStateAsync();
         banks = await CGLPolicyHolderServices.GetBanksAsync();
         FirstName = await StateService.GetFirstName();
     }

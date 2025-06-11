@@ -3,7 +3,7 @@
 @using Und_System.Services
 @inject NavigationManager NavigationManager
 @inject CGLUnderwritingUserService CGLUnderwritingUserService
-@inject StateService StateService  // Inject StateService
+@inject StateService StateService 
 
 <div class="container-fluid d-flex align-items-center justify-content-center" style="height:95vh!important">
 	<div class="row w-100 shadow rounded" style="max-width: 1000px; overflow: hidden; background: white;">
@@ -20,17 +20,17 @@
 						<label for="username" class="col-sm-3 col-form-label text-nowrap" id="usernamelabel">Username</label>
 						<div>
 							<InputText id="username" class="@($"form-control {(showLoginError ? "is-invalid" : "")}")" @bind-Value="loginModel.Username"
-									   bind-value:event="oninput" @oninput="ClearUsernameError" />
+							bind-value:event="oninput" @oninput="ClearUsernameError" />
 							<ValidationMessage For="@(() => loginModel.Username)" />
 						</div>
 					</div>
-					 
+
 					<div class="mb-3 row">
 						<label for="password" class="col-sm-3 col-form-label" id="passlabel">Password</label>
 						<div class="col-sm-12 position-relative">
 							<div class="input-group">
 								<InputText id="password" type="@(!showPassword ? "password" : "text")" class="@($"form-control {(showLoginError ? "is-invalid" : "")}")" @bind-Value="loginModel.Password"
-										   bind-value:event="oninput" @oninput="ClearPasswordError" />
+								bind-value:event="oninput" @oninput="ClearPasswordError" />
 								<span class="input-group-text password-toggle-icon" @onclick="TogglePasswordVisibility" style="cursor: pointer;">
 									<i class="@(!showPassword ? "bi bi-eye-slash" : "bi bi-eye")"></i>
 								</span>
@@ -116,8 +116,9 @@
 		}
 		else
 		{
-            // Store the user's first name in StateService
-            await StateService.SetFirstName(user.FirstName);
+			await StateService.SetFirstName(user.First_Name); 
+			await StateService.SetLastName(user.Last_Name);
+			await StateService.SetDept(user.Department);
 			NavigationManager.NavigateTo("/lineofbusiness2", true);
 		}
 	}
