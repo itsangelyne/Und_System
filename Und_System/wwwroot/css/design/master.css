@@ -82,7 +82,7 @@ input::placeholder{
 }
 
 .background-overlay {
-    background-image: url('/assets/washoutlogo1.png');
+    background-image: url(/assets/washoutlogo1.png');
     background-size: 40% auto;
     background-repeat: no-repeat;
     background-position: center;
@@ -343,18 +343,19 @@ select.custom-dropdown option {
         .table th, .table td {
             padding: 8px;
         }
-}
-
-@media (max-width: 768px) {
     .custom-dropdown {
         font-size: 24px;
         padding-right: 36px;
     }
-
     .custom-dropdown-wrapper::after {
         font-size: 24px;
     }
+    .bankinst {
+        font-size: 12px !important;
+
+    }
 }
+
 
 @media (max-width: 430px) {
     .custom-dropdown {
@@ -364,5 +365,9 @@ select.custom-dropdown option {
 
     .custom-dropdown-wrapper::after {
         font-size: 18px;
+    }
+
+    .bankinst {
+        font-size: 10px !important;
     }
 }

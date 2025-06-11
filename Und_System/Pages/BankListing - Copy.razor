@@ -1,4 +1,4 @@
-﻿@page "/banklisting2" 
+﻿@page "/banklisting" 
 @using Und_System.Context;
 @using Und_System.Data;
 @using Und_System.Services;
@@ -8,18 +8,18 @@
 
 <style>
 	.m_title::first-letter {
-		text-transform: uppercase;
+	text-transform: uppercase;
 	}
 </style>
 <h1><b>Bank List</b></h1>
 <hr />
 
 <div class="background-overlay"></div>
-<div class="container my-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-	<h5 class="text-muted">Please select a bank from the list below to proceed:</h5>
+<div class="container mt-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+	<h5 class="text-muted bankinst mb-0" id="banklistinstructions">Please select a bank from the list of assigned banks to your account below to proceed:</h5>
 	<div class="card-body">
 		<div class="table-responsive">
-			<table class="table table-bordered">
+			<table class="table">
 				<thead class="text-white" style="background-color: #5d835c;">
 					<tr>
 						<th class="text-center">Master PolNo. </th>
@@ -32,12 +32,12 @@
 						@foreach (var bank in banks)
 						{
 							<tr class="hover-cell" @onclick="() => SelectBank(bank)">
-								<td class="text-center" style="vertical-align:middle;">@bank.Master_Polno</td>
+								<td class="text-center" style="vertical-align:middle;font-weight:400;">@bank.Master_Polno</td>
 								<td class="text-center">
 									<div>@bank.Policy_Holder_Name</div>
-									<span class="text-muted " style="font-size: smaller;" >@bank.Bank_Level</span>
+									<span class="text-muted " style="font-size: smaller;font-weight:400;">@bank.Bank_Level</span>
 								</td>
-								<td class="text-center m_title" style="vertical-align:middle;">@bank.Bank_Address</td>
+								<td class="text-center m_title" style="vertical-align:middle;font-weight:400;">@bank.Bank_Address</td>
 							</tr>
 						}
 
@@ -51,12 +51,12 @@
 
 
 @code {
-    private List<CGLPolicyHolder> banks = new List<CGLPolicyHolder>();
+	private List<CGLPolicyHolder> banks = new List<CGLPolicyHolder>();
 
-    protected override async Task OnInitializedAsync()
-    {
-        banks = await CGLPolicyHolderServices.GetBanksAsync();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		banks = await CGLPolicyHolderServices.GetBanksAsync();
+	}
 
     private async Task SelectBank(CGLPolicyHolder bank)
     {
