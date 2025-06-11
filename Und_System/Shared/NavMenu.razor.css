@@ -8,13 +8,14 @@
 }
 
 .bottom-row {
+    height:4.5rem;
     background-color: rgba(0,0,0,0.3);
+    margin-top:305px;
 }
 
 .navbar-brand {
     font-size: 1.1rem;
 }
-
 .oi {
     width: 2rem;
     font-size: 16px;
@@ -62,5 +63,9 @@
     .collapse {
         /* Never collapse the sidebar for wide screens */
         display: block;
+    }
+    .bottom-row {
+        height: 4.5rem;
+        background-color: rgba(0,0,0,0.3);
     }
 }
