@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Routing
 @using Und_System.Services;
 @inject NavigationManager NavigationManager
 @inject StateService StateService
@@ -12,7 +12,7 @@
     </div>
 </div>
 
-<div class="@NavMenuCssClass">
+<div class="@NavMenuCssClass nav-scrollable">
     <nav class="flex-column">
         <!-- Dashboard -->
         <div class="nav-item px-0">
@@ -232,15 +232,15 @@
                 </span>
             </a>
         </div>
-        <div class="bottom-row ps-3 navbar navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand">@FirstName @LastName
-                    <span class="fst-italic" style="font-size: smaller;">@Dept</span>
-                </a>
-
-            </div>
-        </div>
     </nav>
+</div>
+
+<div class="bottom-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">@FirstName @LastName
+            <span class="fst-italic" style="font-size: smaller;">@Dept</span>
+        </a>
+    </div>
 </div>
 
 
@@ -298,122 +298,4 @@
     private string ShortTermDropdownClass => showShortTermDropdown ? "show" : "d-none";
     private string ComplianceDropdownClass => showComplianceDropdown ? "show" : "d-none";
     private string ExtendedAgeDropdownClass => showExtendedAgeDropdown ? "show" : "d-none";
-    private string UsersDropdownClass => showUsersDropdown ? "show" : "d-none";
-
-    private string LongTermExtendedAgeDropdownClass => showLongTermExtendedAgeDropdown ? "show" : "d-none";
-    private string ShortTermExtendedAgeDropdownClass => showShortTermExtendedAgeDropdown ? "show" : "d-none";
-
-    private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
-
-    private void ToggleLoansDropdown()
-    {
-        showLoansDropdown = !showLoansDropdown;
-
-        if (showLoansDropdown)
-        {
-            showComplianceDropdown = false;
-            showExtendedAgeDropdown = false;
-            showUsersDropdown = false;
-        }
-        else
-        {
-            showLongTermDropdown = false;
-            showShortTermDropdown = false;
-        }
-    }
-
-    private void ToggleLongTermDropdown()
-    {
-        showLongTermDropdown = !showLongTermDropdown;
-
-        if (showLongTermDropdown)
-        {
-            showShortTermDropdown = false;
-        }
-    }
-
-    private void ToggleShortTermDropdown()
-    {
-        showShortTermDropdown = !showShortTermDropdown;
-
-        if (showShortTermDropdown)
-        {
-            showLongTermDropdown = false;
-        }
-    }
-
-    private void ToggleComplianceDropdown()
-    {
-        showComplianceDropdown = !showComplianceDropdown;
-
-        if (showComplianceDropdown)
-        {
-            showLoansDropdown = false;
-            showLongTermDropdown = false;
-            showShortTermDropdown = false;
-            showExtendedAgeDropdown = false;
-            showUsersDropdown = false;
-        }
-    }
-
-    private void ToggleExtendedAgeDropdown()
-    {
-        showExtendedAgeDropdown = !showExtendedAgeDropdown;
-
-        if (showExtendedAgeDropdown)
-        {
-            showLoansDropdown = false;
-            showComplianceDropdown = false;
-            showUsersDropdown = false;
-        }
-    }
-
-    private void ToggleLongTermExtendedAgeDropdown()
-    {
-        showLongTermExtendedAgeDropdown = !showLongTermExtendedAgeDropdown;
-
-        if (showLongTermExtendedAgeDropdown)
-        {
-            showShortTermExtendedAgeDropdown = false; // Close Short Term if Long Term is opened
-        }
-    }
-
-    private void ToggleShortTermExtendedAgeDropdown()
-    {
-        showShortTermExtendedAgeDropdown = !showShortTermExtendedAgeDropdown;
-
-        if (showShortTermExtendedAgeDropdown)
-        {
-            showLongTermExtendedAgeDropdown = false; // Close Long Term if Short Term is opened
-        }
-    }
-
-    private void ToggleUsersDropdown()
-    {
-        showUsersDropdown = !showUsersDropdown;
-
-        if (showUsersDropdown)
-        {
-            showLoansDropdown = false;
-            showComplianceDropdown = false;
-            showExtendedAgeDropdown = false;
-        }
-    }
-
-    private void CloseAllMenus()
-    {
-        showLoansDropdown = false;
-        showLongTermDropdown = false;
-        showShortTermDropdown = false;
-        showComplianceDropdown = false;
-        showExtendedAgeDropdown = false;
-        showUsersDropdown = false;
-        showLongTermExtendedAgeDropdown = false;
-        showShortTermExtendedAgeDropdown = false;
-    }
-
-    private void ShowLogoutPopup() => showLogoutPopup = true;
-    private void CancelLogout() => showLogoutPopup = false;
-    private void Logout() => NavigationManager.NavigateTo("/");
-    private string GetArrowClass(bool isDropdownOpen) => isDropdownOpen ? "fas fa-chevron-up" : "fas fa-chevron-right";
-}
+    private string UsersDropdownClass => showUsersDropdown ? "show" :
