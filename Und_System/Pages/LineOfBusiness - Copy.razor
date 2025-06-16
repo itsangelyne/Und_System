@@ -4,6 +4,8 @@
 <style>
 	.lob-container {
 		max-width:95%!important;
+		border-color: transparent;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
 	}
 
 	#aspbtn, #cglbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn {
@@ -46,13 +48,21 @@
 		#cgl2btn:hover{
 			padding-right: 40px !important;
 			background-color: #326f32 !important;
-			color: white !important;
 		}
 
 			#cgl2btn:hover::after {
 				opacity: 1;
 				right: 10px;
 			}
+
+			#cgl2btn:hover .card-subtitle, #cgl2btn:hover .card-title {
+				color:#ffffff!important;
+			}
+
+		#cardcgl:hover .card-img-top{
+			/* filter:grayscale(50%)!important; */
+			filter:brightness(50%)!important;
+		}
 
 </style>
 <h1><b>LINE OF BUSINESS</b></h1>
@@ -122,74 +132,6 @@
 		</div>
 	</div>
 </div>
-
-
-@* 	<div class=" col-lg-12 d-lg-block">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-md-3">
-					<div class="card h-100">
-						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-						<div class="card-body">
-							<h5 class="card-title">Alalay Sa Buhay Plan</h5>
-							<h6 class="card-subtitle text-muted">ASB</h6>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-md-3">
-					<div class="card h-100" @onclick="NavigateToBankListing">
-						<img class="card-img-top" src="/assets/cblicc.jpg" @onclick="NavigateToBankListing" alt="placeholder">
-						<div class="card-body">
-							<h5 class="card-title">Credit Group Life Plans</h5>
-							<h6 class="card-subtitle text-muted">CGL</h6>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-md-3">
-					<div class="card h-100">
-						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-						<div class="card-body">
-							<h5 class="card-title">Group Yearly Renewable Term Plans</h5>
-							<h6 class="card-subtitle text-muted">GYRT</h6>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="row justify-content-center mt-4 mb-4">
-				<div class="col-md-3">
-					<div class="card h-100">
-						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-						<div class="card-body">
-							<h5 class="card-title">Mortgage Redemption Insurance Plans</h5>
-							<h6 class="card-subtitle text-muted">MRI</h6>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-md-3">
-					<div class="card h-100">
-						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-						<div class="card-body">
-							<h5 class="card-title">Standard Plans</h5>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-md-3">
-					<div class="card h-100">
-						<img class="card-img-top" src="/assets/cblicc.jpg" alt="placeholder">
-						<div class="card-body">
-							<h5 class="card-title">DECS Plans</h5>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div> *@
-
 @code {
 	private void NavigateToBankListing()
 	{

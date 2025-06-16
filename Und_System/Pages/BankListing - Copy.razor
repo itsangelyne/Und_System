@@ -10,14 +10,34 @@
     .m_title::first-letter {
         text-transform: uppercase;
     }
+
+    .bankinst{
+        color: #5E585B;
+    }
+
+    .hover-cell .oi-arrow-right{
+        color:#FFFFFF;
+    }
+
+    .hover-cell:hover .oi-arrow-right {
+        color: #365736;
+        font-weight:bolder;
+        margin-left:10px;
+    }
 </style>
 
-<h1><b>Bank List</b></h1>
+<h1 class="text-center"><b>Bank List</b></h1>
 <hr />
 
 <div class="background-overlay"></div>
 <div class="container mt-4 p-4 rounded" style="background-color:#FFFFFF; max-width:100%; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-    <h5 class="text-muted bankinst mb-0" id="banklistinstructions">Hello <i>@FirstName</i>, Please select a bank from the list of assigned banks to your account below to proceed:</h5>
+    <div class="d-flex justify-content-end align-items-center">
+        <div class="ms-0">
+            <button class="btn btn-outline-success" @onclick="GoBackToLOB"><i class="oi oi-briefcase" style="margin-right:5px;" ></i>Line of Business</button>
+        </div>
+    </div>
+
+    <h5 class="bankinst mb-0" id="banklistinstructions">Hello <i><u>@FirstName</u></i> ! Please select a bank from the list of assigned banks to your account below to proceed:</h5>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table">
@@ -39,17 +59,19 @@
                                     <div>@bank.Policy_Holder_Name</div>
                                     <span class="text-muted " style="font-size: smaller;font-weight:400;">@bank.Bank_Level</span>
                                 </td>
-                                <td class="text-center m_title" style="vertical-align:middle;font-weight:400;">@bank.Bank_Address</td>
+                                <td class="text-center m_title" style="vertical-align:middle;font-weight:400;">@bank.Bank_Address 
+                                <span>
+                                    <i class="oi oi-arrow-right"></i>
+                                </span>
+                                </td>
                             </tr>
                         }
-
                     }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
 
 
 @code {
@@ -67,5 +89,10 @@
     {
         await StateService.SetSelectedBank(bank.ID_Policy_Holder, bank.Policy_Holder_Name);
         NavigationManager.NavigateTo("/cgldashboard");
+    }
+    private async Task GoBackToLOB()
+    {
+        await StateService.SetSelectedBank(null, null);
+        NavigationManager.NavigateTo("/lineofbusiness2");
     }
 }

@@ -11,7 +11,7 @@
 @layout MainLayout
 
 
-<h1><b>DASHBOARD</b></h1>
+<h1 class="mb-0"><b>DASHBOARD</b></h1>
 <hr />
 
 @if (StateService.SelectedBankId.HasValue)
@@ -31,7 +31,7 @@
     </div>
 }
 
-<div class="container mt-3 mb-3 text-center">
+<div class="container mt-2 mb-2 text-center">
     @* <div class="text-center mb-4">
         <div class="custom-dropdown-wrapper">
             <select id="headingDropdown" class="custom-dropdown" @onchange="OnFilterChanged">
@@ -41,13 +41,13 @@
             </select>
         </div>
     </div> *@
-    <h2 class="text-center fw-bold mb-4">APPLICATIONS</h2>
+    <h2 class="text-center fw-bold mb-2">APPLICATIONS</h2>
 </div>
 
 
     <div class="row g-3">
         <!--Pending-->
-        <div class="col-12 col-md-6 col-lg-4">
+    <div class="col-12 col-md-6 col-lg-4 mb-1">
             <div class="card shadow-sm rounded" style="z-index: -1;">
                 <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
                     Pending
@@ -67,7 +67,7 @@
             </div>
         </div>
         <!--Approved-->
-        <div class="col-12 col-md-6 col-lg-4">
+        <div class="col-12 col-md-6 col-lg-4 mb-1">
             <div class="card shadow-sm rounded" style="z-index: -1;">
                 <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
                     Approved
@@ -87,7 +87,7 @@
             </div>
         </div>
         <!--Refund-->
-        <div class="col-12 col-md-6 col-lg-4">
+    <div class="col-12 col-md-6 col-lg-4 mb-1">
             <div class="card shadow-sm rounded" style="z-index: -1;">
                 <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
                     Refund
@@ -106,7 +106,7 @@
                 </div>
             </div>
         </div>
-        <div class="row g-3 justify-content-center">
+        <div class="row g-3 justify-content-center mt-2">
             <!--Terminated-->
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card shadow-sm rounded" style="z-index: -1;">
@@ -150,11 +150,11 @@
         </div>
 
         <!-- Compliance and Others Section -->
-        <div class="container mt-3">
-            <h2 class="text-center fw-bold mb-4">COMPLIANCE AND RENEWAL</h2>
+        <div class="container mt-2 mb-2">
+            <h2 class="text-center fw-bold mb-2">COMPLIANCE AND RENEWAL</h2>
             <div class="row g-3 justify-content-center">
                 <!-- Compliance Section -->
-                <div class="col-12 col-md-6 col-lg-4">
+                <div class="col-12 col-md-6 col-lg-4 mb-2">
                     <div class="card shadow-sm rounded" style="z-index: -1;">
                         <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
                             Compliance
@@ -174,7 +174,7 @@
                     </div>
                 </div>
                 <!--Renewal-->
-                <div class="col-12 col-md-6 col-lg-4">
+                <div class="col-12 col-md-6 col-lg-4 mb-2">
                     <div class="card shadow-sm rounded" style="z-index: -1;">
                         <div class="card-header text-white text-center fw-bold" style="background-color: #57855E; font-size: 20px;">
                             Renewal

@@ -225,34 +225,35 @@
 			</a>
 		</div>
 		<!-- Logout -->
-		<div class="nav-item px-0 mt-auto">
+		@* <div class="nav-item px-0 mt-auto">
 			<a class="nav-link d-flex justify-content-between" @onclick="ShowLogoutPopup">
 				<span>
 					<span class="oi oi-account-logout" aria-hidden="true"></span> Logout
 				</span>
 			</a>
-		</div>
-
-		<!--Footer for the user who logged in-->
-		<div class="bottom-row ps-3 navbar navbar-dark">
-			<div class="container-fluid">
-				<div class="col">
-				<a class="navbar-brand">
-					<div style="font-size:16px!important;font-weight:400;" class="mb-0">@FirstName @LastName</div>
-					<span class="fst-italic" style="font-size: 12px; font-weight:400;">@Dept</span>
-				</a>
-				</div>
-				<div class="col">
-					<a class="navbar-brand d-flex justify-content-end" style="vertical-align:middle;" @onclick="ShowLogoutPopup">
-						<span>
-							<div class="oi oi-account-logout" aria-hidden="true"></div>
-						</span>
-					</a>
-				</div>
-			</div>
-		</div>
+		</div> *@
 	</nav>
 </div>
+
+<!--Footer for the user who logged in with logout button on the side for easy access-->
+<div class="bottom-row ps-1 navbar navbar-dark">
+	<div class="container-fluid">
+		<div class="col" style="line-height:1.2rem;">
+			<a class="navbar-brand">
+				<div style="font-size:16px!important;font-weight:400;" class="mb-0">@FirstName @LastName</div>
+				<span class="mt-0" style="font-size: 12px; font-weight:400;">@Dept</span>
+			</a>
+		</div>
+		<div class="col">
+			<a class="navbar-brand d-flex justify-content-end" style="vertical-align:middle!important;margin-right:0px;padding:0px 0px;margin-top:8px;" @onclick="ShowLogoutPopup">
+				<span>
+					<div class="oi oi-account-logout"></div>
+				</span>
+			</a>
+		</div>
+	</div>
+</div>
+
 
 
 <!-- Logout Modal -->
@@ -262,15 +263,15 @@
 		<div class="modal-dialog">
 			<div class="modal-content" style="width:30rem; left: 10px;">
 				<div class="modal-header">
-					<h5 class="modal-title">Confirm Logout</h5>
+					<h5 class="modal-title">Logout Confirmation</h5>
 					<button type="button" class="btn-close" @onclick="CancelLogout"></button>
 				</div>
 				<div class="modal-body">
 					<p class="text-center m-2" style="font-size:16px; font-weight:500;vertical-align:middle;">Are you sure you want to log out?</p>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" @onclick="CancelLogout">Cancel</button>
-					<button type="button" class="btn btn-primary" @onclick="Logout">Logout</button>
+					<button type="button" class="btn btn-outline-dark" @onclick="CancelLogout">Cancel</button>
+					<button type="button" class="btn btn-outline-primary" @onclick="Logout">Logout</button>
 				</div>
 			</div>
 		</div>
@@ -298,8 +299,6 @@
 	private bool showExtendedAgeDropdown = false;
 	private bool showUsersDropdown = false;
 	private bool showLogoutPopup = false;
-
-	// Extended Age Dropdowns
 	private bool showLongTermExtendedAgeDropdown = false;
 	private bool showShortTermExtendedAgeDropdown = false;
 
@@ -310,9 +309,9 @@
 	private string ComplianceDropdownClass => showComplianceDropdown ? "show" : "d-none";
 	private string ExtendedAgeDropdownClass => showExtendedAgeDropdown ? "show" : "d-none";
 	private string UsersDropdownClass => showUsersDropdown ? "show" : "d-none";
-
 	private string LongTermExtendedAgeDropdownClass => showLongTermExtendedAgeDropdown ? "show" : "d-none";
 	private string ShortTermExtendedAgeDropdownClass => showShortTermExtendedAgeDropdown ? "show" : "d-none";
+	private string GetArrowClass(bool isDropdownOpen) => isDropdownOpen ? "fas fa-chevron-up" : "fas fa-chevron-right";
 
 	private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
 
@@ -426,5 +425,5 @@
 	private void ShowLogoutPopup() => showLogoutPopup = true;
 	private void CancelLogout() => showLogoutPopup = false;
 	private void Logout() => NavigationManager.NavigateTo("/");
-	private string GetArrowClass(bool isDropdownOpen) => isDropdownOpen ? "fas fa-chevron-up" : "fas fa-chevron-right";
+	
 }

@@ -8,6 +8,7 @@ hr {
     opacity: 1;
     position: relative;
     z-index: -99;
+    margin-top:1px;
 }
 
 .card {
@@ -36,6 +37,10 @@ input::placeholder{
         border-color: #326f32;
         color: #ffff;
     }
+
+.oi-account-logout:hover {
+    color: #6baae5 !important;
+}
 
 #cglbtn, #aspbtn, #gyrtpbtn, #mrpbtn, #spbtn, #dpbtn {
     font-size: 24px;

@@ -16,7 +16,7 @@
 
 				<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
 					<DataAnnotationsValidator />
-					<div class="mb-3 row">
+					<div class="mb-1 row">
 						<label for="username" class="col-sm-3 col-form-label text-nowrap" id="usernamelabel">Username</label>
 						<div>
 							<InputText id="username" class="@($"form-control {(showLoginError ? "is-invalid" : "")}")" @bind-Value="loginModel.Username"
@@ -25,7 +25,7 @@
 						</div>
 					</div>
 
-					<div class="mb-3 row">
+					<div class="mb-1 row">
 						<label for="password" class="col-sm-3 col-form-label" id="passlabel">Password</label>
 						<div class="col-sm-12 position-relative">
 							<div class="input-group">
@@ -49,7 +49,7 @@
 							<i class="oi oi-account-login"></i> Login
 						</button>
 					</div>
-					<hr style="height:1px!important;z-index: 100;color: #326e32;" />
+					<hr style="height:1px!important;z-index: 100;color: #326e32;margin-top:15px;margin-bottom:10px;" />
 					<div class="text-center">
 						<p class="fst-italic text-center m-1 mt-3" @onclick="LostPassModal" style="font-size:14px!important; padding-right:10px!important;font-weight:500;" id="forgotpass">Forget Password?</p>
 					</div>
