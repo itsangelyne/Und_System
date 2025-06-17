@@ -8,9 +8,11 @@
 }
 
 .bottom-row {
-    height:4.5rem;
+    height: 4.5rem;
     background-color: rgba(0,0,0,0.3);
-    
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
 .navbar-brand {
@@ -63,9 +65,5 @@
     .collapse {
         /* Never collapse the sidebar for wide screens */
         display: block;
-    }
-    .bottom-row {
-        height: 4.5rem;
-        background-color: rgba(0,0,0,0.3);
     }
 }

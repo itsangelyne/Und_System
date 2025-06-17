@@ -232,26 +232,26 @@
 				</span>
 			</a>
 		</div> *@
-	</nav>
-</div>
 
-<!--Footer for the user who logged in with logout button on the side for easy access-->
-<div class="bottom-row ps-1 navbar navbar-dark">
-	<div class="container-fluid">
-		<div class="col" style="line-height:1.2rem;">
-			<a class="navbar-brand">
-				<div style="font-size:16px!important;font-weight:400;" class="mb-0">@FirstName @LastName</div>
-				<span class="mt-0" style="font-size: 12px; font-weight:400;">@Dept</span>
-			</a>
+		<!-- Footer for the user who logged in with logout button on the side for easy access -->
+		<div class="bottom-row ps-1 navbar navbar-dark">
+			<div class="container-fluid d-flex justify-content-between align-items-center">
+				<div class="user-info" style="line-height:1.2rem;">
+					<a class="navbar-brand mb-0">
+						<div style="font-size:16px!important;font-weight:400;">@FirstName @LastName</div>
+						<span class="mt-0" style="font-size: 12px; font-weight:400;">@Dept</span>
+					</a>
+				</div>
+				<div class="logout-button">
+					<a class="navbar-brand d-flex justify-content-end" style="vertical-align:middle!important;margin-right:0px;padding:0px 0px;margin-top:8px;" @onclick="ShowLogoutPopup">
+						<span>
+							<div class="oi oi-account-logout"></div>
+						</span>
+					</a>
+				</div>
+			</div>
 		</div>
-		<div class="col">
-			<a class="navbar-brand d-flex justify-content-end" style="vertical-align:middle!important;margin-right:0px;padding:0px 0px;margin-top:8px;" @onclick="ShowLogoutPopup">
-				<span>
-					<div class="oi oi-account-logout"></div>
-				</span>
-			</a>
-		</div>
-	</div>
+	</nav>
 </div>
 
 
